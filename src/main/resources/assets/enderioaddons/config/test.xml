@@ -1,0 +1,18 @@
+<water>
+  <contents>
+    <component name="Sodium" ppm="10561.0"/>
+    <component name="Aluminium" ppm="0.001"/>
+    <component name="Chloride" ppm="18980.0"/>
+  </contents>
+  <materials>
+    <material name="Aluminium" prio="1" volume="1000000.0" density="2.7">
+      <item class="OreDictionaryItem" oreDictionary="blockAluminium"/>
+      <component name="Aluminium" granularity="1.0" factor="1.0" count="1"/>
+    </material>
+    <material name="Salt" prio="1" volume="1000000.0" density="2.165">
+      <item class="MinecraftItem" modID="harvestcraft" itemName="foodSalt" itemMeta="0"/>
+      <component name="Chloride" granularity="1000.0" factor="0.01" count="1"/>
+      <component name="Sodium" granularity="1000.0" factor="0.01" count="1"/>
+    </material>
+  </materials>
+</water>

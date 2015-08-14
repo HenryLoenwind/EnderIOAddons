@@ -1,0 +1,211 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    dependencies { classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT' }
+}
+
+apply plugin: 'forge'
+apply plugin: 'maven-publish'
+apply plugin: 'curseforge'
+
+ext.buildnumber = 0
+if (System.getenv('BUILD_NUMBER') != null)
+    project.buildnumber = System.getenv('BUILD_NUMBER')
+else
+    logger.lifecycle "No build number detected, setting to 0"
+
+group = "com.enderioaddons"
+archivesBaseName = "EnderIOAddons"
+version = "${minecraft_version}-${mod_version}.${buildnumber}"
+
+if (project.hasProperty('mod_appendix'))
+    version += "_${project.mod_appendix}"
+
+minecraft {
+    version = "${minecraft_version}-${forge_version}"
+    runDir = 'run'
+
+    replace "@VERSION@", project.version
+   	replace "${toReplace}", "required-after:Forge@[${forgeDep_version},);required-after:endercore@[${endercore_version},);required-after:enderio@[${enderio_version},)"
+    replaceIn "EnderIOAddons.java"
+}
+
+configurations {
+    compile.extendsFrom exportedCompile
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "http://mobiusstrip.eu/maven" }
+    maven { url = "http://chickenbones.net/maven/" }
+    maven { url = "http://dl.tsr.me/artifactory/libs-release-local" }
+    maven { url = "http://maven.tterrag.com" }
+    maven { url = "http://maven.ic2.player.to" }
+}
+
+dependencies {
+    exportedCompile 'cglib:cglib-nodep:3.1'
+
+    if (!project.hasProperty('useLocalEnderCore')) {
+        compile "com.enderio.core:EnderCore:${endercore_version}:dev"
+    }
+
+    if (!project.hasProperty('useLocalEnderIO')) {
+        compile "com.enderio:EnderIO:${enderio_version}:dev"
+    }
+
+    compile "com.mod-buildcraft:buildcraft:${buildcraft_version}:api"
+    compile "mcp.mobius.waila:Waila:${waila_version}_${minecraft_version}:dev"
+    compile "net.sengir.forestry:${forestry_version}:api"
+
+    // WAILA ships really old CCC/CCL versions, so we force the new versions
+    compile "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:dev"
+    compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"    
+    
+    exportedCompile "com.thoughtworks.xstream:xstream:1.4.8"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            exclude '**/enderio/trigger/**'
+        }
+        resources {
+            srcDir 'resources'
+        }
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.info'
+        include '**/*.properties'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude '**/*.info'
+        exclude '**/*.properties'
+    }
+}
+
+jar {
+    from { configurations.exportedCompile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    from { configurations.exportedCompile.collect { it.isDirectory() ? it : zipTree(it) } }
+    classifier = 'dev'
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+build.dependsOn sourceJar, deobfJar
+
+publishing {
+    tasks.publish.dependsOn 'build'
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar
+            artifact deobfJar
+        }
+    }
+
+    repositories {
+        if (project.hasProperty('mavendir')) {
+            maven { url mavendir }
+        }
+    }
+}
+
+String getChangelogText() {
+    def changelogFile = new File('ReleaseNotes.txt')
+    String str = ''
+    String separator = '---'
+    int lineCount = 0
+    boolean done = false
+    changelogFile.eachLine {
+        if (done || it == null) {
+            return
+        }
+        if (lineCount < 3) {
+            lineCount++
+            if (it.startsWith(separator)) {return}
+        }
+        if (!it.startsWith(separator)) {
+            str += "$it" + (lineCount < 3 ? ':\n\n' : '\n')
+            return
+        }
+        done = true // once we go past the first version block, parse no more
+    }
+    return str
+}
+
+curse {
+    dependsOn 'reobf'
+    
+    onlyIf {
+        return project.hasProperty('curseforge_key') && System.getenv("CURSE") != null && System.getenv("CURSE").equalsIgnoreCase("true")
+    }
+
+    if (project.hasProperty('curseforge_key')) apiKey = project.curseforge_key
+    projectId = project.curse_projectId
+    changelog = System.getenv("CHANGELOG").equals("none") ? getChangelogText() : System.getenv("CHANGELOG")
+    releaseType = project.hasProperty('mod_appendix') ? "${mod_appendix}".toString() : 'release'
+    additionalArtifact deobfJar
+    relatedProject 'endercore'
+}
+
+task checkTranslations << {
+    Map<String, String> mapen = new HashMap<String, String>()
+    (new File('resources/assets/enderio/lang/en_US.lang')).eachLine {
+        def (value1, value2) = it.tokenize( '=' )
+        if (value1 == null || value2 == null) {return}
+        mapen.put(value1, value2)
+    }
+    
+    new File('resources/assets/enderio/lang/').eachFileMatch( ~".*\\.lang\$" ) { langfile ->
+        if (!langfile.getName().contains("en_US")) {
+	        Map<String, String> map = new HashMap<String, String>()
+	        File outfile = new File("${langfile}.txt")
+	        Writer outwriter = outfile.newWriter("UTF8")
+	        outwriter.write("\n// Additional translations:\n")
+	        outwriter << langfile.filterLine {
+	            def (value1, value2) = it.tokenize( '=' )
+	            if (value1 == null || value2 == null) {return false}
+	            map.put(value1, value2)
+	            return !mapen.containsKey(value1)
+	        }
+	        
+	        outwriter.append("\n// Missing translations:\n")
+	        for (e in mapen) {
+	            if (!map.containsKey(e.key)) {
+	                outwriter.append(e.key + "=" + e.value + "\n")
+	            }
+	        }
+        println "Created translation report ${outfile}"
+        }
+    }
+}
