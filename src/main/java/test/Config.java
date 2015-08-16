@@ -15,14 +15,14 @@ public class Config {
   static int num_levels = 5;
   private List<Water> levels = new ArrayList<Water>();
   
-  Config(Water config) {
+  public Config(Water config) {
     Water input = config;
     for (int i = 0; i < num_levels; i++) {
       input = computeLevel(input, config, i);
     }
   }
   
-  boolean testing = true;
+  boolean testing = false;
   
   private Water computeLevel(Water input, Water mats, int level) {
     Water remains = new Water();

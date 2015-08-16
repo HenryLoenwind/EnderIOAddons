@@ -1,0 +1,5 @@
+tile.blockDrain.name=Powered Drain
+tile.blockDrain.tooltip.detailed.line1=Collects liquids that flow into it.
+tile.blockDrain.tooltip.detailed.line2=Upgrade with capacitors to increase
+tile.blockDrain.tooltip.detailed.line3=working speed.
+enderio.blockDrain.tooltip.disabledMessage=Note: The drain is disabled on this server.

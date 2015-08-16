@@ -17,7 +17,11 @@ import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
 
 public class TestX {
 
-  private String configPath = ".";
+  public TestX() {
+		super();
+	}
+
+private String configPath = ".";
 
   public static void main(String[] args) throws IOException {
     (new TestX()).run();
@@ -33,7 +37,7 @@ public class TestX {
     // go(xstream);
   }
 
-  private XStream makeXStream() {
+  public XStream makeXStream() {
     XStream xstream = new XStream();
     if (this.getClass().getClassLoader() != null) {
       xstream.setClassLoader(this.getClass().getClassLoader());
@@ -69,7 +73,7 @@ public class TestX {
     return xstream;
   }
 
-  private Object readConfig(XStream xstream, String fileName) throws IOException {
+  public Object readConfig(XStream xstream, String fileName) throws IOException {
     File configFile = new File(configPath, fileName);
     
     if(configFile.exists()) {
@@ -82,13 +86,13 @@ public class TestX {
     }
     
     Object myObject = xstream.fromXML(defaultFile);
-    BufferedWriter writer = null;
-    try {
-      writer = new BufferedWriter(new FileWriter(configFile, false));
-      xstream.toXML(myObject, writer);
-    } finally {
-      IOUtils.closeQuietly(writer);
-    }
+//    BufferedWriter writer = null;
+//    try {
+//      writer = new BufferedWriter(new FileWriter(configFile, false));
+//      xstream.toXML(myObject, writer);
+//    } finally {
+//      IOUtils.closeQuietly(writer);
+//    }
     return myObject;
   }
 
@@ -161,7 +165,7 @@ public class TestX {
     }
   }
   
-  void dump(XStream xstream, Config config) throws IOException {
+  public void dump(XStream xstream, Config config) throws IOException {
     File configFile = new File(configPath, "dump.xml");
     BufferedWriter writer = null;
     try {

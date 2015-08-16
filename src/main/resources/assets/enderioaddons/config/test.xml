@@ -6,11 +6,11 @@
   </contents>
   <materials>
     <material name="Aluminium" prio="1" volume="1000000.0" density="2.7">
-      <item class="OreDictionaryItem" oreDictionary="blockAluminium"/>
+      <item class="OreDictionaryItem" oreDictionary="sand"/>
       <component name="Aluminium" granularity="1.0" factor="1.0" count="1"/>
     </material>
     <material name="Salt" prio="1" volume="1000000.0" density="2.165">
-      <item class="MinecraftItem" modID="harvestcraft" itemName="foodSalt" itemMeta="0"/>
+      <item class="MinecraftItem" modID="EnderIO" itemName="itemMaterial" itemMeta="0"/>
       <component name="Chloride" granularity="1000.0" factor="0.01" count="1"/>
       <component name="Sodium" granularity="1000.0" factor="0.01" count="1"/>
     </material>
