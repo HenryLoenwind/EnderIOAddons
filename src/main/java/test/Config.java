@@ -88,7 +88,7 @@ public class Config {
     for (Material mat : use.materials) {
       
       // (1) compute how much mass we need to build one item
-      double needed_mass = mat.volume * mat.density; // cm³ * g/cm³ = g
+      double needed_mass = mat.volume * mat.density; // cmÂ³ * g/cmÂ³ = g
       int parts = 0;
       for (Component comp : mat.components) {
         parts += comp.count;
