@@ -3,8 +3,6 @@ package info.loenwind.enderioaddons.machine.drain;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.enderio.core.common.util.BlockCoord;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.world.World;
@@ -15,6 +13,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+
+import com.enderio.core.common.util.BlockCoord;
 
 public final class FluidHelper {
 
@@ -342,10 +342,6 @@ public final class FluidHelper {
             if (findAndPullSourceBlock(bc2, foundStepUp)) {
               return true;
             }
-          } else {
-        	  System.out.println(bc2 + ": meta="+world.getBlockMetadata(bc2.x, bc2.y, bc2.z));
-        	  System.out.println("x: meta="+world.getBlockMetadata(-362, 54, 122)+" - "+bc2.getBlock(world)+" vs "+world.getBlock(-362, 54, 122));
-        	  
           }
         }
       }

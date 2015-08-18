@@ -1,17 +1,10 @@
 package info.loenwind.enderioaddons.machine.drain;
 
-import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import com.enderio.core.api.common.util.ITankAccess;
-import com.enderio.core.common.util.BlockCoord;
-import com.enderio.core.common.util.FluidUtil;
-import com.enderio.core.common.util.FluidUtil.FluidAndStackResult;
-import com.enderio.core.common.util.ItemUtil;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -24,7 +17,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import crazypants.enderio.ModObject;
+
+import com.enderio.core.api.common.util.ITankAccess;
+import com.enderio.core.common.util.BlockCoord;
+import com.enderio.core.common.util.FluidUtil;
+import com.enderio.core.common.util.FluidUtil.FluidAndStackResult;
+import com.enderio.core.common.util.ItemUtil;
+
 import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.ContinuousTask;
 import crazypants.enderio.machine.IPoweredTask;
@@ -157,7 +156,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
 
   @Override
   public String getMachineName() {
-    return GuiIds.blockDrain_unlocalisedName;
+    return BlockDrain.ModObject_blockDrain.unlocalisedName;
   }
 
   @Override

@@ -1,76 +1,58 @@
 package info.loenwind.enderioaddons;
 
-import info.loenwind.enderioaddons.common.CommonProxy;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.common.Recipes;
 import info.loenwind.enderioaddons.config.Config;
-import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 
 import java.io.IOException;
 
-import com.thoughtworks.xstream.XStream;
-
 import test.TestX;
 import test.Water;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
+
+import com.thoughtworks.xstream.XStream;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 
 @Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
-public class EnderIOAddons
-{
-    public static final String MODID = "enderioaddons";
-    public static final String MOD_NAME = "Ender IO Addons";
-    public static final String VERSION = "@VERSION@";
+public class EnderIOAddons {
+  public static final String MODID = "enderioaddons";
+  public static final String MOD_NAME = "Ender IO Addons";
+  public static final String VERSION = "@VERSION@";
 
-    @SidedProxy(clientSide = "info.loenwind.enderioaddons.common.CommonProxy", serverSide = "info.loenwind.enderioaddons.common.ServerProxy")
-    public static InitAware proxy;
-	public static final Config config = new Config();
-	public static final Recipes recipes = new Recipes();
+  @SidedProxy(clientSide = "info.loenwind.enderioaddons.common.CommonProxy", serverSide = "info.loenwind.enderioaddons.common.ServerProxy")
+  public static InitAware proxy;
+  public static final Config config = new Config();
+  public static final Recipes recipes = new Recipes();
 
-    @EventHandler
-    public void init(FMLPreInitializationEvent event) {
-    	config.init(event);
-    	proxy.init(event);
-    	recipes.init(event);
-    }
+  @EventHandler
+  public void init(FMLPreInitializationEvent event) {
+    config.init(event);
+    proxy.init(event);
+    recipes.init(event);
+  }
 
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
-    	config.init(event);
-    	proxy.init(event);
-    	recipes.init(event);
-		// some example code
-        System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
+  @EventHandler
+  public void init(FMLInitializationEvent event) {
+    config.init(event);
+    proxy.init(event);
+    recipes.init(event);
+  }
 
-//        //Drain
-//        if (Config.drainEnabled) {
-//          ItemStack drain = new ItemStack(EnderIO.blockDrain, 1, 0);
-//          GameRegistry.addRecipe(new ShapedOreRecipe(drain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p',
-//              Blocks.piston, 'b', Items.bucket, 'e', electricSteel, 'v', Items.cauldron));
-//        }
-    }
-    
-    @EventHandler
-    public void init(FMLPostInitializationEvent event) throws IOException {
-    	config.init(event);
-    	proxy.init(event);
-    	recipes.init(event);
+  @EventHandler
+  public void init(FMLPostInitializationEvent event) throws IOException {
+    config.init(event);
+    proxy.init(event);
+    recipes.init(event);
 
-    	System.out.println("customDiamond >> "+customDiamond.getUnlocalizedName());
-    	TestX x = new TestX();
-    	XStream xstream = x.makeXStream();
-		test.Config cfg = new test.Config((Water) x.readConfig(xstream, "test.xml"));
-		x.dump(xstream, cfg);
-    }
-    
-    
-    @ItemStackHolder(value="minecraft:diamond",meta=1,nbt="{\"my.nbttag\":1}")
-    public static final ItemStack customDiamond = null;
+    TestX x = new TestX();
+    XStream xstream = x.makeXStream();
+    test.Config cfg = new test.Config((Water) x.readConfig(xstream, "test.xml"));
+    x.dump(xstream, cfg);
+  }
+
 }

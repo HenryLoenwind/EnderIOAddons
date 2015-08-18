@@ -26,7 +26,7 @@ public class ContainerDrain extends AbstractMachineContainer {
         return getInv().isItemValidForSlot(1, itemStack);
       }
     });
-    
+
   }
 
 }

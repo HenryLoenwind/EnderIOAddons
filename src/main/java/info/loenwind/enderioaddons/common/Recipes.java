@@ -14,43 +14,33 @@ import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 
 public class Recipes implements InitAware {
 
-	@ItemStackHolder(value="EnderIO:itemMachinePart", meta=0)
-	public static final ItemStack machineChassi = null;
-	@ItemStackHolder(value="EnderIO:blockTank", meta=0)
-	public static final ItemStack basicTank = null;
-	@ItemStackHolder(value="EnderIO:itemAlloy", meta=0)
-	public static final ItemStack electricSteel = null;
+  @ItemStackHolder(value = "EnderIO:itemMachinePart", meta = 0)
+  public static final ItemStack machineChassi = null;
+  @ItemStackHolder(value = "EnderIO:blockTank", meta = 0)
+  public static final ItemStack basicTank = null;
+  @ItemStackHolder(value = "EnderIO:itemAlloy", meta = 0)
+  public static final ItemStack electricSteel = null;
 
-	
+  public Recipes() {
+  }
 
-	public Recipes() {}
+  @Override
+  public void init(FMLPreInitializationEvent event) {
+  }
 
-	@Override
-	public void init(FMLPreInitializationEvent event) {
-	}
+  @Override
+  public void init(FMLInitializationEvent event) {
+    //Drain
+    if (Config.drainEnabled) {
+      ItemStack drain = new ItemStack(BlockDrain.blockDrain, 1, 0);
+      GameRegistry.addRecipe(new ShapedOreRecipe(drain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
+          electricSteel, 'v', Items.cauldron));
+    }
 
-	@Override
-	public void init(FMLInitializationEvent event) {
-      //Drain
-      if (Config.drainEnabled) {
-  		Log.info("EnderIO:itemMachinePart"+machineChassi);
-  		Log.info("EnderIO:blockTank"+basicTank);
-  		Log.info("EnderIO:itemAlloy"+electricSteel);
-        ItemStack drain = new ItemStack(BlockDrain.blockDrain, 1, 0);
-        GameRegistry.addRecipe(new ShapedOreRecipe(drain, 
-        		"btb", "pmp", "eve", 
-        		'm', machineChassi, 
-        		't', basicTank, 
-        		'p', Blocks.piston, 
-        		'b', Items.bucket, 
-        		'e', electricSteel, 
-        		'v', Items.cauldron));
-      }
+  }
 
-	}
-
-	@Override
-	public void init(FMLPostInitializationEvent event) {
-	}
+  @Override
+  public void init(FMLPostInitializationEvent event) {
+  }
 
 }

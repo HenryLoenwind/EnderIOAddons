@@ -8,20 +8,15 @@ import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.client.gui.widget.GuiToolTip;
 import com.enderio.core.client.render.RenderUtil;
-import com.enderio.core.common.Lang;
 
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.fluid.Fluids;
-import crazypants.enderio.machine.gui.GuiMachineBase;
 import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
 public class GuiDrain extends GuiPoweredMachineBase<TileDrain> {
 
-  private TileDrain entity;
-
   public GuiDrain(InventoryPlayer par1InventoryPlayer, TileDrain te) {
     super(te, new ContainerDrain(par1InventoryPlayer, te));
-    entity = te;
 
     addToolTip(new GuiToolTip(new Rectangle(80, 21, 16, 47), "") {
 
@@ -29,11 +24,11 @@ public class GuiDrain extends GuiPoweredMachineBase<TileDrain> {
       protected void updateText() {
         text.clear();
         String heading = EnderIO.lang.localize("tank.tank");
-        if(entity.tank.getFluid() != null) {
-          heading += ": " + entity.tank.getFluid().getLocalizedName();
+        if (getTileEntity().tank.getFluid() != null) {
+          heading += ": " + getTileEntity().tank.getFluid().getLocalizedName();
         }
         text.add(heading);
-        text.add(Fluids.toCapactityString(entity.tank));
+        text.add(Fluids.toCapactityString(getTileEntity().tank));
       }
 
     });
@@ -56,8 +51,7 @@ public class GuiDrain extends GuiPoweredMachineBase<TileDrain> {
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
     RenderUtil.bindBlockTexture();
-    RenderUtil.renderGuiTank(entity.tank, guiLeft + 80, guiTop + 21, zLevel, 16,47);    
-
+    RenderUtil.renderGuiTank(getTileEntity().tank, guiLeft + 80, guiTop + 21, zLevel, 16, 47);
   }
 
 }
