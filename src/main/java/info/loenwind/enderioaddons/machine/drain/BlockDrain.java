@@ -1,6 +1,6 @@
-package info.loenwind.enderioaddons.drain;
+package info.loenwind.enderioaddons.machine.drain;
 
-import info.loenwind.enderioaddons.ObjectData;
+import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.config.Config;
 
 import java.util.List;
@@ -25,6 +25,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidStack;
@@ -42,6 +43,9 @@ import crazypants.enderio.network.PacketHandler;
 
 public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdvancedTooltipProvider {
 
+	//addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues)
+	
+	public static final ModObject ModObject_blockDrain = EnumHelper.addEnum(ModObject.class, "blockDrain", new Class<?>[0], new Object[0]);
 	public static BlockDrain blockDrain;
 	
   public static BlockDrain create() {
@@ -52,10 +56,9 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   }
 
   protected BlockDrain() {
-    super(ModObject.itemEnderface, TileDrain.class);
+    super(ModObject_blockDrain, TileDrain.class);
     setStepSound(Block.soundTypeGlass);
     setLightOpacity(0);
-//    this.name = "blockDrain"; TODO
     setBlockName(name);
   }
 
@@ -130,7 +133,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   protected int getGuiId() {
-    return ObjectData.GUI_ID_DRAIN;
+    return GuiIds.GUI_ID_DRAIN;
   }
 
   @Override

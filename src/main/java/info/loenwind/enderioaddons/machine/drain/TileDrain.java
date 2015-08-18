@@ -1,8 +1,8 @@
-package info.loenwind.enderioaddons.drain;
+package info.loenwind.enderioaddons.machine.drain;
 
-import info.loenwind.enderioaddons.ObjectData;
+import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.config.Config;
-import info.loenwind.enderioaddons.drain.FluidHelper.ReturnObject;
+import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -157,7 +157,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
 
   @Override
   public String getMachineName() {
-    return ObjectData.blockDrain_unlocalisedName;
+    return GuiIds.blockDrain_unlocalisedName;
   }
 
   @Override
@@ -228,9 +228,9 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
     if (shouldDoWorkThisTick(modulo) && tank.getAvailableSpace() >= ONE_BLOCK_OF_LIQUID) {
       FluidHelper instance;
       if (tank.getFluid() != null) {
-        instance = info.loenwind.enderioaddons.drain.FluidHelper.getInstance(worldObj, getLocation(), tank.getFluid());
+        instance = info.loenwind.enderioaddons.machine.drain.FluidHelper.getInstance(worldObj, getLocation(), tank.getFluid());
       } else {
-        instance = info.loenwind.enderioaddons.drain.FluidHelper.getInstance(worldObj, getLocation());
+        instance = info.loenwind.enderioaddons.machine.drain.FluidHelper.getInstance(worldObj, getLocation());
       }
       if (instance != null) {
         instance.setDrainingCallback(this);

@@ -1,12 +1,12 @@
-package info.loenwind.enderioaddons;
+package info.loenwind.enderioaddons.common;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
-import info.loenwind.enderioaddons.drain.BlockDrain;
-import info.loenwind.enderioaddons.drain.DrainBlockRenderer;
-import info.loenwind.enderioaddons.drain.DrainFluidRenderer;
-import info.loenwind.enderioaddons.drain.DrainItemRenderer;
-import info.loenwind.enderioaddons.drain.TileDrain;
+import info.loenwind.enderioaddons.machine.drain.BlockDrain;
+import info.loenwind.enderioaddons.machine.drain.DrainBlockRenderer;
+import info.loenwind.enderioaddons.machine.drain.DrainFluidRenderer;
+import info.loenwind.enderioaddons.machine.drain.DrainItemRenderer;
+import info.loenwind.enderioaddons.machine.drain.TileDrain;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;

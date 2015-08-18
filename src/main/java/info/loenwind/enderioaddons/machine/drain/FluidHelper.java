@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.drain;
+package info.loenwind.enderioaddons.machine.drain;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +22,8 @@ public final class FluidHelper {
   private final FluidStack stack;
   private final Fluid fluid;
   private final Block block;
-  private final ForgeDirection densityDir;
+  private final ForgeDirection downflowDirection;
+  private final ForgeDirection upflowDirection;
   private final FType type;
   private final BlockCoord startbc;
   private IDrainingCallback hook;
@@ -39,7 +40,8 @@ public final class FluidHelper {
     this.stack = stack;
     this.fluid = stack.getFluid();
     this.block = fluid.getBlock();
-    this.densityDir = fluid.getDensity() > 0 ? ForgeDirection.DOWN : ForgeDirection.UP;
+    this.downflowDirection = fluid.getDensity() > 0 ? ForgeDirection.DOWN : ForgeDirection.UP;
+    this.upflowDirection = downflowDirection == ForgeDirection.UP ? ForgeDirection.DOWN : ForgeDirection.UP;
     if (block instanceof BlockFluidClassic) {
       this.type = FType.CLASSIC;
     } else if (block instanceof BlockFluidFinite) {
@@ -156,11 +158,23 @@ public final class FluidHelper {
     throw new IllegalStateException("unreachable code");
   }
   
+  public boolean isFlowingBlock(BlockCoord bc) {
+	    switch (type) {
+	    case CLASSIC:
+	      return !((BlockFluidClassic) block).isSourceBlock(world, bc.x, bc.y, bc.z);
+	    case FINITE:
+	      return false;
+	    case VANILLA:
+	      return world.getBlockMetadata(bc.x, bc.y, bc.z) != 0;
+	    }
+	    throw new IllegalStateException("unreachable code");
+	  }
+	  
   /*
    * Replacement for isFlowingVertically() that does the right thing
    */
   public boolean isFlowingVertically2(BlockCoord bc) {
-    BlockCoord downflow = bc.getLocation(densityDir == ForgeDirection.DOWN ? ForgeDirection.DOWN : ForgeDirection.UP);
+    BlockCoord downflow = bc.getLocation(downflowDirection);
     return isSameLiquid(bc.getLocation(ForgeDirection.UP)) && isSameLiquid(bc.getLocation(ForgeDirection.DOWN)) && !isSourceBlock(downflow);
   }
 
@@ -170,12 +184,14 @@ public final class FluidHelper {
   public boolean isUpflow(BlockCoord bc0, BlockCoord bc1) {
     switch (type) {
     case CLASSIC:
-      return world.getBlockMetadata(bc1.x, bc1.y, bc1.z) < world.getBlockMetadata(bc0.x, bc0.y, bc0.z);
+      return world.getBlockMetadata(bc1.x, bc1.y, bc1.z) < world.getBlockMetadata(bc0.x, bc0.y, bc0.z)
+    		  || isSameLiquid(bc1.getLocation(upflowDirection));
     case FINITE:
       return world.getBlockMetadata(bc1.x, bc1.y, bc1.z) > world.getBlockMetadata(bc0.x, bc0.y, bc0.z);
     case VANILLA:
-      return (world.getBlockMetadata(bc1.x, bc1.y, bc1.z) < world.getBlockMetadata(bc0.x, bc0.y, bc0.z)) || (world.getBlockMetadata(bc1.x, bc1.y, bc1.z) & 8) != 0;
-      // other block has higher level of liquid OR other block is downflow and current block is not
+      return world.getBlockMetadata(bc1.x, bc1.y, bc1.z) < world.getBlockMetadata(bc0.x, bc0.y, bc0.z) 
+    		  || (world.getBlockMetadata(bc1.x, bc1.y, bc1.z) & 8) != 0;
+      // other block has higher level of liquid OR other block is downflow
     }
     throw new IllegalStateException("unreachable code");
   }
@@ -277,6 +293,13 @@ public final class FluidHelper {
       }
       if (!result.inProgress && result.result == null) {
         result.isDry = true;
+        // there is liquid here but we were unable to find a source block for it. Minecraft's fluid mechanics
+        // may be messed up and give us some fake flowing blocks. Try to remedy this be forcing it to re-flow them.
+        for (BlockCoord blockCoord : seen) {
+			if (isFlowingBlock(blockCoord) && isSameLiquid(blockCoord)) {
+				world.setBlockToAir(blockCoord.x, blockCoord.y, blockCoord.z);
+			}
+		}
       }
     } else {
       result.isDry = true;
@@ -288,7 +311,7 @@ public final class FluidHelper {
     if (!seen.contains(bc)) {
       seen.add(bc);
 
-      BlockCoord upflow = bc.getLocation(densityDir == ForgeDirection.UP ? ForgeDirection.DOWN : ForgeDirection.UP);
+      BlockCoord upflow = bc.getLocation(upflowDirection);
 
       // try to go up first
       if (isInWorld(upflow) && isSameLiquid(upflow)) {
@@ -306,10 +329,10 @@ public final class FluidHelper {
         if (isSameLiquid(bc2)) {
           if (isSourceBlock(bc2)) {
             if (foundStepUp) { // don't flow unless there is a "down" to flow to
-              if (isSameLiquid(bc2.getLocation(densityDir)) && !isSourceBlock(bc2.getLocation(densityDir)) && 
-                  isSameLiquid(bc.getLocation(densityDir)) && !isSourceBlock(bc.getLocation(densityDir))) {
+              if (isSameLiquid(bc2.getLocation(downflowDirection)) && !isSourceBlock(bc2.getLocation(downflowDirection)) && 
+                  isSameLiquid(bc.getLocation(downflowDirection)) && !isSourceBlock(bc.getLocation(downflowDirection))) {
                 // if we can drop the source block down by one without disconnecting it from us, we do so
-                doFlow(bc2, bc2.getLocation(densityDir));
+                doFlow(bc2, bc2.getLocation(downflowDirection));
               } else {
                 doFlow(bc2, bc);
               }
@@ -319,6 +342,10 @@ public final class FluidHelper {
             if (findAndPullSourceBlock(bc2, foundStepUp)) {
               return true;
             }
+          } else {
+        	  System.out.println(bc2 + ": meta="+world.getBlockMetadata(bc2.x, bc2.y, bc2.z));
+        	  System.out.println("x: meta="+world.getBlockMetadata(-362, 54, 122)+" - "+bc2.getBlock(world)+" vs "+world.getBlock(-362, 54, 122));
+        	  
           }
         }
       }

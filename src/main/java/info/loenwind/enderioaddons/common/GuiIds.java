@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons;
+package info.loenwind.enderioaddons.common;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -6,12 +6,12 @@ import java.util.Map;
 import cpw.mods.fml.common.network.IGuiHandler;
 import crazypants.enderio.EnderIO;
 
-public class ObjectData {
+public class GuiIds {
 
 	public static int GUI_ID_DRAIN = 0;
 	public static String blockDrain_unlocalisedName;
 
-	private ObjectData() {
+	private GuiIds() {
 	}
 
 	static void compute_GUI_IDs() {

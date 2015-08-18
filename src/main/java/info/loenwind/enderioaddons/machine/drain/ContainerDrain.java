@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.drain;
+package info.loenwind.enderioaddons.machine.drain;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;

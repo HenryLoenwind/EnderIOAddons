@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.drain;
+package info.loenwind.enderioaddons.machine.drain;
 
 import com.enderio.core.common.network.MessageTileEntity;
 import com.enderio.core.common.network.NetworkUtil;

@@ -1,4 +1,6 @@
-package info.loenwind.enderioaddons;
+package info.loenwind.enderioaddons.common;
+
+import info.loenwind.enderioaddons.EnderIOAddons;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

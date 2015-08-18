@@ -1,6 +1,6 @@
-package info.loenwind.enderioaddons;
+package info.loenwind.enderioaddons.common;
 
-import info.loenwind.enderioaddons.drain.BlockDrain;
+import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-public interface Proxy {
+public interface InitAware {
     void init(FMLPreInitializationEvent event);
 
     void init(FMLInitializationEvent event);

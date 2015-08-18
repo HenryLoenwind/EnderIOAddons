@@ -10,7 +10,8 @@ public enum ConfigValues {
 	drainContinuousEnergyUseRF(Section.DRAIN, "drainContinuousEnergyUseRF", 10, "The amount of power used by a drain per tick."),
 	drainPerBucketEnergyUseRF(Section.DRAIN, "drainPerBucketEnergyUseRF", 400, "The amount of power used by a drain per 1000mB of liquid collected."),
 	drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, "drainPerSourceBlockMoveEnergyUseRF", 250, "The amount of power used by a drain to move a source block by one meter."),
-	drainAllowOnDedicatedServer(Section.DRAIN, "drainAllowOnDedicatedServer", false, "Allow the use of the drain on a dedicated server.");
+	drainAllowOnDedicatedServer(Section.DRAIN, "drainAllowOnDedicatedServer", false, "Allow the use of the drain on a dedicated server."),
+	drainEnabled(Section.DRAIN, "drainEnabled", true, "Enables/disables the drain's crafting recipe.");
 
 	private final Section section;
 	private final String name;
