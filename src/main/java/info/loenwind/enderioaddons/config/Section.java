@@ -1,7 +1,7 @@
 package info.loenwind.enderioaddons.config;
 
 public enum Section {
-  DRAIN("drain");
+  DRAIN("drain"), COBBLEWORKS("cobbleworks");
 
   public final String name;
 

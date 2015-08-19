@@ -9,12 +9,14 @@ import crazypants.enderio.EnderIO;
 public class GuiIds {
 
   public static int GUI_ID_DRAIN = 0;
+  public static int GUI_ID_COBBLEWORKS = 0;
 
   private GuiIds() {
   }
 
   static void compute_GUI_IDs() {
     GUI_ID_DRAIN = nextID();
+    GUI_ID_COBBLEWORKS = nextID();
   }
 
   static private int nextID() {

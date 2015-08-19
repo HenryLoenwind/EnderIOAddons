@@ -25,6 +25,12 @@ public class Config implements InitAware {
   public static boolean drainAllowOnDedicatedServer = ConfigValues.drainAllowOnDedicatedServer.getDefaultBoolean();
   public static boolean drainEnabled = ConfigValues.drainEnabled.getDefaultBoolean();
 
+  public static int cobbleWorksRfPerCobblestone = ConfigValues.cobbleWorksRfPerCobblestone.getDefaultInt();
+  public static int cobbleWorksRfDiscountForCrafting = ConfigValues.cobbleWorksRfDiscountForCrafting.getDefaultInt(); // %
+  public static int cobbleWorksRfDiscountForSmelting = ConfigValues.cobbleWorksRfDiscountForSmelting.getDefaultInt(); // %
+  public static int cobbleWorksRfDiscountForCrushing = ConfigValues.cobbleWorksRfDiscountForCrushing.getDefaultInt(); // %
+  public static int cobbleWorksRfDiscountPerUpgrade = ConfigValues.cobbleWorksRfDiscountPerUpgrade.getDefaultInt(); // %
+
   //	****************************************************************************************
 
   public static Configuration configuration;

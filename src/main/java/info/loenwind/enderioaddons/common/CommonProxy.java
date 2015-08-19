@@ -1,10 +1,17 @@
 package info.loenwind.enderioaddons.common;
 
+import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
+import info.loenwind.enderioaddons.machine.cobbleworks.RendererCobbleworks;
+import info.loenwind.enderioaddons.machine.cobbleworks.TESRCobbleworks;
+import info.loenwind.enderioaddons.machine.cobbleworks.TileCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 import info.loenwind.enderioaddons.machine.drain.DrainBlockRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainFluidRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainItemRenderer;
 import info.loenwind.enderioaddons.machine.drain.TileDrain;
+import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
+import info.loenwind.enderioaddons.machine.part.MachinePartRenderer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -23,10 +30,20 @@ public class CommonProxy extends ServerProxy {
   @Override
   public void init(FMLInitializationEvent event) {
     super.init(event);
+
     BlockDrain.renderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new DrainBlockRenderer());
     ClientRegistry.bindTileEntitySpecialRenderer(TileDrain.class, new DrainFluidRenderer());
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockDrain.blockDrain), new DrainItemRenderer());
+
+    RendererFrameworkMachine rendererFrameworkMachine = new RendererFrameworkMachine();
+
+    BlockCobbleworks.renderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new RendererCobbleworks(rendererFrameworkMachine));
+    ClientRegistry.bindTileEntitySpecialRenderer(TileCobbleworks.class, new TESRCobbleworks());
+
+    MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
+
   }
 
   @Override

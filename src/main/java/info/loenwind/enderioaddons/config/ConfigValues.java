@@ -11,7 +11,19 @@ public enum ConfigValues {
   drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, "drainPerSourceBlockMoveEnergyUseRF", 250,
       "The amount of power used by a drain to move a source block by one meter."), //
   drainAllowOnDedicatedServer(Section.DRAIN, "drainAllowOnDedicatedServer", false, "Allow the use of the drain on a dedicated server."), //
-  drainEnabled(Section.DRAIN, "drainEnabled", true, "Enables/disables the drain's crafting recipe.");
+  drainEnabled(Section.DRAIN, "drainEnabled", true, "Enables/disables the drain's crafting recipe."), //
+
+  cobbleWorksRfPerCobblestone(Section.COBBLEWORKS, "cobbleWorksRfPerCobblestone", 100, "RF used per generated cobblestone"), //
+
+  cobbleWorksRfDiscountForCrafting(Section.COBBLEWORKS, "cobbleWorksRfDiscountForCrafting", 10,
+      "Discount on the RF cost of crafting operations in percent (0-100)"), //
+  cobbleWorksRfDiscountForSmelting(Section.COBBLEWORKS, "cobbleWorksRfDiscountForSmelting", 10,
+      "Discount on the RF cost of smelting operations in percent (0-100)"), //
+  cobbleWorksRfDiscountForCrushing(Section.COBBLEWORKS, "cobbleWorksRfDiscountForCrushing", 10,
+      "Discount on the RF cost of crusing (sagmilling) operations in percent (0-100)"), //
+  cobbleWorksRfDiscountPerUpgrade(Section.COBBLEWORKS, "cobbleWorksRfDiscountPerUpgrade", 10,
+      "Discount on the RF cost of any operation in percent (0-100). This discount is applied once for a double-layer capacitor "
+          + "and twice for an octadic capacitor upgrade.");
 
   private final Section section;
   private final String name;

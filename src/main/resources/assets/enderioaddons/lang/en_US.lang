@@ -3,3 +3,15 @@ tile.blockDrain.tooltip.detailed.line1=Collects liquids that flow into it.
 tile.blockDrain.tooltip.detailed.line2=Upgrade with capacitors to increase
 tile.blockDrain.tooltip.detailed.line3=working speed.
 enderio.blockDrain.tooltip.disabledMessage=Note: The drain is disabled on this server.
+
+enderio.machineFrame.name=Empty Machine Framework
+enderio.frameTank.name=Machine Framework Tank
+enderio.frameTanks.name=Machine Framework Tanks
+enderio.machineFrameTank.name=Empty Machine Framework with Tanks
+enderio.cobbleController.name=Cobblestone Framework Controller
+
+tile.blockCobbleworks.name=Cobblestone Framework
+tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.
+tile.blockCobbleworks.tooltip.detailed.line2=Can be upgraded with Alloy Smelters,
+tile.blockCobbleworks.tooltip.detailed.line3=SAG Mills and Crafters to produce
+tile.blockCobbleworks.tooltip.detailed.line4=different materials.
