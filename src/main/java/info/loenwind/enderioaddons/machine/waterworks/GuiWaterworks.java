@@ -31,27 +31,11 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
+    drawTexturedModalRect(sx + 50, sy + 32, 208, 6, 24, 26); // boiler
+    drawTexturedModalRect(sx + 30, sy + 9, 197, 41, 15, 47); // left tank
+    drawTexturedModalRect(sx + 79, sy + 9, 215, 41, 15, 47); // right tank
+
     RenderUtil.bindBlockTexture();
-  }
-
-  @Override
-  public int getXSize() {
-    return 234;
-  }
-
-  @Override
-  protected int getPowerU() {
-    return 234;
-  }
-
-  @Override
-  protected int getPowerY() {
-    return 8;
-  }
-
-  @Override
-  protected int getPowerHeight() {
-    return 48;
   }
 
 }
