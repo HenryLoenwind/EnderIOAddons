@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.machine.cobbleworks;
+package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
@@ -17,27 +17,27 @@ import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
 
-public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> implements IFrameworkBlock, TextureProvider {
+public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implements IFrameworkBlock, TextureProvider {
 
-  public static final ModObject ModObject_blockCobbleworks = EnumHelper.addEnum(ModObject.class, "blockCobbleworks", new Class<?>[0], new Object[0]);
-  public static BlockCobbleworks blockCobbleworks;
+  public static final ModObject ModObject_blockWaterworks = EnumHelper.addEnum(ModObject.class, "blockWaterworks", new Class<?>[0], new Object[0]);
+  public static BlockWaterworks blockWaterworks;
   public static int renderId;
 
-  public static BlockCobbleworks create() {
-    blockCobbleworks = new BlockCobbleworks();
-    blockCobbleworks.init();
-    return blockCobbleworks;
+  public static BlockWaterworks create() {
+    blockWaterworks = new BlockWaterworks();
+    blockWaterworks.init();
+    return blockWaterworks;
   }
 
-  protected BlockCobbleworks() {
-    super(ModObject_blockCobbleworks, TileCobbleworks.class);
+  protected BlockWaterworks() {
+    super(ModObject_blockWaterworks, TileWaterworks.class);
   }
 
   @Override
   public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     TileEntity te = world.getTileEntity(x, y, z);
-    if (te instanceof TileCobbleworks) {
-      return new ContainerCobbleworks(player.inventory, (TileCobbleworks) te);
+    if (te instanceof TileWaterworks) {
+      return new ContainerWaterworks(player.inventory, (TileWaterworks) te);
     }
     return null;
   }
@@ -45,15 +45,15 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     TileEntity te = world.getTileEntity(x, y, z);
-    if (te instanceof TileCobbleworks) {
-      return new GuiCobbleworks(player.inventory, (TileCobbleworks) te);
+    if (te instanceof TileWaterworks) {
+      return new GuiWaterworks(player.inventory, (TileWaterworks) te);
     }
     return null;
   }
 
   @Override
   protected int getGuiId() {
-    return GuiIds.GUI_ID_COBBLEWORKS;
+    return GuiIds.GUI_ID_WATERWORKS;
   }
 
   @Override
@@ -73,7 +73,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   @Override
   public String getControllerModelName() {
-    return "cobbleController";
+    return "waterController";
   }
 
   @Override
@@ -88,7 +88,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   @SideOnly(Side.CLIENT)
   @Override
-  public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
+  public void randomDisplayTick(World world, int x, int y, int z, Random rand) { // TODO: steam
     if (isActive(world, x, y, z) && !world.getBlock(x, y + 1, z).isOpaqueCube()) {
       float startX = x + 0.8F - rand.nextFloat() * 0.6F;
       float startY = y + 1.0F;

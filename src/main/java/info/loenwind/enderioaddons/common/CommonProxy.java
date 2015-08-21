@@ -2,7 +2,6 @@ package info.loenwind.enderioaddons.common;
 
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.RendererCobbleworks;
-import info.loenwind.enderioaddons.machine.cobbleworks.TESRCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.TileCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 import info.loenwind.enderioaddons.machine.drain.DrainBlockRenderer;
@@ -10,8 +9,12 @@ import info.loenwind.enderioaddons.machine.drain.DrainFluidRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainItemRenderer;
 import info.loenwind.enderioaddons.machine.drain.TileDrain;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+import info.loenwind.enderioaddons.machine.framework.TESRFrameworkMachine;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePartRenderer;
+import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
+import info.loenwind.enderioaddons.machine.waterworks.RendererWaterworks;
+import info.loenwind.enderioaddons.machine.waterworks.TileWaterworks;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -40,7 +43,11 @@ public class CommonProxy extends ServerProxy {
 
     BlockCobbleworks.renderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererCobbleworks(rendererFrameworkMachine));
-    ClientRegistry.bindTileEntitySpecialRenderer(TileCobbleworks.class, new TESRCobbleworks());
+    ClientRegistry.bindTileEntitySpecialRenderer(TileCobbleworks.class, new TESRFrameworkMachine());
+
+    BlockWaterworks.renderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new RendererWaterworks(rendererFrameworkMachine));
+    ClientRegistry.bindTileEntitySpecialRenderer(TileWaterworks.class, new TESRFrameworkMachine());
 
     MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
 

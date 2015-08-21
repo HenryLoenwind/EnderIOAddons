@@ -10,6 +10,7 @@ public class GuiIds {
 
   public static int GUI_ID_DRAIN = 0;
   public static int GUI_ID_COBBLEWORKS = 0;
+  public static int GUI_ID_WATERWORKS = 0;
 
   private GuiIds() {
   }
@@ -17,7 +18,10 @@ public class GuiIds {
   static void compute_GUI_IDs() {
     GUI_ID_DRAIN = nextID();
     GUI_ID_COBBLEWORKS = nextID();
+    GUI_ID_WATERWORKS = nextID();
   }
+
+  private static int lastId = crazypants.enderio.GuiHandler.GUI_ID_CAP_BANK;
 
   static private int nextID() {
 
@@ -26,11 +30,9 @@ public class GuiIds {
       field.setAccessible(true);
       Map<Integer, IGuiHandler> guiHandlers = (Map<Integer, IGuiHandler>) field.get(EnderIO.guiHandler);
 
-      int i = crazypants.enderio.GuiHandler.GUI_ID_CAP_BANK;
-      while (i < Integer.MAX_VALUE) {
-        i++;
-        if (!guiHandlers.containsKey(i)) {
-          return i;
+      while (++lastId > 0) {
+        if (!guiHandlers.containsKey(lastId)) {
+          return lastId;
         }
       }
 

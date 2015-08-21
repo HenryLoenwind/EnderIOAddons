@@ -3,8 +3,10 @@ package info.loenwind.enderioaddons.machine.framework;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.api.client.render.VertexTransform;
@@ -40,7 +42,22 @@ public class TechneMachineRenderer<T extends AbstractMachineEntity> extends Tech
   @Override
   public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
     setFacingDir(ForgeDirection.SOUTH);
-    super.renderInventoryBlock(block, metadata, modelId, renderer);
+    TechneUtil.vt = this.vt;
+    IIcon icon = getModelIcon(block, metadata);
+    Tessellator.instance.startDrawingQuads();
+    Tessellator.instance.setColorOpaque_F(1, 1, 1);
+    Tessellator.instance.addTranslation(0, -0.47f, 0);
+    for (GroupObject go : getModel(block, metadata)) {
+      if (go instanceof GroupObjectWithIcon) {
+        TechneUtil.renderWithIcon(go, ((GroupObjectWithIcon) go).getControllerTexture(), renderer.overrideBlockTexture, Tessellator.instance, null, 0, 0,
+            0, vt, true);
+      } else {
+        TechneUtil.renderWithIcon(go, icon, renderer.overrideBlockTexture, Tessellator.instance, null, 0, 0, 0, vt, true);
+      }
+    }
+    Tessellator.instance.addTranslation(0, 0.47f, 0);
+    Tessellator.instance.draw();
+    TechneUtil.vt = null;
   }
 
   @SuppressWarnings("unchecked")
@@ -52,7 +69,21 @@ public class TechneMachineRenderer<T extends AbstractMachineEntity> extends Tech
       overlay.setTile(te);
     }
 
-    super.renderWorldBlock(world, x, y, z, block, modelId, renderer);
+    TechneUtil.vt = this.vt;
+    IIcon icon = getModelIcon(world, x, y, z, block);
+    Tessellator.instance.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
+    Tessellator.instance.setColorOpaque_F(1, 1, 1);
+    Tessellator.instance.addTranslation(x + .5F, y + 0.0375f, z + .5F);
+    for (GroupObject go : getModel(world, x, y, z)) {
+      if (go instanceof GroupObjectWithIcon) {
+        TechneUtil.renderWithIcon(go, ((GroupObjectWithIcon) go).getControllerTexture(), renderer.overrideBlockTexture, Tessellator.instance, world, x, y,
+            z, vt, true);
+      } else {
+        TechneUtil.renderWithIcon(go, icon, renderer.overrideBlockTexture, Tessellator.instance, world, x, y, z, vt, true);
+      }
+    }
+    Tessellator.instance.addTranslation(-x - .5F, -y - 0.0375f, -z - .5F);
+    TechneUtil.vt = null;
 
     if (renderer.overrideBlockTexture == null) {
       ccr.renderBlock(world, block, x, y, z, overlay);

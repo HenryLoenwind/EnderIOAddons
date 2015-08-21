@@ -26,7 +26,7 @@ public enum MachinePart {
 
   private MachinePart(String unlocalisedName, boolean render3d, boolean renderAsFrameMachine, boolean hasFrame,
       String controllerModelName, boolean hasTanks, boolean hasSingleTank) {
-    this.unlocalisedName = "enderio." + unlocalisedName;
+    this.unlocalisedName = "enderioaddons." + unlocalisedName;
     this.iconKey = "enderio:" + unlocalisedName;
     this.oreDict = "item" + StringUtils.capitalize(unlocalisedName);
     this.render3d = render3d;

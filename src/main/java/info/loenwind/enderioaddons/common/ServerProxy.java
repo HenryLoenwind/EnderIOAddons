@@ -5,6 +5,7 @@ import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 import info.loenwind.enderioaddons.machine.drain.InfiniteWaterSourceStopper;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
+import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -17,6 +18,7 @@ public class ServerProxy implements InitAware {
     BlockDrain.create();
     AbstractBlockFramework.create();
     BlockCobbleworks.create();
+    BlockWaterworks.create();
     ItemMachinePart.create();
   }
 

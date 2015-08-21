@@ -32,6 +32,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
   private GroupObject[] tanks = { null, null, null, null };
   private GroupObject[] valves = { null, null, null, null };
   private GroupObject[] stems = { null, null };
+  private GroupObject[] contr = { null, null, null, null, null, null, null, null, null, null };
 
   public RendererFrameworkMachine() {
     super(-1, "models/framework");
@@ -43,10 +44,17 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     for (int i = 1; i <= 2; i++) {
       stems[i - 1] = model.remove("ValveStem" + i);
     }
+    for (int i = 1; i <= 10; i++) {
+      contr[i - 1] = model.remove("Controller" + i);
+    }
   }
 
   public GroupObject extractModelPart(String name) {
     return model.remove(name);
+  }
+
+  public GroupObject getControllerPart(int id) {
+    return contr[id - 1];
   }
 
   public void registerController(String name, GroupObject active, GroupObject inactive) {

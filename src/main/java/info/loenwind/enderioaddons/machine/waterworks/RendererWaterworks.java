@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.machine.cobbleworks;
+package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
@@ -8,16 +8,16 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.obj.GroupObject;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
-public class RendererCobbleworks implements ISimpleBlockRenderingHandler {
+public class RendererWaterworks implements ISimpleBlockRenderingHandler {
 
   private final RendererFrameworkMachine frameRenderer;
 
-  public RendererCobbleworks(RendererFrameworkMachine frameRenderer) {
+  public RendererWaterworks(RendererFrameworkMachine frameRenderer) {
     this.frameRenderer = frameRenderer;
-    GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(1), BlockCobbleworks.blockCobbleworks);
-    GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockCobbleworks.blockCobbleworks);
+    GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(3), BlockWaterworks.blockWaterworks);
+    GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockWaterworks.blockWaterworks);
 
-    frameRenderer.registerController(BlockCobbleworks.blockCobbleworks.getControllerModelName(),
+    frameRenderer.registerController(BlockWaterworks.blockWaterworks.getControllerModelName(),
         controllerActive, controllerPassive);
   }
 
@@ -38,7 +38,7 @@ public class RendererCobbleworks implements ISimpleBlockRenderingHandler {
 
   @Override
   public int getRenderId() {
-    return BlockCobbleworks.blockCobbleworks.getRenderType();
+    return BlockWaterworks.blockWaterworks.getRenderType();
   }
 
 }

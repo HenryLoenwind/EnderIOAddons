@@ -1,6 +1,5 @@
-package info.loenwind.enderioaddons.machine.cobbleworks;
+package info.loenwind.enderioaddons.machine.framework;
 
-import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -20,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.machine.AbstractMachineEntity;
 
 @SideOnly(Side.CLIENT)
-public class TESRCobbleworks extends TileEntitySpecialRenderer {
+public class TESRFrameworkMachine extends TileEntitySpecialRenderer {
 
   private static final float EPSILON = 0.01f;
 
