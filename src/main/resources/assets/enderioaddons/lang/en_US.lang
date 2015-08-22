@@ -20,3 +20,19 @@ tile.blockCobbleworks.tooltip.detailed.line3=SAG Mills and Crafters to produce
 tile.blockCobbleworks.tooltip.detailed.line4=different materials.
 
 tile.blockWaterworks.name=Water Extraction Framework
+
+fluid.brine1=Light Brine
+tile.fluid.brine1.name=Light Brine
+item.bucketBrine1.name=Light Brine Bucket
+
+fluid.brine2=Medium Brine
+tile.fluid.brine2.name=Medium Brine
+item.bucketBrine2.name=Medium Brine Bucket
+
+fluid.brine3=Heavy Brine
+tile.fluid.brine3.name=Heavy Brine
+item.bucketBrine3.name=Heavy Brine Bucket
+
+fluid.brine4=Solid Brine
+tile.fluid.brine4.name=Solid Brine
+item.bucketBrine4.name=Solid Brine Bucket

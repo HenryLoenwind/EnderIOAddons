@@ -17,11 +17,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.ModObject;
-import crazypants.enderio.machine.AbstractMachineBlock;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IMachineRecipe.ResultStack;
 import crazypants.enderio.machine.MachineRecipeInput;
@@ -521,26 +521,31 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Override
-  public AbstractMachineBlock getSlotMachine(TankSlot tankSlot) {
-    if (tankSlot == TankSlot.FRONT_LEFT) {
-      return null;
-    }
-    ItemStack stack = inputSlot(tankSlot.ordinal());
-    if (stack != null && stack.getItem() != null) {
-      if (stack.getItem() == crafter) {
-        return EnderIO.blockCrafter;
-      } else if (stack.getItem() == alloySmelter) {
-        return EnderIO.blockAlloySmelter;
-      } else if (stack.getItem() == sagMill) {
-        return EnderIO.blockCrusher;
-      }
-    }
-    return null;
+  public String getControllerModelName() {
+    return BlockCobbleworks.blockCobbleworks.getControllerModelName();
   }
 
   @Override
-  public String getControllerModelName() {
-    return BlockCobbleworks.blockCobbleworks.getControllerModelName();
+  public boolean renderSlot(TankSlot tankSlot) {
+    if (tankSlot != TankSlot.FRONT_LEFT) {
+      ItemStack stack = inputSlot(tankSlot.ordinal());
+      return stack != null && stack.getItem() != null;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public IIcon getSlotIcon(TankSlot tankSlot, int side) {
+    ItemStack stack = inputSlot(tankSlot.ordinal());
+    if (stack.getItem() == crafter) {
+      return EnderIO.blockCrafter.getIcon(side, 0);
+    } else if (stack.getItem() == alloySmelter) {
+      return EnderIO.blockAlloySmelter.getIcon(side, 0);
+    } else if (stack.getItem() == sagMill) {
+      return EnderIO.blockCrusher.getIcon(side, 0);
+    }
+    return null;
   }
 
 }

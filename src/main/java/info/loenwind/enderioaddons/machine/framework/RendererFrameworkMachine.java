@@ -22,7 +22,6 @@ import com.enderio.core.client.render.CubeRenderer;
 import com.enderio.core.client.render.RenderUtil;
 
 import crazypants.enderio.ClientProxy;
-import crazypants.enderio.machine.AbstractMachineBlock;
 import crazypants.enderio.machine.AbstractMachineEntity;
 
 public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTileFramework> {
@@ -75,9 +74,8 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
       }
 
       for (TankSlot tankSlot : TankSlot.values()) {
-        AbstractMachineBlock blockToRender = frameworkMachine.getSlotMachine(tankSlot);
-        if (blockToRender != null) {
-          renderSubBlock(x, y, z, machineEntity, brightnessPerSide, blockToRender, tankSlot);
+        if (frameworkMachine.renderSlot(tankSlot)) {
+          renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
         }
       }
     }
@@ -85,8 +83,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return super.renderWorldBlock(world, x, y, z, block, modelId, renderer);
   }
 
-  private static void renderSubBlock(int x, int y, int z, AbstractMachineEntity te, float[] brightnessPerSide,
-      AbstractMachineBlock blockToRender, TankSlot tankSlot) {
+  private static void renderSubBlock(int x, int y, int z, AbstractMachineEntity te, float[] brightnessPerSide, TankSlot tankSlot) {
     BoundingBox bb = BoundingBox.UNIT_CUBE;
 
     int[] pos = translateToSlotPosition(te.getFacingDir(), tankSlot);
@@ -94,7 +91,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     bb = bb.scale(6D / 16D, 6D / 16D, 6D / 16D);
     bb = bb.translate(x, y, z);
 
-    IIcon[] icons = getBlockTextures(blockToRender, te, tankSlot);
+    IIcon[] icons = getBlockTextures(te, tankSlot);
     CubeRenderer.render(bb, icons, null, brightnessPerSide);
   }
 
@@ -128,15 +125,16 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return positions[0];
   }
 
-  public static IIcon[] getBlockTextures(AbstractMachineBlock block, AbstractMachineEntity te, TankSlot tankSlot) {
+  public static IIcon[] getBlockTextures(AbstractMachineEntity te, TankSlot tankSlot) {
+    IFrameworkMachine fm = (IFrameworkMachine) te;
     int facing = turn(te.getFacingDir(), tankSlot).ordinal();
     IIcon[] icons = new IIcon[6];
     int i = 0;
     for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
       if (te.isActive()) {
-        icons[i++] = block.getIcon(ClientProxy.sideAndFacingToSpriteOffset[dir.ordinal()][facing] + 6, 0);
+        icons[i++] = fm.getSlotIcon(tankSlot, ClientProxy.sideAndFacingToSpriteOffset[dir.ordinal()][facing] + 6);
       } else {
-        icons[i++] = block.getIcon(ClientProxy.sideAndFacingToSpriteOffset[dir.ordinal()][facing], 0);
+        icons[i++] = fm.getSlotIcon(tankSlot, ClientProxy.sideAndFacingToSpriteOffset[dir.ordinal()][facing]);
       }
     }
     return icons;

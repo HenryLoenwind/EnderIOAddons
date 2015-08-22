@@ -1,7 +1,7 @@
 package info.loenwind.enderioaddons.machine.framework;
 
+import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
-import crazypants.enderio.machine.AbstractMachineBlock;
 
 public interface IFrameworkMachine {
 
@@ -15,7 +15,13 @@ public interface IFrameworkMachine {
 
   boolean hasController();
 
-  AbstractMachineBlock getSlotMachine(TankSlot tankSlot);
+  //  Block getSlotMachine(TankSlot tankSlot);
+  //
+  //  int getSlotMachineMeta(TankSlot tankSlot);
+
+  boolean renderSlot(TankSlot tankSlot);
+
+  IIcon getSlotIcon(TankSlot tankSlot, int side);
 
   String getControllerModelName();
 }

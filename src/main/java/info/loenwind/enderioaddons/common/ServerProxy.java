@@ -15,6 +15,7 @@ public class ServerProxy implements InitAware {
   @Override
   public void init(FMLPreInitializationEvent event) {
     GuiIds.compute_GUI_IDs();
+    Fluids.init(event);
     BlockDrain.create();
     AbstractBlockFramework.create();
     BlockCobbleworks.create();
