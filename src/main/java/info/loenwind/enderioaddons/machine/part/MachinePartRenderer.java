@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.client.render.RenderUtil;
 
-import crazypants.enderio.EnderIO;
 import crazypants.enderio.Log;
 
 public class MachinePartRenderer implements IItemRenderer {
@@ -80,7 +79,7 @@ public class MachinePartRenderer implements IItemRenderer {
       RenderUtil.bindBlockTexture();
       frameRenderer.renderInventoryBlock(AbstractBlockFramework.blockDummy, item.getItemDamage() + 16, 0, renderBlocks);
     } else if (MachinePart.values()[item.getItemDamage()].render3d) {
-      renderBlocks.setOverrideBlockTexture(EnderIO.itemMachinePart.getIconFromDamage(item.getItemDamage()));
+      renderBlocks.setOverrideBlockTexture(ItemMachinePart.itemMachinePart.getIconFromDamage(item.getItemDamage()));
       renderBlocks.renderBlockAsItem(Blocks.stone, 0, 1.0F);
       renderBlocks.clearOverrideBlockTexture();
     }

@@ -9,9 +9,14 @@ enderioaddons.frameTank.name=Machine Framework Tank
 enderioaddons.frameTanks.name=Machine Framework Tanks
 enderioaddons.machineFrameTank.name=Empty Machine Framework with Tanks
 enderioaddons.cobbleController.name=Cobblestone Framework Controller
+enderioaddons.heatingElement.name=Heating Element
+enderioaddons.filterElement.name=Filter Element
+enderioaddons.waterController.name=Water Extraction Framework Controller
 
 tile.blockCobbleworks.name=Cobblestone Framework
 tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.
 tile.blockCobbleworks.tooltip.detailed.line2=Can be upgraded with Alloy Smelters,
 tile.blockCobbleworks.tooltip.detailed.line3=SAG Mills and Crafters to produce
 tile.blockCobbleworks.tooltip.detailed.line4=different materials.
+
+tile.blockWaterworks.name=Water Extraction Framework

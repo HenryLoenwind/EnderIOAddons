@@ -53,7 +53,9 @@ public class ItemMachinePart extends Item {
   public void registerIcons(IIconRegister IIconRegister) {
     int numParts = MachinePart.values().length;
     for (int i = 0; i < numParts; i++) {
-      icons[i] = IIconRegister.registerIcon(MachinePart.values()[i].iconKey);
+      if (!MachinePart.values()[i].renderAsFrameMachine) {
+        icons[i] = IIconRegister.registerIcon(MachinePart.values()[i].iconKey);
+      }
     }
   }
 

@@ -12,7 +12,10 @@ public enum MachinePart {
   FRAME_TANK("frameTank", true, true, false, null, false, true), //
   FRAME_TANKS("frameTanks", true, true, false, null, true, false), //
   MACHINE_FRAME_TANK("machineFrameTank", true, true, true, null, true, false), //
-  COBBLE_CONTROLLER("cobbleController", true, true, false, "cobbleController", false, false); //
+  COBBLE_CONTROLLER("cobbleController", true, true, false, "cobbleController", false, false), //
+  HEATING_ELEMENT("heatingElement", false, false, false, null, false, false), //
+  FILTER_ELEMENT("filterElement", true, false, false, null, false, false), //
+  WATER_CONTROLLER("waterController", true, true, false, "waterController", false, false); //
 
   public final String unlocalisedName;
   public final String iconKey;
@@ -27,7 +30,7 @@ public enum MachinePart {
   private MachinePart(String unlocalisedName, boolean render3d, boolean renderAsFrameMachine, boolean hasFrame,
       String controllerModelName, boolean hasTanks, boolean hasSingleTank) {
     this.unlocalisedName = "enderioaddons." + unlocalisedName;
-    this.iconKey = "enderio:" + unlocalisedName;
+    this.iconKey = "enderioaddons:" + unlocalisedName;
     this.oreDict = "item" + StringUtils.capitalize(unlocalisedName);
     this.render3d = render3d;
     this.renderAsFrameMachine = renderAsFrameMachine;
