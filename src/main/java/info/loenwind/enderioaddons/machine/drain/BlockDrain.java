@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.config.Config;
 
@@ -175,7 +176,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   protected String getTopIconKey(boolean active) {
-    return "enderioaddons:blockDrain";
+    return EnderIOAddons.DOMAIN + ":blockDrain";
   }
 
   protected String getBottomIconKey(boolean active) {

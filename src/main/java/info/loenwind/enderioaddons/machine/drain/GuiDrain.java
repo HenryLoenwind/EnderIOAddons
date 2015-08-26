@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
+
 import java.awt.Rectangle;
 
 import net.minecraft.entity.player.InventoryPlayer;
@@ -42,7 +44,7 @@ public class GuiDrain extends GuiPoweredMachineBase<TileDrain> {
   @Override
   protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderUtil.bindTexture("enderioaddons:textures/gui/drain.png");
+    RenderUtil.bindTexture(EnderIOAddons.DOMAIN + ":textures/gui/drain.png");
     int sx = (width - xSize) / 2;
     int sy = (height - ySize) / 2;
 

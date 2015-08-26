@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.common;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
 import net.minecraft.block.material.Material;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -39,7 +40,7 @@ public enum Fluids {
       fluid.block = BlockFluidEioA.create(fluid.fluid, Material.water);
       fluid.block.setQuantaPerBlock(fluid.quanta);
       fluid.bucket = ItemBucketEio.create(fluid.fluid);
-      fluid.bucket.setTextureName("enderioaddons:" + "bucket" + StringUtils.capitalize(fluid.name));
+      fluid.bucket.setTextureName(EnderIOAddons.DOMAIN + ":" + "bucket" + StringUtils.capitalize(fluid.name));
       System.out.println(fluid.name + ": " + fluid.block + " and " + fluid.bucket);
     }
   }

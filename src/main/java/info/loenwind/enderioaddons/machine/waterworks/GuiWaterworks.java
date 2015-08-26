@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
+
 import java.awt.Rectangle;
 
 import net.minecraft.entity.player.InventoryPlayer;
@@ -16,7 +18,7 @@ import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
 public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
 
-  private static final String GUI_TEXTURE = "enderioaddons:textures/gui/waterworks.png";
+  private static final String GUI_TEXTURE = EnderIOAddons.DOMAIN + ":textures/gui/waterworks.png";
 
   public GuiWaterworks(InventoryPlayer par1InventoryPlayer, TileWaterworks te) {
     super(te, new ContainerWaterworks(par1InventoryPlayer, te));

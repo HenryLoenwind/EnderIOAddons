@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.common;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
@@ -24,7 +25,8 @@ public class BlockFluidEioA extends BlockFluidEio {
   @Override
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister iconRegister) {
-    icons = new IIcon[] { iconRegister.registerIcon("enderioaddons:" + fluidName + "_still"), iconRegister.registerIcon("enderioaddons:" + fluidName + "_flow") };
+    icons = new IIcon[] { iconRegister.registerIcon(EnderIOAddons.DOMAIN + ":" + fluidName + "_still"),
+        iconRegister.registerIcon(EnderIOAddons.DOMAIN + ":" + fluidName + "_flow") };
 
     fluid.setIcons(icons[0], icons[1]);
   }

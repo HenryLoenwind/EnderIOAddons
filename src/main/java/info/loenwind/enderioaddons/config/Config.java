@@ -46,7 +46,7 @@ public class Config implements InitAware {
       configDirectory.mkdir();
     }
 
-    File configFile = new File(configDirectory, "EnderIOAddons.cfg");
+    File configFile = new File(configDirectory, EnderIOAddons.MODID + ".cfg");
     configuration = new Configuration(configFile);
     syncConfig(false);
   }

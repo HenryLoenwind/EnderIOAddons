@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.cobbleworks;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
 import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
@@ -24,7 +25,7 @@ public class GuiCobbleworks extends GuiPoweredMachineBase<TileCobbleworks> {
   @Override
   protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderUtil.bindTexture("enderioaddons:textures/gui/cobbleworks.png");
+    RenderUtil.bindTexture(EnderIOAddons.DOMAIN + ":textures/gui/cobbleworks.png");
     int sx = (width - xSize) / 2;
     int sy = (height - ySize) / 2;
 

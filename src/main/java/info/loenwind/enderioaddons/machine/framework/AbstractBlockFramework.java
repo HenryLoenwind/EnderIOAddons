@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.framework;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
+
 import java.util.List;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -52,7 +54,7 @@ public class AbstractBlockFramework extends AbstractMachineBlock<AbstractTileFra
 
   @Override
   protected String getModelIconKey(boolean active) {
-    return "enderioaddons:frameworkModel";
+    return EnderIOAddons.DOMAIN + ":frameworkModel";
   }
 
   @Override

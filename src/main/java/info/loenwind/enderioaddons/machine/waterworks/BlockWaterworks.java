@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
 import info.loenwind.enderioaddons.machine.framework.TextureProvider;
@@ -71,7 +72,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
 
   @Override
   protected String getModelIconKey(boolean active) {
-    return "enderioaddons:frameworkModel";
+    return EnderIOAddons.DOMAIN + ":frameworkModel";
   }
 
   @Override
@@ -127,7 +128,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
   public void registerBlockIcons(IIconRegister iIconRegister) {
     super.registerBlockIcons(iIconRegister);
 
-    controllerTexture = iIconRegister.registerIcon("enderioaddons:frameworkController");
+    controllerTexture = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":frameworkController");
     filterTexture = iIconRegister.registerIcon(MachinePart.FILTER_ELEMENT.iconKey);
   }
 

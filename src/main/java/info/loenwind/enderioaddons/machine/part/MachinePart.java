@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.part;
 
+import info.loenwind.enderioaddons.EnderIOAddons;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -29,8 +30,8 @@ public enum MachinePart {
 
   private MachinePart(String unlocalisedName, boolean render3d, boolean renderAsFrameMachine, boolean hasFrame,
       String controllerModelName, boolean hasTanks, boolean hasSingleTank) {
-    this.unlocalisedName = "enderioaddons." + unlocalisedName;
-    this.iconKey = "enderioaddons:" + unlocalisedName;
+    this.unlocalisedName = EnderIOAddons.DOMAIN + "." + unlocalisedName;
+    this.iconKey = EnderIOAddons.DOMAIN + ":" + unlocalisedName;
     this.oreDict = "item" + StringUtils.capitalize(unlocalisedName);
     this.render3d = render3d;
     this.renderAsFrameMachine = renderAsFrameMachine;

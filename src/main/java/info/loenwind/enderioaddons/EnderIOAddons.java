@@ -5,6 +5,7 @@ import info.loenwind.enderioaddons.common.Recipes;
 import info.loenwind.enderioaddons.config.Config;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import test.TestX;
 import test.Water;
@@ -21,6 +22,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
 public class EnderIOAddons {
   public static final String MODID = "enderioaddons";
+  public static final String DOMAIN = MODID.toLowerCase(Locale.US);
   public static final String MOD_NAME = "Ender IO Addons";
   public static final String VERSION = "@VERSION@";
 
