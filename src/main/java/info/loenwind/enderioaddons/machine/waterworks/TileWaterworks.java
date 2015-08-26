@@ -1,11 +1,9 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.common.Fluids;
-import info.loenwind.enderioaddons.machine.framework.AbstractTileFramework;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -20,11 +18,12 @@ import com.enderio.core.api.common.util.ITankAccess;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.FluidUtil;
 
+import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
 
-public class TileWaterworks extends AbstractTileFramework implements IFrameworkMachine, IProgressTile, IFluidHandler, ITankAccess {
+public class TileWaterworks extends AbstractPoweredTaskEntity implements IFrameworkMachine, IProgressTile, IFluidHandler, ITankAccess {
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
@@ -42,7 +41,7 @@ public class TileWaterworks extends AbstractTileFramework implements IFrameworkM
   public TileWaterworks() {
     super(new SlotDefinition(0, 14, 1));
 
-    tank1.setFluid(new FluidStack(Fluids.BRINE1.getFluid(), 1500));
+    tank1.setFluid(new FluidStack(Fluids.BRINE1.getFluid(), 1500)); // TODO delme
     tank2.setFluid(new FluidStack(Fluids.BRINE2.getFluid(), 150));
 
   }
@@ -59,20 +58,6 @@ public class TileWaterworks extends AbstractTileFramework implements IFrameworkM
   @Override
   public void init() {
     super.init();
-  }
-
-  @Override
-  public boolean isActive() {
-    return hasPower() && redstoneCheckPassed;
-  }
-
-  @Override
-  protected boolean processTasks(boolean redstoneCheckPassed) {
-    if (redstoneCheckPassed) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @Override
@@ -148,23 +133,12 @@ public class TileWaterworks extends AbstractTileFramework implements IFrameworkM
 
   @Override
   public float getProgress() {
-    // TODO Auto-generated method stub
+    // TODO delme
     progress += 1.0f / 20 / 15;
     if (progress > 1) {
       progress = 0;
     }
     return progress;
-  }
-
-  @Override
-  public void setProgress(float progress) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public TileEntity getTileEntity() {
-    return this;
   }
 
   @Override
@@ -328,6 +302,13 @@ public class TileWaterworks extends AbstractTileFramework implements IFrameworkM
       }
     }
     return res;
+  }
+
+  @Override
+  protected boolean hasInputStacks() {
+    // used by super class to determine if it should try to start a new task
+    // TODO: return true if input tank has fluid or internal buffer has stuff
+    return true;
   }
 
 }
