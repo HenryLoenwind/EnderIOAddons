@@ -80,10 +80,10 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
     }
 
     if (getTileEntity().tank1.getFluid() != null) {
-      RenderUtil.renderGuiTank(getTileEntity().tank1, guiLeft + 30, guiTop + 9, zLevel, 15, 47);
+      RenderUtil.renderGuiTank(getTileEntity().tank1, guiLeft + 29, guiTop + 9, zLevel, 16, 47);
     }
     if (getTileEntity().tank2.getFluid() != null) {
-      RenderUtil.renderGuiTank(getTileEntity().tank2, guiLeft + 79, guiTop + 9, zLevel, 15, 47);
+      RenderUtil.renderGuiTank(getTileEntity().tank2, guiLeft + 78, guiTop + 9, zLevel, 16, 47);
     }
 
     if (getTileEntity().progress_in != null) {
@@ -107,8 +107,8 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     RenderUtil.bindTexture(GUI_TEXTURE);
     drawTexturedModalRect(guiLeft + 50, guiTop + 32, 208, 6, 24, 26); // boiler
-    drawTexturedModalRect(guiLeft + 30, guiTop + 9, 197, 41, 15, 47); // left tank
-    drawTexturedModalRect(guiLeft + 79, guiTop + 9, 215, 41, 15, 47); // right tank
+    drawTexturedModalRect(guiLeft + 29, guiTop + 9, 196, 41, 16, 47); // left tank
+    drawTexturedModalRect(guiLeft + 78, guiTop + 9, 214, 41, 16, 47); // right tank
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
     RenderUtil.bindBlockTexture();
