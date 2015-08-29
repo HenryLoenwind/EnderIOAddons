@@ -76,9 +76,9 @@ private String configPath = ".";
   public Object readConfig(XStream xstream, String fileName) throws IOException {
     File configFile = new File(configPath, fileName);
     
-    if(configFile.exists()) {
-      return xstream.fromXML(configFile);
-    }
+    //    if(configFile.exists()) {
+    //      return xstream.fromXML(configFile);
+    //    }
 
     InputStream defaultFile = this.getClass().getResourceAsStream("/assets/enderioaddons/config/" + fileName);
     if(defaultFile == null) {
@@ -86,13 +86,13 @@ private String configPath = ".";
     }
     
     Object myObject = xstream.fromXML(defaultFile);
-//    BufferedWriter writer = null;
-//    try {
-//      writer = new BufferedWriter(new FileWriter(configFile, false));
-//      xstream.toXML(myObject, writer);
-//    } finally {
-//      IOUtils.closeQuietly(writer);
-//    }
+    BufferedWriter writer = null;
+    try {
+      writer = new BufferedWriter(new FileWriter(configFile, false));
+      xstream.toXML(myObject, writer);
+    } finally {
+      IOUtils.closeQuietly(writer);
+    }
     return myObject;
   }
 

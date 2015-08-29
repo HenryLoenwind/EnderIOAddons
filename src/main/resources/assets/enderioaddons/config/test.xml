@@ -1,5 +1,6 @@
 <water>
   <contents>
+    <!-- Note: 'abrev' is not read (yet), it's just an info atm -->
     <component name="Hydrogen" abrev="H" ppm="110000"/>
     <component name="Oxygen" abrev="O" ppm="883000"/>
     <component name="Sodium" abrev="Na" ppm="10800"/>
@@ -35,7 +36,7 @@
     <component name="Vanadium" abrev="V" ppm="0.0019"/>
     <component name="Chromium" abrev="Cr" ppm="0.0002"/>
     <component name="Manganese" abrev="Mn" ppm="0.0004"/>
-    <component name="Ferrum" ppm="Fe" ppm="0.0034"/>
+    <component name="Ferrum" abrev="Fe" ppm="0.0034"/>
     <component name="Cobalt" abrev="Co" ppm="0.00039"/>
     <component name="Nickel" abrev="Ni" ppm="0.0066"/>
     <component name="Tellurium" abrev="Te" ppm="0.0"/>
