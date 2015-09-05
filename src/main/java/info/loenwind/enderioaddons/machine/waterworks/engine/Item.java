@@ -1,4 +1,4 @@
-package test;
+package info.loenwind.enderioaddons.machine.waterworks.engine;
 
 import net.minecraft.item.ItemStack;
 

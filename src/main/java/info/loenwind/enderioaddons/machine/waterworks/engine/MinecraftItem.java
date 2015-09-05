@@ -1,31 +1,25 @@
-package test;
+package info.loenwind.enderioaddons.machine.waterworks.engine;
 
-import org.xml.sax.Attributes;
-
-import com.enderio.core.common.util.OreDictionaryHelper;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import crazypants.enderio.Log;
-import crazypants.enderio.machine.recipe.OreDictionaryRecipeInput;
-import crazypants.enderio.machine.recipe.RecipeInput;
-import crazypants.enderio.material.OreDictionaryPreferences;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import cpw.mods.fml.common.registry.GameRegistry;
 
-public class MinecraftItem implements test.Item {
-  String modID;
-  String itemName;
-  int itemMeta;
+public class MinecraftItem implements info.loenwind.enderioaddons.machine.waterworks.engine.Item {
+  private final String modID;
+  private String itemName;
+  private final int itemMeta;
   private ItemStack stack = null;
 
   // modID="EnderIO" itemName="itemAlloy" itemMeta="1"
   // oreDictionary="dustCoal"
   
-  /* (non-Javadoc)
-   * @see test.Item#getItemStack()
-   */
+  public MinecraftItem(String modID, String itemName, int itemMeta) {
+    this.modID = modID;
+    this.itemName = itemName;
+    this.itemMeta = itemMeta;
+  }
+
   @Override
   public ItemStack getItemStack() {
     if (stack == null && itemName != null && modID != null) {

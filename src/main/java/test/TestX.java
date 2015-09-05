@@ -1,12 +1,17 @@
 package test;
 
+import info.loenwind.enderioaddons.machine.waterworks.engine.Component;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Material;
+import info.loenwind.enderioaddons.machine.waterworks.engine.MinecraftItem;
+import info.loenwind.enderioaddons.machine.waterworks.engine.OreDictionaryItem;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Water;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
 
@@ -30,7 +35,7 @@ private String configPath = ".";
   private void run() throws IOException {
     XStream xstream = makeXStream();
     
-    Config cfg = new Config((Water) readConfig(xstream, "test.xml"));
+    Engine cfg = new Engine((Water) readConfig(xstream, "test.xml"));
 
     dump(xstream, cfg);
 
@@ -98,61 +103,24 @@ private String configPath = ".";
 
   void go(XStream xstream) throws IOException {
     Water wc = new Water();
-    wc.contents = new HashMap<String, Double>();
-    wc.materials = new ArrayList<Material>();
     
-    wc.contents.put("Chloride", 18980.0);
-    wc.contents.put("Sodium", 10561.0);
-    wc.contents.put("Aluminium", 0.001);
+    wc.getContents().put("Chloride", 18980.0);
+    wc.getContents().put("Sodium", 10561.0);
+    wc.getContents().put("Aluminium", 0.001);
     
-    Material m = new Material();
-    m.name = "Aluminium";
-    OreDictionaryItem i = new OreDictionaryItem();
-    i.oreDictionary = "blockAluminium";
-    m.item = i;
-    m.prio = 1;
-    m.volume = 1000000.0;
-    wc.materials.add(m);
-    m.components = new ArrayList<Component>();
+    Material m = new Material("Aluminium", 1, new OreDictionaryItem("blockAluminium"), 1000000.0, 2.70);
     
-    Component c = new Component();
-    c.name = "Aluminium";
-    c.factor = 1.0;
-    m.density = 2.70;
-    c.count = 1;
-    c.granularity = 1.0;
-    m.components.add(c);
+    m.getComponents().add(new Component("Aluminium", 1.0, 1.0, 1));
+
+    wc.getMaterials().add(m);
+
+    m = new Material("Salt", 1, new MinecraftItem("harvestcraft", "foodSalt", 0), 1000000.0, 2.165);
+
+    m.getComponents().add(new Component("Chloride", 1000.0, 1.0, 1));
+    m.getComponents().add(new Component("Sodium", 1000.0, 0.01, 1));
     
-    
-    m = new Material();
-    m.name = "Salt";
-    MinecraftItem mi = new MinecraftItem();
-    m.item = mi;
-    mi.modID = "harvestcraft";
-    mi.itemName = "foodSalt";
-    mi.itemMeta = 0;
-    m.prio = 1;
-    m.volume = 1000000.0;
-    wc.materials.add(m);
-    m.components = new ArrayList<Component>();
-    
-    c = new Component();
-    c.name = "Chloride";
-    c.factor = 0.01;
-    m.density = 2.165;
-    c.count = 1;
-    c.granularity = 1000.0;
-    m.components.add(c);
-    
-    c = new Component();
-    c.name = "Sodium";
-    c.factor = 0.01;
-    c.count = 1;
-    c.granularity = 1000.0;
-    m.components.add(c);
-    
-    
-    
+    wc.getMaterials().add(m);
+
     // Config cfg = new Config(wc);
     
     File configFile = new File(configPath, "test.xml");
@@ -165,7 +133,7 @@ private String configPath = ".";
     }
   }
   
-  public void dump(XStream xstream, Config config) throws IOException {
+  public void dump(XStream xstream, Engine config) throws IOException {
     File configFile = new File(configPath, "dump.xml");
     BufferedWriter writer = null;
     try {

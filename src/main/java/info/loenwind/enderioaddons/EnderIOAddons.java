@@ -3,12 +3,12 @@ package info.loenwind.enderioaddons;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.common.Recipes;
 import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Water;
 
 import java.io.IOException;
 import java.util.Locale;
 
 import test.TestX;
-import test.Water;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -53,7 +53,7 @@ public class EnderIOAddons {
 
     TestX x = new TestX();
     XStream xstream = x.makeXStream();
-    test.Config cfg = new test.Config((Water) x.readConfig(xstream, "test.xml"));
+    info.loenwind.enderioaddons.machine.waterworks.engine.Engine cfg = new info.loenwind.enderioaddons.machine.waterworks.engine.Engine((Water) x.readConfig(xstream, "test.xml"));
     x.dump(xstream, cfg);
   }
 
