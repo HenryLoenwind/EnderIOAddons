@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.config;
 
+import io.netty.buffer.ByteBuf;
+
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 
 import net.minecraftforge.common.config.Configuration;
 
@@ -65,6 +68,64 @@ public enum ConfigValues {
       value = config.get(section.name, name, (String) defaultValue, description).getString();
     }
 
+    try {
+      Field field = Config.class.getDeclaredField(name);
+      field.set(null, value);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static void toBytes(ByteBuf buf) {
+    for (ConfigValues value : values()) {
+      if (value.section.sync) {
+        value.store(buf);
+      }
+    }
+  }
+
+  private void store(ByteBuf buf) {
+    try {
+      Field field = Config.class.getDeclaredField(name);
+      if (defaultValue instanceof Integer) {
+        buf.writeInt(field.getInt(null));
+      } else if (defaultValue instanceof Double) {
+        buf.writeDouble(field.getDouble(null));
+      } else if (defaultValue instanceof Boolean) {
+        buf.writeBoolean(field.getBoolean(null));
+      } else if (defaultValue instanceof String) {
+        String value = (String) field.get(null);
+        byte[] bytes = value.getBytes(Charset.forName("UTF-8"));
+        buf.writeInt(bytes.length);
+        buf.writeBytes(bytes);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static void fromBytes(ByteBuf buf) {
+    for (ConfigValues value : values()) {
+      if (value.section.sync) {
+        value.read(buf);
+      }
+    }
+  }
+
+  private void read(ByteBuf buf) {
+    Object value = null;
+    if (defaultValue instanceof Integer) {
+      value = buf.readInt();
+    } else if (defaultValue instanceof Double) {
+      value = buf.readDouble();
+    } else if (defaultValue instanceof Boolean) {
+      value = buf.readBoolean();
+    } else if (defaultValue instanceof String) {
+      int len = buf.readInt();
+      byte[] bytes = new byte[len];
+      buf.readBytes(bytes, 0, len);
+      value = new String(bytes, Charset.forName("UTF-8"));
+    }
     try {
       Field field = Config.class.getDeclaredField(name);
       field.set(null, value);

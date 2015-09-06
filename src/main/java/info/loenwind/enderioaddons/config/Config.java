@@ -3,9 +3,11 @@ package info.loenwind.enderioaddons.config;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.common.Log;
+import io.netty.buffer.ByteBuf;
 
 import java.io.File;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.config.Configuration;
 
 import com.enderio.core.common.event.ConfigFileChangedEvent;
@@ -16,6 +18,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.relauncher.Side;
+import crazypants.enderio.network.PacketHandler;
 
 public class Config implements InitAware {
 
@@ -40,6 +45,7 @@ public class Config implements InitAware {
   }
 
   public void init(FMLPreInitializationEvent event) {
+    PacketHandler.INSTANCE.registerMessage(PacketConfigSync.class, PacketConfigSync.class, PacketHandler.nextID(), Side.CLIENT);
     FMLCommonHandler.instance().bus().register(new Config());
     configDirectory = new File(event.getModConfigurationDirectory(), EnderIOAddons.MODID.toLowerCase());
     if (!configDirectory.exists()) {
@@ -86,12 +92,32 @@ public class Config implements InitAware {
 
   private static void processConfig() {
     ConfigValues.loadAll(configuration);
-
-    drainEnabled = drainEnabled && (drainAllowOnDedicatedServer || FMLCommonHandler.instance().getSide().isClient());
-
+    computeDerivedValues(false);
     if (configuration.hasChanged()) {
       configuration.save();
     }
+  }
+
+  private static void computeDerivedValues(boolean serverSync) {
+    if (serverSync) {
+      drainEnabled = drainEnabled && drainAllowOnDedicatedServer;
+    } else {
+      drainEnabled = drainEnabled && (drainAllowOnDedicatedServer || FMLCommonHandler.instance().getSide().isClient());
+    }
+  }
+
+  public static void toBytes(ByteBuf buf) {
+    ConfigValues.toBytes(buf);
+  }
+
+  public static void fromBytes(ByteBuf buf) {
+    ConfigValues.fromBytes(buf);
+    computeDerivedValues(true);
+  }
+
+  @SubscribeEvent
+  public void onPlayerLoggon(PlayerLoggedInEvent evt) {
+    PacketHandler.INSTANCE.sendTo(new PacketConfigSync(), (EntityPlayerMP) evt.player);
   }
 
   @Override
