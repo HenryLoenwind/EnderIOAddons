@@ -39,7 +39,7 @@ public class Engine {
           }
         }
         if (good2go) {
-          used.getMaterials().add(mat);
+          used.getMaterials().add(mat); // TODO: This should not be dependent on the level!
           while (good2go) {
             for (Component comp : mat.getComponents()) {
               Double needed = comp.getGranularity();
@@ -82,7 +82,7 @@ public class Engine {
     }
   }
 
-  enum CreationResult {
+  public enum CreationResult {
     NO_INPUTS, OK, LOW_OUTPUTS, NO_OUTPUTS;
   }
 

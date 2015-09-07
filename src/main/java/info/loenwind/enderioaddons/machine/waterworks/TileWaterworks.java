@@ -1,7 +1,11 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.common.Fluids;
+import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Engine.CreationResult;
+import info.loenwind.enderioaddons.machine.waterworks.engine.Stash;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -19,6 +23,7 @@ import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.FluidUtil;
 
 import crazypants.enderio.machine.AbstractPoweredTaskEntity;
+import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
@@ -34,16 +39,26 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
 
   boolean tanksDirty = false;
 
-  protected float progress = 0;
-  protected Fluid progress_in = Fluids.BRINE1.getFluid();
-  protected Fluid progress_out = Fluids.BRINE2.getFluid();
+  protected Fluid progress_in = null;
+  protected Fluid progress_out = null;
+
+  protected static final Engine engine = new Engine(null); // TODO
+  protected final Stash stash = new Stash();
+
+  protected static ColMap data;
 
   public TileWaterworks() {
     super(new SlotDefinition(0, 14, 1));
 
-    tank1.setFluid(new FluidStack(Fluids.BRINE1.getFluid(), 1500)); // TODO delme
-    tank2.setFluid(new FluidStack(Fluids.BRINE2.getFluid(), 150));
-
+    if (data == null) {
+      int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage / 100;
+      data = new ColMap(5);
+      data.set(0, FluidRegistry.WATER, Fluids.BRINE1, 0, amount);
+      data.set(1, Fluids.BRINE1, Fluids.BRINE2, 1, amount);
+      data.set(2, Fluids.BRINE2, Fluids.BRINE3, 2, amount);
+      data.set(3, Fluids.BRINE3, Fluids.BRINE4, 3, amount);
+      data.set(4, Fluids.BRINE4, 4);
+    }
   }
 
   protected int outputSlotNo(int no) {
@@ -132,16 +147,6 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public float getProgress() {
-    // TODO delme
-    progress += 1.0f / 20 / 15;
-    if (progress > 1) {
-      progress = 0;
-    }
-    return progress;
-  }
-
-  @Override
   public FluidTank getInputTank(FluidStack forFluidType) {
     if (forFluidType != null && tank1.canFill(forFluidType.getFluid())) {
       return tank1;
@@ -208,9 +213,21 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
       return false;
     }
 
-    int flid = fluid.getID();
-    return flid == FluidRegistry.WATER.getID() || flid == Fluids.BRINE1.getFluid().getID() || flid == Fluids.BRINE2.getFluid().getID()
-        || flid == Fluids.BRINE3.getFluid().getID() || flid == Fluids.BRINE4.getFluid().getID();
+    if (tank2.getFluidAmount() == 0) {
+      return data.containsInputLiquid(fluid);
+    } else {
+      return data.isMatchingInputForOutput(fluid, tank2.getFluid().getFluid());
+    }
+  }
+
+  private static boolean flequals(Fluid a, Fluid b) {
+    if (a == null && b == null) {
+      return true;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
+    return a.getID() == b.getID();
   }
 
   @Override
@@ -309,6 +326,38 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     // used by super class to determine if it should try to start a new task
     // TODO: return true if input tank has fluid or internal buffer has stuff
     return true;
+    //    return tank1.getFluidAmount() >= ONE_BLOCK_OF_LIQUID || engine.createItems(stash, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
+  }
+
+  @Override
+  protected IMachineRecipe getNextRecipe() {
+    return DummyRecipe.instance;
+  }
+
+  // read as canStartNextTask()
+  @Override
+  protected boolean canInsertResult(float chance, IMachineRecipe nextRecipe) {
+    progress_in = tank1.getFluidAmount() > 0 ? tank1.getFluid().getFluid() : null;
+    progress_out = tank2.getFluidAmount() > 0 ? tank2.getFluid().getFluid() : null;
+
+    if (tank1.getFluidAmount() < ONE_BLOCK_OF_LIQUID) {
+      return false;
+    }
+
+    int level = data.getLevelFromInput(tank1.getFluid().getFluid());
+    if (level < 0) {
+      return false;
+    }
+    if (tank2.getAvailableSpace() < data.getOutputAmountFromInput(tank1.getFluid().getFluid())) {
+      return false;
+    }
+    if (!data.isMatchingOutputForInput(tank1.getFluid().getFluid(), tank2.getFluidAmount() > 0 ? tank2.getFluid().getFluid() : null)) {
+      return false;
+    }
+
+    progress_out = data.getOutputFromInput(tank1.getFluid().getFluid());
+
+    return engine.createItems(stash, level, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
   }
 
 }

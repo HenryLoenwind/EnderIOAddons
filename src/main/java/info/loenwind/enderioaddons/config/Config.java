@@ -36,6 +36,8 @@ public class Config implements InitAware {
   public static int cobbleWorksRfDiscountForCrushing = ConfigValues.cobbleWorksRfDiscountForCrushing.getDefaultInt(); // %
   public static int cobbleWorksRfDiscountPerUpgrade = ConfigValues.cobbleWorksRfDiscountPerUpgrade.getDefaultInt(); // %
 
+  public static int waterWorksWaterReductionPercentage = 10; // TODO
+
   //	****************************************************************************************
 
   public static Configuration configuration;
