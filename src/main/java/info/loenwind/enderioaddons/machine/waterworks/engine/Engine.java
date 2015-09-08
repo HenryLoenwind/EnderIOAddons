@@ -13,8 +13,7 @@ import net.minecraft.item.ItemStack;
 
 public class Engine {
   private static final int num_levels = 5;
-  private final List<Stash> levels = new ArrayList<Stash>();
-  private final List<Material> materials = new ArrayList<Material>();
+  private final List<Water> levels = new ArrayList<Water>();
   private double waterWorksWaterReductionPercentageUsedInCalcs = 0.0;
   private final Water config;
   
@@ -27,7 +26,6 @@ public class Engine {
     if (waterWorksWaterReductionPercentageUsedInCalcs != Config.waterWorksWaterReductionPercentage) {
       waterWorksWaterReductionPercentageUsedInCalcs = Config.waterWorksWaterReductionPercentage;
       levels.clear();
-      materials.clear();
       Stash input = config;
       for (int i = 0; i < num_levels; i++) {
         input = computeLevel(input, i);
@@ -37,30 +35,22 @@ public class Engine {
 
   private Stash computeLevel(Stash input, int level) {
     Stash remains = new Stash();
-    Stash used = new Stash();
+    Water used = new Water();
     
     remains.getContents().putAll(input.getContents());
     Collections.sort(config.getMaterials());
     
     for (Material mat : config.getMaterials()) {
-      System.out.println("Looking at material " + mat.getName());
       if (mat.getItem().getItemStack() != null) {
-        System.out.println(" Yes, it has an item");
         boolean good2go = true;
         for (Component comp : mat.getComponents()) {
-          System.out.println(" Looking at component " + comp.getName());
           Double available = remains.getContents().get(comp.getName());
-          System.out.println("  We have " + available + " and want to take with agranularity of " + comp.getGranularity());
           if (available == null || available < comp.getGranularity()) {
-            System.out.println("  That won't work.");
             good2go = false;
           }
         }
         if (good2go) {
-          System.out.println(" All is fine");
-          if (!materials.contains(mat)) {
-            materials.add(mat);
-          }
+          used.getMaterials().add(mat);
           while (good2go) {
             for (Component comp : mat.getComponents()) {
               Double needed = comp.getGranularity();
@@ -87,14 +77,6 @@ public class Engine {
     levels.add(level, used);
     return remains;
   }
-  
-  /*
-   * Logic:
-   * 
-   * if (createItems(false) != NO_OUTPUTS) { useEnergy(); if (createItems(true)
-   * in (NO_INPUTS, OK)) { if inputTank >= 1000 mB) { processWater();
-   * useEnergy(); inputTank -= 1000 mB; outputTank += 100 mB; } }
-   */
   
   public void processWater(Stash stash, int level, double factor) {
     computeLevels();
@@ -138,11 +120,11 @@ public class Engine {
    *         mode LOW_OUTPUTS is not a possible return value. OK is returned
    *         instead.
    */
-  public CreationResult createItems(Stash stash, IInventory inv, int startSlot, int endSlot, boolean doCreate) {
+  public CreationResult createItems(Stash stash, int level, IInventory inv, int startSlot, int endSlot, boolean doCreate) {
     computeLevels();
     boolean haveInserted = false;
     progress = 0.0;
-    for (Material mat : materials) {
+    for (Material mat : levels.get(level).getMaterials()) {
       
       // (1) compute how much mass we need to build one item
       double needed_mass = mat.getVolume() * mat.getDensity(); // cm³ * g/cm³ = g

@@ -50,12 +50,14 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
       }
     });
 
-    addToolTip(new GuiToolTip(new Rectangle(29, 77, 65, 3), "") {
+    addToolTip(new GuiToolTip(new Rectangle(29, 77, 66, 3), "") {
       @Override
       protected void updateText() {
         text.clear();
         String heading = EnderIO.lang.localize("waterworks.stashprogress");
-        heading += ": " + (int) (getTileEntity().stashProgress * 100) + "%";
+        heading += ": ";
+        heading += getTileEntity().stashProgress > 0.0f ? MathHelper.clamp_int((int) (getTileEntity().stashProgress * 100), 1, 99) : "0";
+        heading += "%";
         text.add(heading);
       }
     });
@@ -121,7 +123,7 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
     RenderUtil.bindTexture(GUI_TEXTURE);
 
     if (getTileEntity().stashProgress > 0.0) {
-      int size = (int) (62 * getTileEntity().stashProgress) + 1;
+      int size = MathHelper.clamp_int((int) (64 * getTileEntity().stashProgress), 1, 64);
       drawTexturedModalRect(guiLeft + 30, guiTop + 78, 188, 94, size, 1);
     }
 

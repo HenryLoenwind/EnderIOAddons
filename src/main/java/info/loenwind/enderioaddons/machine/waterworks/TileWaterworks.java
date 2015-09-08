@@ -329,10 +329,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   @Override
   protected boolean hasInputStacks() {
     // used by super class to determine if it should try to start a new task
-    insertingIntoSelf = true;
-    boolean result = inputTank.getFluidAmount() >= ONE_BLOCK_OF_LIQUID * getLiquidFactorPerTask()
-        || engine.createItems(stash, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
-    insertingIntoSelf = false;
+    boolean result = inputTank.getFluidAmount() >= ONE_BLOCK_OF_LIQUID * getLiquidFactorPerTask();
     return result;
   }
 
@@ -409,8 +406,9 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
 
   protected void taskComplete() {
     if (currentTask != null) {
+      int level = data.getLevelFromInput(progress_in);
       insertingIntoSelf = true;
-      CreationResult creationResult = engine.createItems(stash, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, true);
+      CreationResult creationResult = engine.createItems(stash, level, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, true);
       insertingIntoSelf = false;
       if (creationResult == CreationResult.OK || creationResult == CreationResult.NO_INPUTS) {
         stashProgress = (float) engine.getLastProgress();
@@ -422,7 +420,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
         } else {
           return;
         }
-        engine.processWater(stash, data.getLevelFromInput(progress_in), factor);
+        engine.processWater(stash, level, factor);
         currentTask = null;
         progress_in = progress_out = null;
         lastProgressScaled = 0;
