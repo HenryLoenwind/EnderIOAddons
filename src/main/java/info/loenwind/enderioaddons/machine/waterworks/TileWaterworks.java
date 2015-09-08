@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.machine.waterworks;
 import info.loenwind.enderioaddons.common.Fluids;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
+import info.loenwind.enderioaddons.machine.waterworks.engine.ConfigProvider;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine.CreationResult;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Stash;
@@ -42,7 +43,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   protected Fluid progress_in = null;
   protected Fluid progress_out = null;
 
-  protected static final Engine engine = new Engine(null); // TODO
+  protected static final Engine engine = new Engine(ConfigProvider.readConfig());
   protected final Stash stash = new Stash();
 
   protected static ColMap data;
@@ -324,9 +325,8 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   @Override
   protected boolean hasInputStacks() {
     // used by super class to determine if it should try to start a new task
-    // TODO: return true if input tank has fluid or internal buffer has stuff
-    return true;
-    //    return tank1.getFluidAmount() >= ONE_BLOCK_OF_LIQUID || engine.createItems(stash, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
+    return tank1.getFluidAmount() >= ONE_BLOCK_OF_LIQUID
+        || engine.createItems(stash, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
   }
 
   @Override
@@ -357,7 +357,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
 
     progress_out = data.getOutputFromInput(tank1.getFluid().getFluid());
 
-    return engine.createItems(stash, level, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
+    return engine.createItems(stash, this, slotDefinition.minOutputSlot, slotDefinition.maxOutputSlot, false) == CreationResult.OK;
   }
 
 }

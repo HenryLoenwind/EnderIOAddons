@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.waterworks.engine;
 
 import static com.enderio.core.common.util.ItemUtil.doInsertItem;
+import info.loenwind.enderioaddons.config.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,25 +12,37 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class Engine {
-  static int level_reduction_factor = 10;
-  static int num_levels = 5;
-  private List<Water> levels = new ArrayList<Water>();
+  private static final int num_levels = 5;
+  private final List<Stash> levels = new ArrayList<Stash>();
+  private final List<Material> materials = new ArrayList<Material>();
+  private double waterWorksWaterReductionPercentageUsedInCalcs = 0.0;
+  private final Water config;
   
   public Engine(Water config) {
-    Stash input = config;
-    for (int i = 0; i < num_levels; i++) {
-      input = computeLevel(input, config, i);
+    this.config = config;
+    computeLevels();
+  }
+
+  private void computeLevels() {
+    if (waterWorksWaterReductionPercentageUsedInCalcs != Config.waterWorksWaterReductionPercentage) {
+      waterWorksWaterReductionPercentageUsedInCalcs = Config.waterWorksWaterReductionPercentage;
+      levels.clear();
+      materials.clear();
+      Stash input = config;
+      for (int i = 0; i < num_levels; i++) {
+        input = computeLevel(input, i);
+      }
     }
   }
-  
-  private Stash computeLevel(Stash input, Water mats, int level) {
-    Stash remains = new Water();
-    Water used = new Water();
+
+  private Stash computeLevel(Stash input, int level) {
+    Stash remains = new Stash();
+    Stash used = new Stash();
     
     remains.getContents().putAll(input.getContents());
-    Collections.sort(mats.getMaterials());
+    Collections.sort(config.getMaterials());
     
-    for (Material mat : mats.getMaterials()) {
+    for (Material mat : config.getMaterials()) {
       if (mat.getItem().getItemStack() != null) {
         boolean good2go = true;
         for (Component comp : mat.getComponents()) {
@@ -39,7 +52,9 @@ public class Engine {
           }
         }
         if (good2go) {
-          used.getMaterials().add(mat); // TODO: This should not be dependent on the level!
+          if (!materials.contains(mat)) {
+            materials.add(mat);
+          }
           while (good2go) {
             for (Component comp : mat.getComponents()) {
               Double needed = comp.getGranularity();
@@ -60,7 +75,7 @@ public class Engine {
     }
     
     for (Entry<String, Double> content : remains.getContents().entrySet()) {
-      content.setValue(content.getValue() * level_reduction_factor);
+      content.setValue(content.getValue() * 100.0 / Config.waterWorksWaterReductionPercentage);
     }
     
     levels.add(level, used);
@@ -76,6 +91,7 @@ public class Engine {
    */
   
   public void processWater(Stash stash, int level) {
+    computeLevels();
     Stash use = levels.get(level);
     for (Entry<String, Double> comp : use.getContents().entrySet()) {
       stash.getContents().put(comp.getKey(), stash.getContents().get(comp.getKey()) + comp.getValue());
@@ -92,8 +108,6 @@ public class Engine {
    * 
    * @param stash
    *          The internal buffer to take the input from
-   * @param level
-   *          The level to work at
    * @param inv
    *          The inventory to (try to) put items
    * @param startSlot
@@ -103,7 +117,7 @@ public class Engine {
    * @param doCreate
    *          Whether to do a dry run or actually create the items
    * @return NO_INPUTS if there are not enough materials in the given stash to
-   *         create any items. Ff there is not enough space in the target
+   *         create any items. If there is not enough space in the target
    *         inventory it will return LOW_OUTPUTS or NO_OUTPUTS, with
    *         LOW_OUTPUTS meaning that at least one item was successfully
    *         created. If it created at least one item and could put all created
@@ -111,10 +125,10 @@ public class Engine {
    *         mode LOW_OUTPUTS is not a possible return value. OK is returned
    *         instead.
    */
-  public CreationResult createItems(Stash stash, int level, IInventory inv, int startSlot, int endSlot, boolean doCreate) {
+  public CreationResult createItems(Stash stash, IInventory inv, int startSlot, int endSlot, boolean doCreate) {
+    computeLevels();
     boolean haveInserted = false;
-    Water use = levels.get(level);
-    for (Material mat : use.getMaterials()) {
+    for (Material mat : materials) {
       
       // (1) compute how much mass we need to build one item
       double needed_mass = mat.getVolume() * mat.getDensity(); // cm³ * g/cm³ = g

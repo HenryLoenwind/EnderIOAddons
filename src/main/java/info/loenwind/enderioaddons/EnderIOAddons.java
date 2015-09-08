@@ -3,14 +3,9 @@ package info.loenwind.enderioaddons;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.common.Recipes;
 import info.loenwind.enderioaddons.config.Config;
-import info.loenwind.enderioaddons.machine.waterworks.engine.Water;
 
 import java.io.IOException;
 import java.util.Locale;
-
-import test.TestX;
-
-import com.thoughtworks.xstream.XStream;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -50,11 +45,6 @@ public class EnderIOAddons {
     config.init(event);
     proxy.init(event);
     recipes.init(event);
-
-    TestX x = new TestX();
-    XStream xstream = x.makeXStream();
-    info.loenwind.enderioaddons.machine.waterworks.engine.Engine cfg = new info.loenwind.enderioaddons.machine.waterworks.engine.Engine((Water) x.readConfig(xstream, "test.xml"));
-    x.dump(xstream, cfg);
   }
 
 }
