@@ -37,6 +37,21 @@ public class Config implements InitAware {
   public static int cobbleWorksRfDiscountPerUpgrade = ConfigValues.cobbleWorksRfDiscountPerUpgrade.getDefaultInt(); // %
 
   public static int waterWorksWaterReductionPercentage = 10; // TODO
+  public static float waterWorksRFperTask1 = 5 * 20 * 20; // TODO
+  public static float waterWorksRFperTask2 = 5 * 20 * 20 * 1.75f * 0.9f; // TODO
+  public static float waterWorksRFperTask3 = 5 * 20 * 20 * 3 * 0.8f; // TODO
+
+  public static float waterWorksLiquidFactorperTask1 = 1.0f; // TODO
+  public static float waterWorksLiquidFactorperTask2 = 1.75f; // TODO
+  public static float waterWorksLiquidFactorperTask3 = 3.0f; // TODO
+
+  public static int waterWorksRFusePerTick1 = 20; // TODO
+  public static int waterWorksRFusePerTick2 = 40; // TODO
+  public static int waterWorksRFusePerTick3 = 60; // TODO
+
+  public static int waterWorksRFinPerTick1 = 100; // TODO
+  public static int waterWorksRFinPerTick2 = 200; // TODO
+  public static int waterWorksRFinPerTick3 = 800; // TODO
 
   //	****************************************************************************************
 

@@ -36,3 +36,5 @@ item.bucketBrine3.name=Heavy Brine Bucket
 fluid.brine4=Solid Brine
 tile.fluid.brine4.name=Solid Brine
 item.bucketBrine4.name=Solid Brine Bucket
+
+enderio.waterworks.stashprogress=Internal Buffer

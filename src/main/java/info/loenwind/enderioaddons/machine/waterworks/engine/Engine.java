@@ -43,15 +43,21 @@ public class Engine {
     Collections.sort(config.getMaterials());
     
     for (Material mat : config.getMaterials()) {
+      System.out.println("Looking at material " + mat.getName());
       if (mat.getItem().getItemStack() != null) {
+        System.out.println(" Yes, it has an item");
         boolean good2go = true;
         for (Component comp : mat.getComponents()) {
+          System.out.println(" Looking at component " + comp.getName());
           Double available = remains.getContents().get(comp.getName());
+          System.out.println("  We have " + available + " and want to take with agranularity of " + comp.getGranularity());
           if (available == null || available < comp.getGranularity()) {
+            System.out.println("  That won't work.");
             good2go = false;
           }
         }
         if (good2go) {
+          System.out.println(" All is fine");
           if (!materials.contains(mat)) {
             materials.add(mat);
           }
@@ -90,16 +96,23 @@ public class Engine {
    * useEnergy(); inputTank -= 1000 mB; outputTank += 100 mB; } }
    */
   
-  public void processWater(Stash stash, int level) {
+  public void processWater(Stash stash, int level, double factor) {
     computeLevels();
     Stash use = levels.get(level);
     for (Entry<String, Double> comp : use.getContents().entrySet()) {
-      stash.getContents().put(comp.getKey(), stash.getContents().get(comp.getKey()) + comp.getValue());
+      stash.getContents().put(comp.getKey(),
+          (stash.getContents().containsKey(comp.getKey()) ? stash.getContents().get(comp.getKey()) : 0) + comp.getValue() * factor);
     }
   }
 
   public enum CreationResult {
     NO_INPUTS, OK, LOW_OUTPUTS, NO_OUTPUTS;
+  }
+
+  private double progress = 0.0;
+
+  public double getLastProgress() {
+    return progress;
   }
 
   /**
@@ -128,6 +141,7 @@ public class Engine {
   public CreationResult createItems(Stash stash, IInventory inv, int startSlot, int endSlot, boolean doCreate) {
     computeLevels();
     boolean haveInserted = false;
+    progress = 0.0;
     for (Material mat : materials) {
       
       // (1) compute how much mass we need to build one item
@@ -141,8 +155,13 @@ public class Engine {
       boolean good2go = true;
       while (good2go) {
         // (2) check if there is enough for one item
+        double all_needed = 0.0, all_there = 0.0;
         for (Component comp : mat.getComponents()) {
-          if (stash.getContents().get(comp.getName()) < comp.getCount() * needed_mass_per_part) {
+          double needed = comp.getCount() * needed_mass_per_part;
+          all_needed += needed;
+          double there = stash.getContents().containsKey(comp.getName()) ? stash.getContents().get(comp.getName()) : 0.0;
+          all_there += there;
+          if (there < needed) {
             good2go = false;
           }
         }
@@ -161,6 +180,11 @@ public class Engine {
           } else {
             // we cannot add this item, so stop processing
             return haveInserted ? CreationResult.LOW_OUTPUTS : CreationResult.NO_OUTPUTS;
+          }
+        } else if (all_needed > 0.0) {
+          double this_progress = all_there / all_needed;
+          if (this_progress > progress) {
+            progress = this_progress;
           }
         }
       }

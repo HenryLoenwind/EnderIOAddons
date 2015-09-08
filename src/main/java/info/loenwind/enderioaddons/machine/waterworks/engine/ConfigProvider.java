@@ -26,7 +26,7 @@ public class ConfigProvider {
       xstream.setClassLoader(ConfigProvider.class.getClassLoader());
     }
 
-    xstream.registerLocalConverter(Water.class, "contents", new NamedMapConverter(xstream.getMapper(), "component", "name", String.class, "ppm", Double.class,
+    xstream.registerLocalConverter(Stash.class, "contents", new NamedMapConverter(xstream.getMapper(), "component", "name", String.class, "ppm", Double.class,
         true, true, xstream.getConverterLookup()));
     xstream.addImplicitCollection(Material.class, "components");
     xstream.useAttributeFor(Material.class, "name");

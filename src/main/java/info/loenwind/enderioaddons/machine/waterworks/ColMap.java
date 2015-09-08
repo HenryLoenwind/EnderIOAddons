@@ -115,23 +115,23 @@ public class ColMap {
   public void set(int elem, Fluid input, Fluids output, int level, int amount) {
     set(COL_INPUT_FLUID, elem, input);
     set(COL_INPUT_FLUID_ID, elem, input.getID());
-    set(COL_OUTPUT_FLUID, elem, output);
+    set(COL_OUTPUT_FLUID, elem, output.getFluid());
     set(COL_OUTPUT_FLUID_ID, elem, output.getFluid().getID());
     set(COL_LEVEL, elem, level);
     set(COL_OUTPUT_AMOUNT, elem, amount);
   }
 
   public void set(int elem, Fluids input, Fluids output, int level, int amount) {
-    set(COL_INPUT_FLUID, elem, input);
+    set(COL_INPUT_FLUID, elem, input.getFluid());
     set(COL_INPUT_FLUID_ID, elem, input.getFluid().getID());
-    set(COL_OUTPUT_FLUID, elem, output);
+    set(COL_OUTPUT_FLUID, elem, output.getFluid());
     set(COL_OUTPUT_FLUID_ID, elem, output.getFluid().getID());
     set(COL_LEVEL, elem, level);
     set(COL_OUTPUT_AMOUNT, elem, amount);
   }
 
   public void set(int elem, Fluids input, int level) {
-    set(COL_INPUT_FLUID, elem, input);
+    set(COL_INPUT_FLUID, elem, input.getFluid());
     set(COL_INPUT_FLUID_ID, elem, input.getFluid().getID());
     set(COL_OUTPUT_FLUID, elem, null);
     set(COL_OUTPUT_FLUID_ID, elem, null);

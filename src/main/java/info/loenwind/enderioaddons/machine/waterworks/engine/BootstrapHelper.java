@@ -16,9 +16,16 @@ public class BootstrapHelper {
   public static void main(String[] args) throws IOException {
     XStream xstream = ConfigProvider.makeXStream();
     
-    dumpConfig(xstream, new Engine(ConfigProvider.readConfig()));
-
     createDummyConfigFile(xstream);
+  }
+
+  public static void dumpConfig() {
+    XStream xstream = ConfigProvider.makeXStream();
+    try {
+      dumpConfig(xstream, new Engine(ConfigProvider.readConfig()));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private static void createDummyConfigFile(XStream xstream) throws IOException {

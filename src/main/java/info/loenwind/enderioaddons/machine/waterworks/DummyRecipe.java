@@ -1,9 +1,11 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.MachineRecipeInput;
 import crazypants.enderio.machine.recipe.RecipeBonusType;
@@ -54,7 +56,9 @@ public class DummyRecipe implements IMachineRecipe {
 
   @Override
   public List<MachineRecipeInput> getQuantitiesConsumed(MachineRecipeInput[] inputs) {
-    return Collections.emptyList();
+    List<MachineRecipeInput> result = new ArrayList<MachineRecipeInput>();
+    result.add(new MachineRecipeInput(0, null, new FluidStack(FluidRegistry.WATER, 1000)));
+    return result;
   }
 
 }

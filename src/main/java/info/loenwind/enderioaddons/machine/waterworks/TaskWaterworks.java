@@ -18,13 +18,15 @@ public class TaskWaterworks implements IPoweredTask {
 
   private float usedEnergy = 0;
   private final float requiredEnergy;
+  private final float liquidinfactor;
 
-  public TaskWaterworks(float requiredEnergy) {
+  public TaskWaterworks(float requiredEnergy, float liquidinfactor) {
     this.requiredEnergy = requiredEnergy;
+    this.liquidinfactor = liquidinfactor;
   }
 
-  private TaskWaterworks(float requiredEnergy, float usedEnergy) {
-    this(requiredEnergy);
+  private TaskWaterworks(float requiredEnergy, float usedEnergy, float liquidinfactor) {
+    this(requiredEnergy, liquidinfactor);
     this.usedEnergy = usedEnergy;
   }
 
@@ -65,11 +67,13 @@ public class TaskWaterworks implements IPoweredTask {
 
   public static final String KEY_USED_ENERGY = "usedEnergy";
   public static final String KEY_REQUIRED_ENERGY = "requiredEnergy";
+  public static final String KEY_LIQUID_IN_FACTOR = "liquidinfactor";
 
   @Override
   public void writeToNBT(NBTTagCompound nbtRoot) {
     nbtRoot.setFloat(KEY_USED_ENERGY, usedEnergy);
     nbtRoot.setFloat(KEY_REQUIRED_ENERGY, requiredEnergy);
+    nbtRoot.setFloat(KEY_LIQUID_IN_FACTOR, liquidinfactor);
   }
 
   public static IPoweredTask readFromNBT(NBTTagCompound nbtRoot) {
@@ -77,7 +81,7 @@ public class TaskWaterworks implements IPoweredTask {
       return null;
     }
 
-    return new TaskWaterworks(nbtRoot.getFloat(KEY_REQUIRED_ENERGY), nbtRoot.getFloat(KEY_USED_ENERGY));
+    return new TaskWaterworks(nbtRoot.getFloat(KEY_REQUIRED_ENERGY), nbtRoot.getFloat(KEY_USED_ENERGY), nbtRoot.getFloat(KEY_LIQUID_IN_FACTOR));
   }
 
   @Override
@@ -88,6 +92,10 @@ public class TaskWaterworks implements IPoweredTask {
   @Override
   public MachineRecipeInput[] getInputs() {
     return new MachineRecipeInput[0];
+  }
+
+  public float getLiquidInFactor() {
+    return liquidinfactor;
   }
 
 }

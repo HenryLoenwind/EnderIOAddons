@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
+import crazypants.enderio.network.PacketHandler;
 
 public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implements IFrameworkBlock, TextureProvider {
 
@@ -28,6 +29,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
   public static int renderId;
 
   public static BlockWaterworks create() {
+    PacketHandler.INSTANCE.registerMessage(PacketWaterworksProgress.class, PacketWaterworksProgress.class, PacketHandler.nextID(), Side.CLIENT);
     blockWaterworks = new BlockWaterworks();
     blockWaterworks.init();
     return blockWaterworks;
