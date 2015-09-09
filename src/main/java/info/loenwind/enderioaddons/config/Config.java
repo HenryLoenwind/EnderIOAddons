@@ -58,6 +58,7 @@ public class Config implements InitAware {
 
   public static Configuration configuration;
   public static File configDirectory;
+  public static boolean configLockedByServer = false;
 
   public Config() {
   }
@@ -131,6 +132,7 @@ public class Config implements InitAware {
   public static void fromBytes(ByteBuf buf) {
     ConfigValues.fromBytes(buf);
     computeDerivedValues(true);
+    configLockedByServer = true;
   }
 
   @SubscribeEvent
@@ -141,6 +143,7 @@ public class Config implements InitAware {
   @SubscribeEvent
   public void onPlayerLogout(ClientDisconnectionFromServerEvent event) {
     syncConfig(false);
+    configLockedByServer = false;
   }
 
   @Override

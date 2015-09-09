@@ -1,7 +1,7 @@
 package info.loenwind.enderioaddons.config.gui;
 
-import static info.loenwind.enderioaddons.config.Config.configuration;
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.config.Section;
 
 import java.util.ArrayList;
@@ -26,7 +26,9 @@ public class GuiConfigFactory extends GuiConfig {
     String prefix = EnderIO.lang.addPrefix("config.");
 
     for (Section section : Section.values()) {
-      list.add(new ConfigElement<ConfigCategory>(configuration.getCategory(section.name).setLanguageKey(prefix)));
+      if (!section.sync || !Config.configLockedByServer) {
+        list.add(new ConfigElement<ConfigCategory>(Config.configuration.getCategory(section.name).setLanguageKey(prefix)));
+      }
     }
 
     return list;
