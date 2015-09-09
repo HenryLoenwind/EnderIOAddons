@@ -19,6 +19,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import cpw.mods.fml.relauncher.Side;
 import crazypants.enderio.network.PacketHandler;
 
@@ -79,7 +80,7 @@ public class Config implements InitAware {
       if (load) {
         configuration.load();
       }
-      Config.processConfig();
+      processConfig();
     } catch (Exception e) {
       Log.error("EnderIOAddons has a problem loading it's configuration");
       e.printStackTrace();
@@ -135,6 +136,11 @@ public class Config implements InitAware {
   @SubscribeEvent
   public void onPlayerLoggon(PlayerLoggedInEvent evt) {
     PacketHandler.INSTANCE.sendTo(new PacketConfigSync(), (EntityPlayerMP) evt.player);
+  }
+
+  @SubscribeEvent
+  public void onPlayerLogout(ClientDisconnectionFromServerEvent event) {
+    syncConfig(false);
   }
 
   @Override
