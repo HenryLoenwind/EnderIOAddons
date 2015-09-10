@@ -84,7 +84,7 @@
     <component name="Niobium" abrev="Nb" ppm="0.0000004"/>
     <component name="Thorium" abrev="Th" ppm="0.000015"/>
     <component name="Uranium" abrev="U" ppm="0.0033"/>
-    <component name="Plutonimu" abrev="Pu" ppm="0.0"/>
+    <component name="Plutonium" abrev="Pu" ppm="0.0"/>
   </contents>
   <materials>
     <material name="Aluminium" prio="1" volume="1000000.0" density="2.7">
