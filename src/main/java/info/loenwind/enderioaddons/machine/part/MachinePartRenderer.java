@@ -2,10 +2,7 @@ package info.loenwind.enderioaddons.machine.part;
 
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
@@ -18,8 +15,6 @@ import crazypants.enderio.Log;
 
 public class MachinePartRenderer implements IItemRenderer {
 
-  private ItemRenderer itemRenderer = new ItemRenderer(Minecraft.getMinecraft());
-  private RenderItem renderItem = new RenderItem();
   private boolean loggedError = false;
   private RendererFrameworkMachine frameRenderer;
 

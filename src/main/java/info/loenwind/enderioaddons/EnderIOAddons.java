@@ -4,7 +4,6 @@ import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.common.Recipes;
 import info.loenwind.enderioaddons.config.Config;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import cpw.mods.fml.common.Mod;
@@ -15,7 +14,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
-public class EnderIOAddons {
+public class EnderIOAddons implements InitAware {
   public static final String MODID = "enderioaddons";
   public static final String DOMAIN = MODID.toLowerCase(Locale.US);
   public static final String MOD_NAME = "Ender IO Addons";
@@ -26,6 +25,7 @@ public class EnderIOAddons {
   public static final Config config = new Config();
   public static final Recipes recipes = new Recipes();
 
+  @Override
   @EventHandler
   public void init(FMLPreInitializationEvent event) {
     config.init(event);
@@ -33,6 +33,7 @@ public class EnderIOAddons {
     recipes.init(event);
   }
 
+  @Override
   @EventHandler
   public void init(FMLInitializationEvent event) {
     config.init(event);
@@ -40,8 +41,9 @@ public class EnderIOAddons {
     recipes.init(event);
   }
 
+  @Override
   @EventHandler
-  public void init(FMLPostInitializationEvent event) throws IOException {
+  public void init(FMLPostInitializationEvent event) {
     config.init(event);
     proxy.init(event);
     recipes.init(event);

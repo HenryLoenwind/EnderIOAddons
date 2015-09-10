@@ -26,6 +26,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
 
   public static final ModObject ModObject_blockWaterworks = EnumHelper.addEnum(ModObject.class, "blockWaterworks", new Class<?>[0], new Object[0]);
   public static BlockWaterworks blockWaterworks;
+  @SuppressWarnings("hiding")
   public static int renderId;
 
   public static BlockWaterworks create() {

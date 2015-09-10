@@ -49,7 +49,7 @@ public class TESRFrameworkMachine extends TileEntitySpecialRenderer {
     }
   }
 
-  private void renderTankPass(TileEntity te, double x, double y, double z, boolean waterPass) {
+  private static void renderTankPass(TileEntity te, double x, double y, double z, boolean waterPass) {
     int facing = ((AbstractMachineEntity) te).facing;
     for (TankSlot tankSlot : TankSlot.values()) {
       if (((IFrameworkMachine) te).hasTank(tankSlot)) {

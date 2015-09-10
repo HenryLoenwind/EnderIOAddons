@@ -21,7 +21,7 @@ public class GuiConfigFactory extends GuiConfig {
     super(parentScreen, getConfigElements(parentScreen), EnderIOAddons.MODID, false, false, EnderIO.lang.localize("config.title"));
   }
 
-  private static List<IConfigElement> getConfigElements(GuiScreen parent) {
+  private static List<IConfigElement> getConfigElements(@SuppressWarnings("unused") GuiScreen parent) {
     List<IConfigElement> list = new ArrayList<IConfigElement>();
     String prefix = EnderIO.lang.addPrefix("config.");
 

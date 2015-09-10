@@ -2,6 +2,9 @@ package info.loenwind.enderioaddons.machine.cobbleworks;
 
 import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
@@ -10,9 +13,10 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RendererCobbleworks implements ISimpleBlockRenderingHandler {
 
+  @Nonnull
   private final RendererFrameworkMachine frameRenderer;
 
-  public RendererCobbleworks(RendererFrameworkMachine frameRenderer) {
+  public RendererCobbleworks(@Nonnull RendererFrameworkMachine frameRenderer) {
     this.frameRenderer = frameRenderer;
     GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(1), BlockCobbleworks.blockCobbleworks);
     GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockCobbleworks.blockCobbleworks);

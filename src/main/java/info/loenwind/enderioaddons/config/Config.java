@@ -63,6 +63,7 @@ public class Config implements InitAware {
   public Config() {
   }
 
+  @Override
   public void init(FMLPreInitializationEvent event) {
     PacketHandler.INSTANCE.registerMessage(PacketConfigSync.class, PacketConfigSync.class, PacketHandler.nextID(), Side.CLIENT);
     FMLCommonHandler.instance().bus().register(new Config());
@@ -92,6 +93,7 @@ public class Config implements InitAware {
     }
   }
 
+  @SuppressWarnings("static-method")
   @SubscribeEvent
   public void onConfigChanged(OnConfigChangedEvent event) {
     if (event.modID.equals(EnderIOAddons.MODID)) {
@@ -100,6 +102,7 @@ public class Config implements InitAware {
     }
   }
 
+  @SuppressWarnings("static-method")
   @SubscribeEvent
   public void onConfigFileChanged(ConfigFileChangedEvent event) {
     if (event.modID.equals(EnderIOAddons.MODID)) {
@@ -135,13 +138,15 @@ public class Config implements InitAware {
     configLockedByServer = true;
   }
 
+  @SuppressWarnings("static-method")
   @SubscribeEvent
   public void onPlayerLoggon(PlayerLoggedInEvent evt) {
     PacketHandler.INSTANCE.sendTo(new PacketConfigSync(), (EntityPlayerMP) evt.player);
   }
 
+  @SuppressWarnings("static-method")
   @SubscribeEvent
-  public void onPlayerLogout(ClientDisconnectionFromServerEvent event) {
+  public void onPlayerLogout(@SuppressWarnings("unused") ClientDisconnectionFromServerEvent event) {
     syncConfig(false);
     configLockedByServer = false;
   }

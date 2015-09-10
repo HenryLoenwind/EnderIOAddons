@@ -223,7 +223,6 @@ public final class FluidHelper {
   }
 
   private void preventWater(BlockCoord bc) {
-    int result = 0;
     for (ForgeDirection forgeDirection : DIRECTIONS) {
       final BlockCoord bc1 = bc.getLocation(forgeDirection);
       if (isSameLiquid(bc1) && !isSourceBlock(bc1)) {

@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.common;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
@@ -11,14 +14,15 @@ import crazypants.enderio.fluid.BlockFluidEio;
 
 public class BlockFluidEioA extends BlockFluidEio {
 
-  public static BlockFluidEio create(Fluid fluid, Material material) {
+  @Nonnull
+  public static BlockFluidEio create(@Nonnull Fluid fluid, @Nonnull Material material) {
     BlockFluidEioA res = new BlockFluidEioA(fluid, material);
     res.init();
     fluid.setBlock(res);
     return res;
   }
 
-  private BlockFluidEioA(Fluid fluid, Material material) {
+  private BlockFluidEioA(@Nonnull Fluid fluid, @Nonnull Material material) {
     super(fluid, material);
   }
 

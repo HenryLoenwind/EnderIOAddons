@@ -5,6 +5,8 @@ import io.netty.buffer.ByteBuf;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.common.config.Configuration;
 
 public enum ConfigValues {
@@ -28,31 +30,35 @@ public enum ConfigValues {
       "Discount on the RF cost of any operation in percent (0-100). This discount is applied once for a double-layer capacitor "
           + "and twice for an octadic capacitor upgrade.");
 
+  @Nonnull
   private final Section section;
+  @Nonnull
   private final String name;
+  @Nonnull
   private final Object defaultValue;
+  @Nonnull
   private final String description;
 
-  private ConfigValues(Section section, String name, Object defaultValue, String description) {
+  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Object defaultValue, @Nonnull String description) {
     this.section = section;
     this.name = name;
     this.description = description;
     this.defaultValue = defaultValue;
   }
 
-  private ConfigValues(Section section, String name, Integer defaultValue, String description) {
+  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Integer defaultValue, @Nonnull String description) {
     this(section, name, (Object) defaultValue, description);
   }
 
-  private ConfigValues(Section section, String name, Double defaultValue, String description) {
+  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Double defaultValue, @Nonnull String description) {
     this(section, name, (Object) defaultValue, description);
   }
 
-  private ConfigValues(Section section, String name, Boolean defaultValue, String description) {
+  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Boolean defaultValue, @Nonnull String description) {
     this(section, name, (Object) defaultValue, description);
   }
 
-  private ConfigValues(Section section, String name, String defaultValue, String description) {
+  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull String defaultValue, @Nonnull String description) {
     this(section, name, (Object) defaultValue, description);
   }
 
@@ -140,18 +146,22 @@ public enum ConfigValues {
     }
   }
 
+  @Nonnull
   public Integer getDefaultInt() {
     return (Integer) defaultValue;
   }
 
+  @Nonnull
   public Double getDefaultDouble() {
     return (Double) defaultValue;
   }
 
+  @Nonnull
   public Boolean getDefaultBoolean() {
     return (Boolean) defaultValue;
   }
 
+  @Nonnull
   public String getDefaultString() {
     return (String) defaultValue;
   }

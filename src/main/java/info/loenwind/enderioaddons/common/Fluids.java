@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.common;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.material.Material;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -17,6 +20,7 @@ public enum Fluids {
   BRINE3("brine3", 1750, 7000, 2), //
   BRINE4("brine4", 2000, 9000, 1);
 
+  @Nonnull
   private final String name;
   private final int density; // kg/m³
   private final int viscosity;
@@ -25,22 +29,25 @@ public enum Fluids {
   private BlockFluidEio block;
   private ItemBucketEio bucket;
 
-  Fluids(String name, int density, int viscosity, int quanta) {
+  Fluids(@Nonnull String name, int density, int viscosity, int quanta) {
     this.name = name;
     this.density = density;
     this.viscosity = viscosity;
     this.quanta = quanta;
   }
 
-  public static void init(FMLPreInitializationEvent event) {
+  @SuppressWarnings("null")
+  public static void init(@SuppressWarnings("unused") FMLPreInitializationEvent event) {
     for (Fluids fluid : values()) {
-      Fluid f = new Fluid(fluid.name).setDensity(fluid.density).setViscosity(fluid.viscosity);
-      FluidRegistry.registerFluid(f);
-      fluid.fluid = FluidRegistry.getFluid(f.getName());
-      fluid.block = BlockFluidEioA.create(fluid.fluid, Material.water);
-      fluid.block.setQuantaPerBlock(fluid.quanta);
-      fluid.bucket = ItemBucketEio.create(fluid.fluid);
-      fluid.bucket.setTextureName(EnderIOAddons.DOMAIN + ":" + "bucket" + StringUtils.capitalize(fluid.name));
+      fluid.fluid = new Fluid(fluid.name).setDensity(fluid.density).setViscosity(fluid.viscosity);
+      if (FluidRegistry.registerFluid(fluid.fluid)) {
+        fluid.block = BlockFluidEioA.create(fluid.fluid, Material.water);
+        fluid.block.setQuantaPerBlock(fluid.quanta);
+        fluid.bucket = ItemBucketEio.create(fluid.fluid);
+        fluid.bucket.setTextureName(EnderIOAddons.DOMAIN + ":" + "bucket" + StringUtils.capitalize(fluid.name));
+      } else {
+        throw new RuntimeException("Failed to register fluid '" + fluid.name + "', there already is a confliction fluid with the same name.");
+      }
       System.out.println(fluid.name + ": " + fluid.block + " and " + fluid.bucket);
     }
   }

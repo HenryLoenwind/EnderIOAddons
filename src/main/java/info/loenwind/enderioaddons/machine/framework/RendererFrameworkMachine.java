@@ -207,13 +207,15 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return result;
   }
 
-  protected boolean renderFrameInItem(Block block, int metadata) {
+  @SuppressWarnings("static-method")
+  protected boolean renderFrameInItem(@SuppressWarnings("unused") Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].hasFrame;
     }
     return true;
   }
 
+  @SuppressWarnings("static-method")
   protected String getControllerInItemName(Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].getControllerModelName();
@@ -223,14 +225,16 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return null;
   }
 
-  protected boolean renderAllTanksInItem(Block block, int metadata) {
+  @SuppressWarnings("static-method")
+  protected boolean renderAllTanksInItem(@SuppressWarnings("unused") Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].hasTanks;
     }
     return true;
   }
 
-  protected boolean renderOneTankInItem(Block block, int metadata) {
+  @SuppressWarnings("static-method")
+  protected boolean renderOneTankInItem(@SuppressWarnings("unused") Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].hasSingleTank;
     }

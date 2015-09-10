@@ -9,13 +9,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.enderio.core.api.client.render.VertexTransform;
 import com.enderio.core.client.render.CustomCubeRenderer;
 import com.enderio.core.client.render.TechneModelRenderer;
 import com.enderio.core.client.render.TechneUtil;
 import com.enderio.core.client.render.VertexRotationFacing;
 import com.enderio.core.client.render.VertexTransformComposite;
-import com.google.common.collect.ObjectArrays;
 
 import crazypants.enderio.machine.AbstractMachineBlock;
 import crazypants.enderio.machine.AbstractMachineEntity;
@@ -32,11 +30,6 @@ public class TechneMachineRenderer<T extends AbstractMachineEntity> extends Tech
 
   public TechneMachineRenderer(int renderId, String modelPath) {
     super(TechneUtil.getModel(EnderIOAddons.MODID, modelPath), renderId, new VertexTransformComposite(new VertexRotationFacing(ForgeDirection.NORTH)));
-  }
-
-  public TechneMachineRenderer<T> addTransform(VertexTransform vt) {
-    this.vt = new VertexTransformComposite(ObjectArrays.concat(vt, ((VertexTransformComposite) this.vt).xforms));
-    return this;
   }
 
   @Override

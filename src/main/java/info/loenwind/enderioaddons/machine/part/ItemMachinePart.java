@@ -44,8 +44,7 @@ public class ItemMachinePart extends Item {
   @Override
   @SideOnly(Side.CLIENT)
   public IIcon getIconFromDamage(int damage) {
-    damage = MathHelper.clamp_int(damage, 0, MachinePart.values().length - 1);
-    return icons[damage];
+    return icons[MathHelper.clamp_int(damage, 0, MachinePart.values().length - 1)];
   }
 
   @Override

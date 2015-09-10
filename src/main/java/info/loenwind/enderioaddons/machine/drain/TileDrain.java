@@ -44,12 +44,8 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   
   private boolean tankDirty = false;
 
-  public TileDrain(int meta) {
-    super(new SlotDefinition(1, 1, 1));
-  }
-
   public TileDrain() {
-    this(0);
+    super(new SlotDefinition(1, 1, 1));
   }
 
   @Override

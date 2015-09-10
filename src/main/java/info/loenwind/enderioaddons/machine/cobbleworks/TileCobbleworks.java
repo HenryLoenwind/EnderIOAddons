@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
@@ -33,22 +36,25 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
 
   static final int SLOTS_PER_WORK = 4;
   static final int WORKS = 3;
+  @Nonnull
+  private static final Mapping[] outputMapping = new Mapping[1 + SLOTS_PER_WORK * WORKS];
 
   private static Item alloySmelter;
   private static Item sagMill;
   private static Item crafter;
+  private static Set<Item> upgradeMachines;
 
-  private Set<Item> upgradeMachines = new HashSet<Item>();
-  private Mapping[] outputMapping = new Mapping[1 + SLOTS_PER_WORK * WORKS];
   private boolean inputsChanged = true;
   private int capTickLimit = 0;
 
   public TileCobbleworks() {
     super(new SlotDefinition(WORKS, 1 + SLOTS_PER_WORK * WORKS, 1));
-    upgradeMachines.clear();
-    upgradeMachines.add(alloySmelter = Item.getItemFromBlock(EnderIO.blockAlloySmelter));
-    upgradeMachines.add(sagMill = Item.getItemFromBlock(EnderIO.blockCrusher));
-    upgradeMachines.add(crafter = Item.getItemFromBlock(EnderIO.blockCrafter));
+    if (upgradeMachines == null) {
+      upgradeMachines = new HashSet<Item>();
+      upgradeMachines.add(alloySmelter = Item.getItemFromBlock(EnderIO.blockAlloySmelter));
+      upgradeMachines.add(sagMill = Item.getItemFromBlock(EnderIO.blockCrusher));
+      upgradeMachines.add(crafter = Item.getItemFromBlock(EnderIO.blockCrafter));
+    }
   }
 
   @Override
@@ -69,7 +75,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       return inventory[i] == null && upgradeMachines.contains(itemstack.getItem());
     } else if (slotDefinition.isOutputSlot(i)) {
       Mapping mapping = outputMapping[i - slotDefinition.minOutputSlot];
-      return mapping != null && mapping.itemStack != null && itemstack != null && mapping.itemStack.isItemEqual(itemstack);
+      return mapping != null && itemstack != null && mapping.itemStack.isItemEqual(itemstack);
     } else {
       return false;
     }
@@ -120,9 +126,9 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Override
-  protected boolean processTasks(boolean redstoneCheckPassed) {
+  protected boolean processTasks(boolean rsCheckPassed) {
     boolean updateClient = computeOutputMapping();
-    if (redstoneCheckPassed && reCraft()) {
+    if (rsCheckPassed && reCraft()) {
       active = 40;
       return true;
     } else {
@@ -137,11 +143,12 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return no + slotDefinition.minOutputSlot;
   }
 
+  @Nullable
   private ItemStack outputSlot(int no) {
     return inventory[outputSlotNo(no)];
   }
 
-  private void outputSlot(int no, ItemStack is) {
+  private void outputSlot(int no, @Nullable ItemStack is) {
     inventory[outputSlotNo(no)] = is;
   }
 
@@ -153,11 +160,12 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return work == 0 ? 0 : (work - 1) * SLOTS_PER_WORK + no;
   }
 
-  private void outputMapping(int work, int no, Mapping mapping) {
+  private static void outputMapping(int work, int no, @Nullable Mapping mapping) {
     outputMapping[outputMappingNo(work, no)] = mapping;
   }
 
-  private Mapping outputMapping(int work, int no) {
+  @Nullable
+  private static Mapping outputMapping(int work, int no) {
     return outputMapping[outputMappingNo(work, no)];
   }
 
@@ -165,17 +173,19 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return no + slotDefinition.minInputSlot - 1;
   }
 
+  @Nullable
   private ItemStack inputSlot(int no) {
     return inventory[inputSlotNo(no)];
   }
 
-  private static void clear(Object[] list) {
+  private static void clear(@Nonnull Object[] list) {
     for (int i = 0; i < list.length; i++) {
       list[i] = null;
     }
   }
 
-  private List<Mapping> getInputForWork(int work) {
+  @Nonnull
+  private static List<Mapping> getInputForWork(int work) {
     List<Mapping> result = new ArrayList<Mapping>();
     if (work == 1) {
       result.add(outputMapping(0, 0));
@@ -205,7 +215,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       List<Mapping> output = new ArrayList<Mapping>();
       if (machine != null && machine.getItem() != null && !input.isEmpty()) {
         for (Mapping mapping : input) {
-          if (mapping != null && mapping.itemStack != null) {
+          if (mapping != null) {
             if (machine.getItem() == crafter) {
               computeCrafterOutput(output, mapping);
             } else if (machine.getItem() == alloySmelter) {
@@ -222,12 +232,14 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       for (Mapping mapping : output) {
         boolean done = false;
         // do we already have this item in a previous step?
-        if (outputMapping(0, 0) != null && outputMapping(0, 0).itemStack.isItemEqual(mapping.itemStack)) {
+        Mapping om0 = outputMapping(0, 0);
+        if (om0 != null && om0.itemStack.isItemEqual(mapping.itemStack)) {
           done = true;
         }
         for (int w = 1; !done && w < work; w++) {
           for (int i = 1; !done && i <= SLOTS_PER_WORK; i++) {
-            if (outputMapping(w, i) != null && outputMapping(w, i).itemStack.isItemEqual(mapping.itemStack)) {
+            Mapping om = outputMapping(w, i);
+            if (om != null && om.itemStack.isItemEqual(mapping.itemStack)) {
               done = true;
             }
           }
@@ -235,9 +247,10 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
 
         // do we already have it in this step? If yes, keep the cheaper recipe
         for (int i = 1; !done && i <= SLOTS_PER_WORK; i++) {
-          if (outputMapping(work, i) != null && outputMapping(work, i).itemStack.isItemEqual(mapping.itemStack)) {
+          Mapping om = outputMapping(work, i);
+          if (om != null && om.itemStack.isItemEqual(mapping.itemStack)) {
             done = true;
-            if (outputMapping(work, i).costInRF > mapping.costInRF) {
+            if (om.costInRF > mapping.costInRF) {
               mapping.position = outputMappingNo(work, i);
               outputMapping(work, i, mapping);
             }
@@ -260,7 +273,8 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return true;
   }
 
-  private static void computeMachineOutput(List<Mapping> output, Mapping input, String machineName, OperationType operationType) {
+  private static void computeMachineOutput(@Nonnull List<Mapping> output, @Nonnull Mapping input, String machineName,
+      @Nonnull OperationType operationType) {
     ItemStack stackcopy = input.itemStack.copy();
     stackcopy.stackSize = 1; // otherwise we'd get a 200% energy bonus on
                              // vanilla smelting
@@ -276,7 +290,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     }
   }
 
-  private void computeCrafterOutput(List<Mapping> output, Mapping input) {
+  private void computeCrafterOutput(@Nonnull List<Mapping> output, @Nonnull Mapping input) {
     InventoryCrafting inv = new InventoryCrafting(new Container() {
       @Override
       public boolean canInteractWith(EntityPlayer var1) {
@@ -325,7 +339,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     }
   }
 
-  private int applyDiscounts(int RFcost, OperationType operationType) {
+  private int applyDiscounts(int RFcost, @Nonnull OperationType operationType) {
     int cost = RFcost;
     switch (operationType) {
     case CRAFTING:
@@ -481,14 +495,19 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   private static class Mapping {
+    @Nonnull
     final OperationType operationType;
+    @Nonnull
     final ItemStack itemStack;
     final int costInRF;
     final int parent;
     int position = 0;
     final int inputAmount;
 
-    public Mapping(OperationType operationType, ItemStack itemStack, int costInRF, int parent, int inputAmount) {
+    public Mapping(@Nonnull OperationType operationType, ItemStack itemStack, int costInRF, int parent, int inputAmount) {
+      if (itemStack == null) {
+        throw new NullPointerException("Unexpected NULL ItemStack");
+      }
       this.operationType = operationType;
       this.itemStack = itemStack;
       this.costInRF = costInRF;
@@ -538,7 +557,9 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   @Override
   public IIcon getSlotIcon(TankSlot tankSlot, int side) {
     ItemStack stack = inputSlot(tankSlot.ordinal());
-    if (stack.getItem() == crafter) {
+    if (stack == null) {
+      return null;
+    } else if (stack.getItem() == crafter) {
       return EnderIO.blockCrafter.getIcon(side, 0);
     } else if (stack.getItem() == alloySmelter) {
       return EnderIO.blockAlloySmelter.getIcon(side, 0);

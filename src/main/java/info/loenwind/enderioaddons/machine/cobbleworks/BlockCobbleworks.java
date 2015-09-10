@@ -22,6 +22,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   public static final ModObject ModObject_blockCobbleworks = EnumHelper.addEnum(ModObject.class, "blockCobbleworks", new Class<?>[0], new Object[0]);
   public static BlockCobbleworks blockCobbleworks;
+  @SuppressWarnings("hiding")
   public static int renderId;
 
   public static BlockCobbleworks create() {

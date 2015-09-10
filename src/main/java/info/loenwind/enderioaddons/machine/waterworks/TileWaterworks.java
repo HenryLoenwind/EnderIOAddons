@@ -20,7 +20,6 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import com.enderio.core.api.common.util.IProgressTile;
 import com.enderio.core.api.common.util.ITankAccess;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.FluidUtil;
@@ -34,7 +33,7 @@ import crazypants.enderio.network.PacketHandler;
 import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
 
-public class TileWaterworks extends AbstractPoweredTaskEntity implements IFrameworkMachine, IProgressTile, IFluidHandler, ITankAccess {
+public class TileWaterworks extends AbstractPoweredTaskEntity implements IFrameworkMachine, IFluidHandler, ITankAccess {
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
@@ -367,7 +366,8 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     return new TaskWaterworks(getRfPerTask(), getLiquidFactorPerTask());
   }
 
-  // TODO:  @Override
+  // TODO:  @Override instead of @SuppressWarnings
+  @SuppressWarnings("static-method")
   protected IPoweredTask createTask(NBTTagCompound taskTagCompound) {
     return TaskWaterworks.readFromNBT(taskTagCompound);
   }
@@ -377,6 +377,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     inputTank.drain((int) (((TaskWaterworks) currentTask).getLiquidInFactor() * ONE_BLOCK_OF_LIQUID), true);
   }
 
+  @Override
   protected boolean checkProgress(boolean redstoneChecksPassed) {
     if (currentTask == null || !hasPower()) {
       return false;
@@ -404,6 +405,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     return insertingIntoSelf && i >= slotDefinition.minOutputSlot && i <= slotDefinition.maxOutputSlot;
   }
 
+  @Override
   protected void taskComplete() {
     if (currentTask != null) {
       int level = data.getLevelFromInput(progress_in);

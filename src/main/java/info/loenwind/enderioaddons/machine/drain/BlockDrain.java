@@ -79,7 +79,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   public TileEntity createTileEntity(World world, int metadata) {
-    return new TileDrain(metadata);
+    return new TileDrain();
   }
 
   @Override
@@ -179,7 +179,8 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
     return EnderIOAddons.DOMAIN + ":blockDrain";
   }
 
-  protected String getBottomIconKey(boolean active) {
+  @SuppressWarnings("static-method")
+  protected String getBottomIconKey(@SuppressWarnings("unused") boolean active) {
     return "enderio:machineTemplate";
   }
 
@@ -253,6 +254,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
     }
   }
 
+  @SuppressWarnings("hiding")
   public static int renderId;
 
   @Override
