@@ -3,6 +3,8 @@ package info.loenwind.enderioaddons.machine.waterworks;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -12,6 +14,7 @@ import crazypants.enderio.machine.recipe.RecipeBonusType;
 
 public class DummyRecipe implements IMachineRecipe {
 
+  @Nonnull
   public static final DummyRecipe instance = new DummyRecipe();
 
   @Override

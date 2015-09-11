@@ -131,8 +131,8 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
     }
   }
 
-  IIcon controllerTexture;
-  IIcon filterTexture;
+  private IIcon controllerTexture;
+  private IIcon filterTexture;
 
   @Override
   @SideOnly(Side.CLIENT)
@@ -146,6 +146,10 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
   @Override
   public IIcon getTexture() {
     return controllerTexture;
+  }
+
+  public IIcon getFilterTexture() {
+    return filterTexture;
   }
 
 }

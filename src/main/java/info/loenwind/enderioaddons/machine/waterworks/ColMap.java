@@ -1,6 +1,10 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.common.Fluids;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraftforge.fluids.Fluid;
 
 public class ColMap {
@@ -12,6 +16,7 @@ public class ColMap {
   private static final int COL_LEVEL = 4;
   private static final int COL_OUTPUT_AMOUNT = 5;
 
+  @Nonnull
   private final Object[] x;
   private final int cols = 6;
   private final int elements;
@@ -21,15 +26,16 @@ public class ColMap {
     this.elements = elements;
   }
 
+  @Nullable
   private Object get(int col, int elem) {
     return x[elem * cols + col];
   }
 
-  private void set(int col, int elem, Object o) {
+  private void set(int col, int elem, @Nullable Object o) {
     x[elem * cols + col] = o;
   }
 
-  private boolean contains(int col, Object o) {
+  private boolean contains(int col, @Nullable Object o) {
     for (int i = 0; i <= elements; i++) {
       Object c = get(col, i);
       if (o == null && c == null || (o != null && o.equals(c))) {
@@ -39,7 +45,7 @@ public class ColMap {
     return false;
   }
 
-  private int find(int col, Object o) {
+  private int find(int col, @Nullable Object o) {
     for (int i = 0; i <= elements; i++) {
       Object c = get(col, i);
       if (o == null && c == null || (o != null && o.equals(c))) {
@@ -49,11 +55,11 @@ public class ColMap {
     return -1;
   }
 
-  public boolean containsInputLiquid(Fluid l) {
+  public boolean containsInputLiquid(@Nonnull Fluid l) {
     return contains(COL_INPUT_FLUID_ID, l.getID());
   }
 
-  public boolean isMatchingInputForOutput(Fluid input, Fluid output) {
+  public boolean isMatchingInputForOutput(@Nullable Fluid input, @Nullable Fluid output) {
     if (input == null || output == null) {
       return false;
     }
@@ -61,10 +67,11 @@ public class ColMap {
     if (elem < 0) {
       return false;
     }
-    return get(COL_INPUT_FLUID_ID, elem).equals(input.getID());
+    final Object result = get(COL_INPUT_FLUID_ID, elem);
+    return result != null && result.equals(input.getID());
   }
 
-  public boolean isMatchingOutputForInput(Fluid input, Fluid output) {
+  public boolean isMatchingOutputForInput(@Nullable Fluid input, @Nullable Fluid output) {
     if (input == null) {
       return false;
     }
@@ -79,7 +86,7 @@ public class ColMap {
     return expectedOutput != null && expectedOutput.equals(output.getID());
   }
 
-  public int getLevelFromInput(Fluid input) {
+  public int getLevelFromInput(@Nullable Fluid input) {
     if (input == null) {
       return -1;
     }
@@ -87,10 +94,11 @@ public class ColMap {
     if (elem < 0) {
       return -1;
     }
-    return (Integer) get(COL_LEVEL, elem);
+    final Object result = get(COL_LEVEL, elem);
+    return result != null ? (Integer) result : -1;
   }
 
-  public int getOutputAmountFromInput(Fluid input) {
+  public int getOutputAmountFromInput(@Nullable Fluid input) {
     if (input == null) {
       return -1;
     }
@@ -98,10 +106,11 @@ public class ColMap {
     if (elem < 0) {
       return -1;
     }
-    return (Integer) get(COL_OUTPUT_AMOUNT, elem);
+    final Object result = get(COL_OUTPUT_AMOUNT, elem);
+    return result != null ? (Integer) result : -1;
   }
 
-  public Fluid getOutputFromInput(Fluid input) {
+  public Fluid getOutputFromInput(@Nullable Fluid input) {
     if (input == null) {
       return null;
     }
@@ -112,7 +121,7 @@ public class ColMap {
     return (Fluid) get(COL_OUTPUT_FLUID, elem);
   }
 
-  public void set(int elem, Fluid input, Fluids output, int level, int amount) {
+  public void set(int elem, @Nonnull Fluid input, @Nonnull Fluids output, int level, int amount) {
     set(COL_INPUT_FLUID, elem, input);
     set(COL_INPUT_FLUID_ID, elem, input.getID());
     set(COL_OUTPUT_FLUID, elem, output.getFluid());
@@ -121,7 +130,7 @@ public class ColMap {
     set(COL_OUTPUT_AMOUNT, elem, amount);
   }
 
-  public void set(int elem, Fluids input, Fluids output, int level, int amount) {
+  public void set(int elem, @Nonnull Fluids input, @Nonnull Fluids output, int level, int amount) {
     set(COL_INPUT_FLUID, elem, input.getFluid());
     set(COL_INPUT_FLUID_ID, elem, input.getFluid().getID());
     set(COL_OUTPUT_FLUID, elem, output.getFluid());
@@ -130,7 +139,7 @@ public class ColMap {
     set(COL_OUTPUT_AMOUNT, elem, amount);
   }
 
-  public void set(int elem, Fluids input, int level) {
+  public void set(int elem, @Nonnull Fluids input, int level) {
     set(COL_INPUT_FLUID, elem, input.getFluid());
     set(COL_INPUT_FLUID_ID, elem, input.getFluid().getID());
     set(COL_OUTPUT_FLUID, elem, null);

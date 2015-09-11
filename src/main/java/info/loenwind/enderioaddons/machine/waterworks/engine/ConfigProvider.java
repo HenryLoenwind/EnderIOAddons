@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.waterworks.engine;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.enderioaddons.config.Config;
 
 import java.io.BufferedWriter;
@@ -7,6 +8,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.io.IOUtils;
 
@@ -20,6 +23,7 @@ public class ConfigProvider {
   private ConfigProvider() {
   }
 
+  @Nonnull
   public static XStream makeXStream() {
     XStream xstream = new XStream();
     if (ConfigProvider.class.getClassLoader() != null) {
@@ -53,7 +57,7 @@ public class ConfigProvider {
     return xstream;
   }
 
-  private static Object readConfig(XStream xstream, String fileName) throws IOException {
+  private static Object readConfig(@Nonnull XStream xstream, @Nonnull String fileName) throws IOException {
     File configFile = new File(Config.configDirectory, fileName);
 
     if (configFile.exists()) {
@@ -76,13 +80,16 @@ public class ConfigProvider {
     return myObject;
   }
 
+  @Nonnull
   public static Water readConfig() {
     XStream xstream = makeXStream();
+    Water result;
 
     try {
-      return (Water) readConfig(xstream, "water.xml");
+      result = (Water) readConfig(xstream, "water.xml");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    return notnull(result, "Invalid Water configuration, it seems to be empty?");
   }
 }

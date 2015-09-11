@@ -1,27 +1,31 @@
 package info.loenwind.enderioaddons.machine.waterworks.engine;
 
+import javax.annotation.Nonnull;
+
 public class Component {
+  @Nonnull
   private final String name;
-  private final Double granularity;
-  private final Double factor;
+  private final double granularity;
+  private final double factor;
   private final int count;
 
-  public Component(String name, Double granularity, Double factor, int count) {
+  public Component(@Nonnull String name, double granularity, double factor, int count) {
     this.name = name;
     this.granularity = granularity;
     this.factor = factor;
     this.count = count;
   }
 
+  @Nonnull
   public String getName() {
     return name;
   }
 
-  public Double getGranularity() {
+  public double getGranularity() {
     return granularity;
   }
 
-  public Double getFactor() {
+  public double getFactor() {
     return factor;
   }
 

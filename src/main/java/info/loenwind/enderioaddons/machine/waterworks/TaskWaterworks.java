@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import crazypants.enderio.machine.IMachineRecipe;
@@ -76,6 +78,7 @@ public class TaskWaterworks implements IPoweredTask {
     nbtRoot.setFloat(KEY_LIQUID_IN_FACTOR, liquidinfactor);
   }
 
+  @Nullable
   public static IPoweredTask readFromNBT(NBTTagCompound nbtRoot) {
     if (nbtRoot == null) {
       return null;

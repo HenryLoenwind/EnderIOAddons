@@ -3,17 +3,20 @@ package info.loenwind.enderioaddons.machine.waterworks.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import javax.annotation.Nonnull;
 
 public class Material implements Comparable<Material> {
+  @Nonnull
   private final String name;
   private final int prio;
+  @Nonnull
   private final Item item;
+  @Nonnull
   private final List<Component> components = new ArrayList<Component>();
-  private final Double volume;
-  private final Double density;
+  private final double volume;
+  private final double density;
   
-  public Material(String name, int prio, Item item, Double volume, Double density) {
+  public Material(@Nonnull String name, int prio, @Nonnull Item item, double volume, double density) {
     this.name = name;
     this.prio = prio;
     this.item = item;
@@ -21,6 +24,7 @@ public class Material implements Comparable<Material> {
     this.density = density;
   }
 
+  @Nonnull
   public String getName() {
     return name;
   }
@@ -29,19 +33,21 @@ public class Material implements Comparable<Material> {
     return prio;
   }
 
+  @Nonnull
   public Item getItem() {
     return item;
   }
 
+  @Nonnull
   public List<Component> getComponents() {
     return components;
   }
 
-  public Double getVolume() {
+  public double getVolume() {
     return volume;
   }
 
-  public Double getDensity() {
+  public double getDensity() {
     return density;
   }
 

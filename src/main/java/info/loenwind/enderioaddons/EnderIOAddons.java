@@ -6,6 +6,8 @@ import info.loenwind.enderioaddons.config.Config;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -15,14 +17,21 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
 public class EnderIOAddons implements InitAware {
+  @Nonnull
   public static final String MODID = "enderioaddons";
+  @SuppressWarnings("null")
+  @Nonnull
   public static final String DOMAIN = MODID.toLowerCase(Locale.US);
+  @Nonnull
   public static final String MOD_NAME = "Ender IO Addons";
+  @Nonnull
   public static final String VERSION = "@VERSION@";
 
   @SidedProxy(clientSide = "info.loenwind.enderioaddons.common.CommonProxy", serverSide = "info.loenwind.enderioaddons.common.ServerProxy")
   public static InitAware proxy;
+  @Nonnull
   public static final Config config = new Config();
+  @Nonnull
   public static final Recipes recipes = new Recipes();
 
   @Override

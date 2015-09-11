@@ -5,15 +5,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class Stash {
 
+  @Nonnull
   private final Map<String, Double> contents = new HashMap<String, Double>();
 
   public Stash() {
   }
 
+  @Nonnull
   public Map<String, Double> getContents() {
     return contents;
   }

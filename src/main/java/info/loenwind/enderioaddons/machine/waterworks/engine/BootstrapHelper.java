@@ -5,12 +5,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.IOUtils;
 
 import com.thoughtworks.xstream.XStream;
 
 public class BootstrapHelper {
 
+  @Nonnull
   private static String dumpPath = ".";
 
   public static void main(String[] args) throws IOException {
@@ -28,7 +31,7 @@ public class BootstrapHelper {
     }
   }
 
-  private static void createDummyConfigFile(XStream xstream) throws IOException {
+  private static void createDummyConfigFile(@Nonnull XStream xstream) throws IOException {
     Water wc = new Water();
     
     wc.getContents().put("Chloride", 18980.0);
@@ -58,7 +61,7 @@ public class BootstrapHelper {
     }
   }
   
-  private static void dumpConfig(XStream xstream, Engine config) throws IOException {
+  private static void dumpConfig(@Nonnull XStream xstream, @Nonnull Engine config) throws IOException {
     File configFile = new File(dumpPath, "dump.xml");
     BufferedWriter writer = null;
     try {

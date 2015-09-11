@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.enderioaddons.common.Fluids;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
@@ -7,6 +8,10 @@ import info.loenwind.enderioaddons.machine.waterworks.engine.ConfigProvider;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine.CreationResult;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Stash;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
@@ -37,17 +42,23 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
+  @Nonnull
   protected SmartTank inputTank = new SmartTank(3 * ONE_BLOCK_OF_LIQUID);
+  @Nonnull
   protected SmartTank outputTank = new SmartTank(1 * ONE_BLOCK_OF_LIQUID);
 
   private static int IO_MB_TICK = 200;
 
   boolean tanksDirty = false;
 
+  @Nullable
   protected Fluid progress_in = null;
+  @Nullable
   protected Fluid progress_out = null;
 
+  @Nonnull
   protected static final Engine engine = new Engine(ConfigProvider.readConfig());
+  @Nonnull
   protected final Stash stash = new Stash();
   protected float stashProgress = 0.0f;
 
@@ -59,7 +70,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     if (data == null) {
       int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage / 100;
       data = new ColMap(5);
-      data.set(0, FluidRegistry.WATER, Fluids.BRINE1, 0, amount);
+      data.set(0, notnull(FluidRegistry.WATER, "Forge error: There is no water!"), Fluids.BRINE1, 0, amount);
       data.set(1, Fluids.BRINE1, Fluids.BRINE2, 1, amount);
       data.set(2, Fluids.BRINE2, Fluids.BRINE3, 2, amount);
       data.set(3, Fluids.BRINE3, Fluids.BRINE4, 3, amount);
@@ -126,7 +137,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public Fluid getTankFluid(TankSlot tankSlot) {
+  public Fluid getTankFluid(@Nonnull TankSlot tankSlot) {
     switch (tankSlot) {
     case FRONT_LEFT:
       return inputTank.getFluidAmount() > 0 ? inputTank.getFluid().getFluid() : null;
@@ -146,13 +157,13 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public boolean renderSlot(TankSlot tankSlot) {
+  public boolean renderSlot(@Nonnull TankSlot tankSlot) {
     return tankSlot != TankSlot.FRONT_LEFT;
   }
 
   @Override
-  public IIcon getSlotIcon(TankSlot tankSlot, int side) {
-    return BlockWaterworks.blockWaterworks.filterTexture;
+  public IIcon getSlotIcon(@Nonnull TankSlot tankSlot, int side) {
+    return BlockWaterworks.blockWaterworks.getFilterTexture();
   }
 
   @Override
@@ -161,7 +172,8 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public FluidTank getInputTank(FluidStack forFluidType) {
+  @Nullable
+  public FluidTank getInputTank(@Nullable FluidStack forFluidType) {
     if (forFluidType != null && inputTank.canFill(forFluidType.getFluid())) {
       return inputTank;
     }
@@ -169,6 +181,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
+  @Nonnull
   public FluidTank[] getOutputTanks() {
     return new FluidTank[] { outputTank };
   }
@@ -179,12 +192,8 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-    if (isSideDisabled(from.ordinal())) {
-      return 0;
-    }
-
-    if (resource == null || !canFill(from, resource.getFluid())) {
+  public int fill(@Nullable ForgeDirection from, @Nullable FluidStack resource, boolean doFill) {
+    if (from == null || isSideDisabled(from.ordinal()) || resource == null || !canFill(from, resource.getFluid())) {
       return 0;
     }
     int res = inputTank.fill(resource, doFill);
@@ -195,11 +204,9 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-    if (isSideDisabled(from.ordinal())) {
-      return null;
-    }
-    if (outputTank.getFluid() == null || resource == null || !resource.isFluidEqual(outputTank.getFluid())) {
+  @Nullable
+  public FluidStack drain(@Nullable ForgeDirection from, @Nullable FluidStack resource, boolean doDrain) {
+    if (from == null || isSideDisabled(from.ordinal()) || outputTank.getFluid() == null || resource == null || !resource.isFluidEqual(outputTank.getFluid())) {
       return null;
     }
     FluidStack res = outputTank.drain(resource.amount, doDrain);
@@ -210,8 +217,9 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-    if (isSideDisabled(from.ordinal())) {
+  @Nullable
+  public FluidStack drain(@Nullable ForgeDirection from, int maxDrain, boolean doDrain) {
+    if (from == null || isSideDisabled(from.ordinal())) {
       return null;
     }
     FluidStack res = outputTank.drain(maxDrain, doDrain);
@@ -222,8 +230,8 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public boolean canFill(ForgeDirection from, Fluid fluid) {
-    if (isSideDisabled(from.ordinal()) || fluid == null || !inputTank.canFill(fluid)) {
+  public boolean canFill(@Nullable ForgeDirection from, @Nullable Fluid fluid) {
+    if (from == null || isSideDisabled(from.ordinal()) || fluid == null || !inputTank.canFill(fluid)) {
       return false;
     }
 
@@ -235,24 +243,25 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public boolean canDrain(ForgeDirection from, Fluid fluid) {
-    if (isSideDisabled(from.ordinal())) {
+  public boolean canDrain(@Nullable ForgeDirection from, @Nullable Fluid fluid) {
+    if (from == null || isSideDisabled(from.ordinal())) {
       return false;
     }
     return outputTank.canDrainFluidType(fluid);
   }
 
   @Override
-  public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-    if (isSideDisabled(from.ordinal())) {
+  @Nonnull
+  public FluidTankInfo[] getTankInfo(@Nullable ForgeDirection from) {
+    if (from == null || isSideDisabled(from.ordinal())) {
       return new FluidTankInfo[0];
     }
     return new FluidTankInfo[] { inputTank.getInfo(), outputTank.getInfo() };
   }
 
   @Override
-  protected boolean doPush(ForgeDirection dir) {
-    if (isSideDisabled(dir.ordinal())) {
+  protected boolean doPush(@Nullable ForgeDirection dir) {
+    if (dir == null || isSideDisabled(dir.ordinal())) {
       return false;
     }
 
@@ -279,8 +288,8 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  protected boolean doPull(ForgeDirection dir) {
-    if (isSideDisabled(dir.ordinal())) {
+  protected boolean doPull(@Nullable ForgeDirection dir) {
+    if (dir == null || isSideDisabled(dir.ordinal())) {
       return false;
     }
 
@@ -333,13 +342,14 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
+  @Nonnull
   protected IMachineRecipe getNextRecipe() {
     return DummyRecipe.instance;
   }
 
   // read as canStartNextTask(), only called after hasInputStacks()
   @Override
-  protected boolean canInsertResult(float chance, IMachineRecipe nextRecipe) {
+  protected boolean canInsertResult(float chance, @Nullable IMachineRecipe nextRecipe) {
     if (inputTank.getFluidAmount() < ONE_BLOCK_OF_LIQUID * getLiquidFactorPerTask()) {
       return false;
     }
@@ -362,18 +372,20 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  protected IPoweredTask createTask(IMachineRecipe nextRecipe, float chance) {
+  @Nonnull
+  protected IPoweredTask createTask(@Nullable IMachineRecipe nextRecipe, float chance) {
     return new TaskWaterworks(getRfPerTask(), getLiquidFactorPerTask());
   }
 
   // TODO:  @Override instead of @SuppressWarnings
   @SuppressWarnings("static-method")
+  @Nullable
   protected IPoweredTask createTask(NBTTagCompound taskTagCompound) {
     return TaskWaterworks.readFromNBT(taskTagCompound);
   }
 
   @Override
-  protected void drainInputFluid(MachineRecipeInput fluid) {
+  protected void drainInputFluid(@Nullable MachineRecipeInput fluid) {
     inputTank.drain((int) (((TaskWaterworks) currentTask).getLiquidInFactor() * ONE_BLOCK_OF_LIQUID), true);
   }
 
@@ -401,7 +413,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   protected boolean insertingIntoSelf = false;
 
   @Override
-  protected boolean isMachineItemValidForSlot(int i, ItemStack itemstack) {
+  protected boolean isMachineItemValidForSlot(int i, @Nullable ItemStack itemstack) {
     return insertingIntoSelf && i >= slotDefinition.minOutputSlot && i <= slotDefinition.maxOutputSlot;
   }
 
@@ -415,12 +427,19 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
       if (creationResult == CreationResult.OK || creationResult == CreationResult.NO_INPUTS) {
         stashProgress = (float) engine.getLastProgress();
         float factor = ((TaskWaterworks) currentTask).getLiquidInFactor();
-        if (outputTank.getFluidAmount() == 0) {
-          outputTank.setFluid(new FluidStack(progress_out, (int) (data.getOutputAmountFromInput(progress_in) * factor)));
-        } else if (outputTank.getFluid().getFluidID() == progress_out.getID()) {
-          outputTank.addFluidAmount((int) (data.getOutputAmountFromInput(progress_in) * factor));
-        } else {
-          return;
+        final int amount = (int) (data.getOutputAmountFromInput(progress_in) * factor);
+        if (amount > 0) {
+          Fluid progress_out2 = progress_out;
+          if (progress_out2 == null) {
+            progress_out2 = data.getOutputFromInput(progress_in);
+          }
+          if (progress_out2 != null && outputTank.getFluidAmount() == 0) {
+            outputTank.setFluid(new FluidStack(progress_out2, amount));
+          } else if (progress_out2 == null || outputTank.getFluid().getFluidID() == progress_out2.getID()) {
+            outputTank.addFluidAmount(amount);
+          } else {
+            return;
+          }
         }
         engine.processWater(stash, level, factor);
         currentTask = null;
@@ -439,7 +458,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   public void readCustomNBT(NBTTagCompound nbtRoot) {
     IPoweredTask tmp = currentTask; // TODO
     super.readCustomNBT(nbtRoot);
-    currentTask = tmp;
+    currentTask = tmp; // TODO
     if (nbtRoot.hasKey("progress_in")) {
       progress_in = FluidRegistry.getFluid(nbtRoot.getInteger("progress_in"));
     } else {

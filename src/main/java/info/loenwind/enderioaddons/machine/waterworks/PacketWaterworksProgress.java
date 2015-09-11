@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
 import io.netty.buffer.ByteBuf;
+
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -27,10 +30,9 @@ public class PacketWaterworksProgress extends MessageTileEntity<TileWaterworks> 
   private float stashProgress = 0.0f;
 
   public PacketWaterworksProgress() {
-
   }
 
-  public PacketWaterworksProgress(TileWaterworks te) {
+  public PacketWaterworksProgress(@Nonnull TileWaterworks te) {
     super(te);
     progress = te.getProgress();
 
@@ -101,7 +103,7 @@ public class PacketWaterworksProgress extends MessageTileEntity<TileWaterworks> 
     return null;
   }
 
-  private static void setTank(SmartTank tank, int amount, int flid) {
+  private static void setTank(@Nonnull SmartTank tank, int amount, int flid) {
     if (amount > 0) {
       if (tank.getFluid() != null && flid == tank.getFluid().getFluidID()) {
         tank.setFluidAmount(amount);

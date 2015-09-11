@@ -5,8 +5,11 @@ import info.loenwind.enderioaddons.config.Config;
 
 import java.awt.Rectangle;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.fluids.Fluid;
 
 import org.lwjgl.opengl.GL11;
 
@@ -19,9 +22,10 @@ import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
 public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
 
+  @Nonnull
   private static final String GUI_TEXTURE = EnderIOAddons.DOMAIN + ":textures/gui/waterworks.png";
 
-  public GuiWaterworks(InventoryPlayer par1InventoryPlayer, TileWaterworks te) {
+  public GuiWaterworks(InventoryPlayer par1InventoryPlayer, @Nonnull TileWaterworks te) {
     super(te, new ContainerWaterworks(par1InventoryPlayer, te));
 
     addToolTip(new GuiToolTip(new Rectangle(30, 9, 15, 47), "") {
@@ -99,21 +103,23 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
       RenderUtil.renderGuiTank(getTileEntity().outputTank, guiLeft + 78, guiTop + 9, zLevel, 16, 47);
     }
 
-    if (getTileEntity().progress_in != null) {
+    final Fluid progress_in = getTileEntity().progress_in;
+    if (progress_in != null) {
       RenderUtil.bindBlockTexture();
       GL11.glEnable(GL11.GL_BLEND);
       float progress0 = getTileEntity().getProgress();
       if (progress0 >= 0) {
         float progress = MathHelper.clamp_float(progress0 * 1.3f - 0.15f, 0, 1);
-        int cfactor = getTileEntity().progress_out != null ? Config.waterWorksWaterReductionPercentage : 0;
+        final Fluid progress_out = getTileEntity().progress_out;
+        int cfactor = progress_out != null ? Config.waterWorksWaterReductionPercentage : 0;
         int hmin = 26 * cfactor / 100;
         int h = (int) (hmin + (1f - progress) * (26 - hmin));
         int offset = 26 - h;
         GL11.glColor4f(1, 1, 1, 0.75f * (1f - progress0));
-        drawTexturedModelRectFromIcon(guiLeft + 50, guiTop + 32 + offset, getTileEntity().progress_in.getStillIcon(), 24, h);
-        if (getTileEntity().progress_out != null) {
+        drawTexturedModelRectFromIcon(guiLeft + 50, guiTop + 32 + offset, progress_in.getStillIcon(), 24, h);
+        if (progress_out != null) {
           GL11.glColor4f(1, 1, 1, 0.75f * progress0);
-          drawTexturedModelRectFromIcon(guiLeft + 50, guiTop + 32 + offset, getTileEntity().progress_out.getStillIcon(), 24, h);
+          drawTexturedModelRectFromIcon(guiLeft + 50, guiTop + 32 + offset, progress_out.getStillIcon(), 24, h);
         }
         GL11.glDisable(GL11.GL_BLEND);
       }

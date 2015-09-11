@@ -8,16 +8,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class Engine {
   private static final int num_levels = 5;
+  @Nonnull
   private final List<Water> levels = new ArrayList<Water>();
   private double waterWorksWaterReductionPercentageUsedInCalcs = 0.0;
+  @Nonnull
   private final Water config;
   
-  public Engine(Water config) {
+  public Engine(@Nonnull Water config) {
     this.config = config;
     computeLevels();
   }
@@ -33,7 +37,8 @@ public class Engine {
     }
   }
 
-  private Stash computeLevel(Stash input, int level) {
+  @Nonnull
+  private Stash computeLevel(@Nonnull Stash input, int level) {
     Stash remains = new Stash();
     Water used = new Water();
     
@@ -78,7 +83,7 @@ public class Engine {
     return remains;
   }
   
-  public void processWater(Stash stash, int level, double factor) {
+  public void processWater(@Nonnull Stash stash, int level, double factor) {
     computeLevels();
     Stash use = levels.get(level);
     for (Entry<String, Double> comp : use.getContents().entrySet()) {
@@ -120,7 +125,8 @@ public class Engine {
    *         mode LOW_OUTPUTS is not a possible return value. OK is returned
    *         instead.
    */
-  public CreationResult createItems(Stash stash, int level, IInventory inv, int startSlot, int endSlot, boolean doCreate) {
+  @Nonnull
+  public CreationResult createItems(@Nonnull Stash stash, int level, @Nonnull IInventory inv, int startSlot, int endSlot, boolean doCreate) {
     computeLevels();
     boolean haveInserted = false;
     progress = 0.0;
