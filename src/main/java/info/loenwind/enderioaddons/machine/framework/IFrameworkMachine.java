@@ -1,5 +1,8 @@
 package info.loenwind.enderioaddons.machine.framework;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 
@@ -9,9 +12,10 @@ public interface IFrameworkMachine {
     FRONT_LEFT, FRONT_RIGHT, BACK_RIGHT, BACK_LEFT;
   }
 
-  boolean hasTank(TankSlot tankSlot);
+  boolean hasTank(@Nonnull TankSlot tankSlot);
 
-  Fluid getTankFluid(TankSlot tankSlot);
+  @Nullable
+  Fluid getTankFluid(@Nonnull TankSlot tankSlot);
 
   boolean hasController();
 
@@ -19,9 +23,10 @@ public interface IFrameworkMachine {
   //
   //  int getSlotMachineMeta(TankSlot tankSlot);
 
-  boolean renderSlot(TankSlot tankSlot);
+  boolean renderSlot(@Nonnull TankSlot tankSlot);
 
-  IIcon getSlotIcon(TankSlot tankSlot, int side);
+  @Nullable
+  IIcon getSlotIcon(@Nonnull TankSlot tankSlot, int side);
 
   String getControllerModelName();
 }

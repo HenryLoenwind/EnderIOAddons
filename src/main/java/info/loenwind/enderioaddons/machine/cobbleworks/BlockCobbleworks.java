@@ -2,10 +2,13 @@ package info.loenwind.enderioaddons.machine.cobbleworks;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
+import info.loenwind.enderioaddons.machine.drain.FluidHelper;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
-import info.loenwind.enderioaddons.machine.framework.TextureProvider;
+import info.loenwind.enderioaddons.machine.framework.ITextureProvider;
 
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
 
-public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> implements IFrameworkBlock, TextureProvider {
+public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> implements IFrameworkBlock, ITextureProvider {
 
   public static final ModObject ModObject_blockCobbleworks = EnumHelper.addEnum(ModObject.class, "blockCobbleworks", new Class<?>[0], new Object[0]);
   public static BlockCobbleworks blockCobbleworks;
@@ -33,6 +36,11 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   protected BlockCobbleworks() {
     super(ModObject_blockCobbleworks, TileCobbleworks.class);
+  }
+
+  @Nonnull
+  public static BlockCobbleworks getBlock() {
+    return FluidHelper.notnull(blockCobbleworks, "Internal statwe error: BlockCobbleworks has not been initialized");
   }
 
   @Override

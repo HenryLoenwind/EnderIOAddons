@@ -1,6 +1,10 @@
 package info.loenwind.enderioaddons.machine.framework;
 
+import static info.loenwind.enderioaddons.machine.drain.FluidHelper.notnull;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +27,7 @@ public class TESRFrameworkMachine extends TileEntitySpecialRenderer {
 
   private static final float EPSILON = 0.01f;
 
+  @Nonnull
   private static final int[][] direction = {
       // TankSlot, x/y/z => direction from block center
       { +1, -1, +1 }, // FRONT_LEFT
@@ -31,6 +36,7 @@ public class TESRFrameworkMachine extends TileEntitySpecialRenderer {
       { -1, -1, +1 }, // FRONT_RIGHT
   };
 
+  @Nonnull
   static final int[][] rotation = {
       // ForgeDirection facing, TankSlot logical => TankSlot physical
       { 0, 0, 0, 0 }, // DOWN
@@ -49,9 +55,10 @@ public class TESRFrameworkMachine extends TileEntitySpecialRenderer {
     }
   }
 
-  private static void renderTankPass(TileEntity te, double x, double y, double z, boolean waterPass) {
+  private static void renderTankPass(@Nonnull TileEntity te, double x, double y, double z, boolean waterPass) {
     int facing = ((AbstractMachineEntity) te).facing;
     for (TankSlot tankSlot : TankSlot.values()) {
+      tankSlot = notnull(tankSlot, "Java's broken, enum has null values");
       if (((IFrameworkMachine) te).hasTank(tankSlot)) {
         Fluid fluid = ((IFrameworkMachine) te).getTankFluid(tankSlot);
         if (fluid != null && (fluid == FluidRegistry.WATER) == waterPass) {

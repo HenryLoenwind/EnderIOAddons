@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.machine.framework;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,14 +24,16 @@ import crazypants.enderio.machine.OverlayRenderer;
 
 public class TechneMachineRenderer<T extends AbstractMachineEntity> extends TechneModelRenderer {
 
+  @Nonnull
   private CustomCubeRenderer ccr = new CustomCubeRenderer();
+  @Nonnull
   private OverlayRenderer overlay = new OverlayRenderer();
 
-  public TechneMachineRenderer(AbstractMachineBlock<T> block, String modelPath) {
+  public TechneMachineRenderer(@Nonnull AbstractMachineBlock<T> block, @Nonnull String modelPath) {
     super(EnderIOAddons.MODID, modelPath, block.getRenderType(), new VertexTransformComposite(new VertexRotationFacing(ForgeDirection.NORTH)));
   }
 
-  public TechneMachineRenderer(int renderId, String modelPath) {
+  public TechneMachineRenderer(int renderId, @Nonnull String modelPath) {
     super(TechneUtil.getModel(EnderIOAddons.MODID, modelPath), renderId, new VertexTransformComposite(new VertexRotationFacing(ForgeDirection.NORTH)));
   }
 

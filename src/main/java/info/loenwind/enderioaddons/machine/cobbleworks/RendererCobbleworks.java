@@ -18,10 +18,10 @@ public class RendererCobbleworks implements ISimpleBlockRenderingHandler {
 
   public RendererCobbleworks(@Nonnull RendererFrameworkMachine frameRenderer) {
     this.frameRenderer = frameRenderer;
-    GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(1), BlockCobbleworks.blockCobbleworks);
-    GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockCobbleworks.blockCobbleworks);
+    GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(1), BlockCobbleworks.getBlock());
+    GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockCobbleworks.getBlock());
 
-    frameRenderer.registerController(BlockCobbleworks.blockCobbleworks.getControllerModelName(),
+    frameRenderer.registerController(BlockCobbleworks.getBlock().getControllerModelName(),
         controllerActive, controllerPassive);
   }
 

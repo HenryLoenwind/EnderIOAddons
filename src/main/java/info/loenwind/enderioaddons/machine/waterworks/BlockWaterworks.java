@@ -2,11 +2,14 @@ package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
+import info.loenwind.enderioaddons.machine.drain.FluidHelper;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
-import info.loenwind.enderioaddons.machine.framework.TextureProvider;
+import info.loenwind.enderioaddons.machine.framework.ITextureProvider;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntitySmokeFX;
@@ -22,7 +25,7 @@ import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
 import crazypants.enderio.network.PacketHandler;
 
-public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implements IFrameworkBlock, TextureProvider {
+public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implements IFrameworkBlock, ITextureProvider {
 
   public static final ModObject ModObject_blockWaterworks = EnumHelper.addEnum(ModObject.class, "blockWaterworks", new Class<?>[0], new Object[0]);
   public static BlockWaterworks blockWaterworks;
@@ -38,6 +41,11 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
 
   protected BlockWaterworks() {
     super(ModObject_blockWaterworks, TileWaterworks.class);
+  }
+
+  @Nonnull
+  public static BlockWaterworks getBlock() {
+    return FluidHelper.notnull(blockWaterworks, "Internal statwe error: BlockWaterworks has not been initialized");
   }
 
   @Override

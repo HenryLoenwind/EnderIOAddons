@@ -14,10 +14,10 @@ public class RendererWaterworks implements ISimpleBlockRenderingHandler {
 
   public RendererWaterworks(RendererFrameworkMachine frameRenderer) {
     this.frameRenderer = frameRenderer;
-    GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(3), BlockWaterworks.blockWaterworks);
-    GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockWaterworks.blockWaterworks);
+    GroupObject controllerActive = new GroupObjectWithIcon(frameRenderer.getControllerPart(3), BlockWaterworks.getBlock());
+    GroupObject controllerPassive = new GroupObjectWithIcon(frameRenderer.getControllerPart(2), BlockWaterworks.getBlock());
 
-    frameRenderer.registerController(BlockWaterworks.blockWaterworks.getControllerModelName(),
+    frameRenderer.registerController(BlockWaterworks.getBlock().getControllerModelName(),
         controllerActive, controllerPassive);
   }
 

@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.framework;
 
+import static info.loenwind.enderioaddons.machine.drain.FluidHelper.notnull;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 
@@ -8,6 +9,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -26,11 +30,16 @@ import crazypants.enderio.machine.AbstractMachineEntity;
 
 public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTileFramework> {
 
+  @Nonnull
   private Map<String, GroupObject> controller = new HashMap<String, GroupObject>();
 
+  @Nonnull
   private GroupObject[] tanks = { null, null, null, null };
+  @Nonnull
   private GroupObject[] valves = { null, null, null, null };
+  @Nonnull
   private GroupObject[] stems = { null, null };
+  @Nonnull
   private GroupObject[] contr = { null, null, null, null, null, null, null, null, null, null };
 
   public RendererFrameworkMachine() {
@@ -48,15 +57,17 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     }
   }
 
-  public GroupObject extractModelPart(String name) {
+  @Nullable
+  public GroupObject extractModelPart(@Nonnull String name) {
     return model.remove(name);
   }
 
+  @Nullable
   public GroupObject getControllerPart(int id) {
     return contr[id - 1];
   }
 
-  public void registerController(String name, GroupObject active, GroupObject inactive) {
+  public void registerController(@Nonnull String name, @Nonnull GroupObject active, @Nonnull GroupObject inactive) {
     controller.put(name, inactive);
     controller.put(name + "Active", active);
   }
@@ -74,6 +85,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
       }
 
       for (TankSlot tankSlot : TankSlot.values()) {
+        tankSlot = notnull(tankSlot, "Java's broken, enum has null values");
         if (frameworkMachine.renderSlot(tankSlot)) {
           renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
         }
@@ -83,10 +95,10 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return super.renderWorldBlock(world, x, y, z, block, modelId, renderer);
   }
 
-  private static void renderSubBlock(int x, int y, int z, AbstractMachineEntity te, float[] brightnessPerSide, TankSlot tankSlot) {
+  private static void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, float[] brightnessPerSide, @Nonnull TankSlot tankSlot) {
     BoundingBox bb = BoundingBox.UNIT_CUBE;
 
-    int[] pos = translateToSlotPosition(te.getFacingDir(), tankSlot);
+    int[] pos = translateToSlotPosition(notnull(te.getFacingDir(), "Internal state error: Block is not facing any direction"), tankSlot);
     bb = bb.translate(pos[0] * 4f / 16f, 4f / 16f, pos[1] * 4f / 16f);
     bb = bb.scale(6D / 16D, 6D / 16D, 6D / 16D);
     bb = bb.translate(x, y, z);
@@ -95,7 +107,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     CubeRenderer.render(bb, icons, null, brightnessPerSide);
   }
 
-  private static ForgeDirection turn(ForgeDirection dir, TankSlot tankSlot) {
+  private static ForgeDirection turn(@Nonnull ForgeDirection dir, @Nonnull TankSlot tankSlot) {
     if (tankSlot == TankSlot.BACK_RIGHT) {
       return dir.getRotation(ForgeDirection.DOWN);
     } else if (tankSlot == TankSlot.BACK_LEFT) {
@@ -107,9 +119,10 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     }
   }
 
+  @Nonnull
   private static final int[][] positions = { { -1, 1 }, { 1, 1 }, { 1, -1 }, { -1, -1 } };
 
-  private static int[] translateToSlotPosition(ForgeDirection dir, TankSlot tankSlot) {
+  private static int[] translateToSlotPosition(@Nonnull ForgeDirection dir, @Nonnull TankSlot tankSlot) {
     switch (dir) {
     case NORTH:
       return positions[(2 + tankSlot.ordinal()) & 3];
@@ -125,9 +138,9 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return positions[0];
   }
 
-  public static IIcon[] getBlockTextures(AbstractMachineEntity te, TankSlot tankSlot) {
+  public static IIcon[] getBlockTextures(@Nonnull AbstractMachineEntity te, @Nonnull TankSlot tankSlot) {
     IFrameworkMachine fm = (IFrameworkMachine) te;
-    int facing = turn(te.getFacingDir(), tankSlot).ordinal();
+    int facing = turn(notnull(te.getFacingDir(), "Internal state error: Block is not facing any direction"), tankSlot).ordinal();
     IIcon[] icons = new IIcon[6];
     int i = 0;
     for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
@@ -180,6 +193,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
 
       boolean stem1 = false, stem2 = false;
       for (TankSlot tankSlot : TankSlot.values()) {
+        tankSlot = notnull(tankSlot, "Java's broken, enum has null values");
         if (frameworkMachine.hasTank(tankSlot)) {
           int i = tankSlot.ordinal();
           result.add(tanks[i]);
@@ -208,7 +222,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
   }
 
   @SuppressWarnings("static-method")
-  protected boolean renderFrameInItem(@SuppressWarnings("unused") Block block, int metadata) {
+  protected boolean renderFrameInItem(@SuppressWarnings("unused") @Nullable Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].hasFrame;
     }
@@ -216,7 +230,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
   }
 
   @SuppressWarnings("static-method")
-  protected String getControllerInItemName(Block block, int metadata) {
+  protected String getControllerInItemName(@Nullable Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].getControllerModelName();
     } else if (block instanceof IFrameworkBlock) {
@@ -226,7 +240,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
   }
 
   @SuppressWarnings("static-method")
-  protected boolean renderAllTanksInItem(@SuppressWarnings("unused") Block block, int metadata) {
+  protected boolean renderAllTanksInItem(@SuppressWarnings("unused") @Nullable Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].hasTanks;
     }
@@ -234,7 +248,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
   }
 
   @SuppressWarnings("static-method")
-  protected boolean renderOneTankInItem(@SuppressWarnings("unused") Block block, int metadata) {
+  protected boolean renderOneTankInItem(@SuppressWarnings("unused") @Nullable Block block, int metadata) {
     if ((metadata & 16) == 16) {
       return MachinePart.values()[metadata & 15].hasSingleTank;
     }
