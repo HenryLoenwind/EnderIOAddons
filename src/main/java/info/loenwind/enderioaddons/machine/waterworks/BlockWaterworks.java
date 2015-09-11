@@ -1,8 +1,8 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
-import info.loenwind.enderioaddons.machine.drain.FluidHelper;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
 import info.loenwind.enderioaddons.machine.framework.ITextureProvider;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
@@ -45,7 +45,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
 
   @Nonnull
   public static BlockWaterworks getBlock() {
-    return FluidHelper.notnull(blockWaterworks, "Internal statwe error: BlockWaterworks has not been initialized");
+    return notnull(blockWaterworks, "Internal statwe error: BlockWaterworks has not been initialized");
   }
 
   @Override

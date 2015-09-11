@@ -1,7 +1,11 @@
 package info.loenwind.enderioaddons.machine.part;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -16,9 +20,10 @@ import crazypants.enderio.Log;
 public class MachinePartRenderer implements IItemRenderer {
 
   private boolean loggedError = false;
-  private RendererFrameworkMachine frameRenderer;
+  @Nonnull
+  private final RendererFrameworkMachine frameRenderer;
 
-  public MachinePartRenderer(RendererFrameworkMachine frameRenderer) {
+  public MachinePartRenderer(@Nonnull RendererFrameworkMachine frameRenderer) {
     this.frameRenderer = frameRenderer;
   }
 
@@ -39,36 +44,37 @@ public class MachinePartRenderer implements IItemRenderer {
 
   @Override
   public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+    @Nonnull
+    final RenderBlocks renderBlocks = notnull((RenderBlocks) data[0], "Game state error: Missing RenderBlock parameter");
+    @Nonnull
+    final ItemStack itemToRender = notnull(item, "Game state error: Missing item to render");
     if(type == ItemRenderType.INVENTORY) {
-      RenderBlocks renderBlocks = (RenderBlocks) data[0];
-      renderToInventory(item, renderBlocks);
+      renderToInventory(itemToRender, renderBlocks);
     } else if(type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-      renderEquipped(item, (RenderBlocks) data[0]);
+      renderEquipped(itemToRender, renderBlocks);
     } else if(type == ItemRenderType.ENTITY) {
-      renderEntity(item, (RenderBlocks) data[0]);
-    } else {
-      if(loggedError) {
-        Log.warn("MachinePartRenderer.renderItem: Unsupported render type");
-        loggedError = true;
-      }
+      renderEntity(itemToRender, renderBlocks);
+    } else if (!loggedError) {
+      Log.warn("MachinePartRenderer.renderItem: Unsupported render type");
+      loggedError = true;
     }
   }
 
-  private void renderEntity(ItemStack item, RenderBlocks renderBlocks) {
+  private void renderEntity(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks) {
     GL11.glPushMatrix();
     GL11.glScalef(0.5f, 0.5f, 0.5f);
     renderToInventory(item, renderBlocks);
     GL11.glPopMatrix();
   }
 
-  private void renderEquipped(ItemStack item, RenderBlocks renderBlocks) {
+  private void renderEquipped(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks) {
     GL11.glPushMatrix();
     GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     renderToInventory(item, renderBlocks);
     GL11.glPopMatrix();
   }
 
-  private void renderToInventory(ItemStack item, RenderBlocks renderBlocks) {
+  private void renderToInventory(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks) {
     GL11.glEnable(GL11.GL_ALPHA_TEST);
     if (MachinePart.values()[item.getItemDamage()].renderAsFrameMachine) {
       RenderUtil.bindBlockTexture();

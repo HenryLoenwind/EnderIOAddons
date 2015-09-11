@@ -1,8 +1,8 @@
 package info.loenwind.enderioaddons.machine.cobbleworks;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
-import info.loenwind.enderioaddons.machine.drain.FluidHelper;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
 import info.loenwind.enderioaddons.machine.framework.ITextureProvider;
 
@@ -40,7 +40,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   @Nonnull
   public static BlockCobbleworks getBlock() {
-    return FluidHelper.notnull(blockCobbleworks, "Internal statwe error: BlockCobbleworks has not been initialized");
+    return notnull(blockCobbleworks, "Internal statwe error: BlockCobbleworks has not been initialized");
   }
 
   @Override

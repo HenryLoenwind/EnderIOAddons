@@ -1,6 +1,10 @@
 package info.loenwind.enderioaddons.machine.part;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -18,18 +22,22 @@ public enum MachinePart {
   FILTER_ELEMENT("filterElement", true, false, false, null, false, false), //
   WATER_CONTROLLER("waterController", true, true, false, "waterController", false, false); //
 
+  @Nonnull
   public final String unlocalisedName;
+  @Nonnull
   public final String iconKey;
+  @Nonnull
   public final String oreDict;
   public final boolean render3d;
   public final boolean renderAsFrameMachine;
   public final boolean hasFrame;
+  @Nullable
   public final String controllerModelName;
   public final boolean hasTanks;
   public final boolean hasSingleTank;
 
-  private MachinePart(String unlocalisedName, boolean render3d, boolean renderAsFrameMachine, boolean hasFrame,
-      String controllerModelName, boolean hasTanks, boolean hasSingleTank) {
+  private MachinePart(@Nonnull String unlocalisedName, boolean render3d, boolean renderAsFrameMachine, boolean hasFrame, @Nullable String controllerModelName,
+      boolean hasTanks, boolean hasSingleTank) {
     this.unlocalisedName = EnderIOAddons.DOMAIN + "." + unlocalisedName;
     this.iconKey = EnderIOAddons.DOMAIN + ":" + unlocalisedName;
     this.oreDict = "item" + StringUtils.capitalize(unlocalisedName);
@@ -41,7 +49,7 @@ public enum MachinePart {
     this.hasSingleTank = hasSingleTank;
   }
   
-  public static void registerOres(Item item) {
+  public static void registerOres(@Nonnull Item item) {
     for (MachinePart m : values()) {
       OreDictionary.registerOre(m.oreDict, new ItemStack(item, 1, m.ordinal()));
     }

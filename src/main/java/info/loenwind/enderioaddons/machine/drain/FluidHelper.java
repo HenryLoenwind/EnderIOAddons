@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,14 +46,6 @@ public final class FluidHelper {
    */
   public void setDrainingCallback(@Nonnull IDrainingCallback hook) {
     this.hook = hook;
-  }
-
-  @Nonnull
-  public static <P> P notnull(P o, @Nonnull String message) {
-    if (o == null) {
-      throw new NullPointerException(message);
-    }
-    return o;
   }
 
   private FluidHelper(@Nonnull World world, @Nonnull FluidStack stack, @Nullable BlockCoord startbc) throws Exception {

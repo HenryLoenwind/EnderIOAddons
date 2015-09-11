@@ -1,6 +1,6 @@
 package info.loenwind.enderioaddons.machine.framework;
 
-import static info.loenwind.enderioaddons.machine.drain.FluidHelper.notnull;
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 

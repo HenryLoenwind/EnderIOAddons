@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.waterhooks.WaterFormEvent;
 
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class InfiniteWaterSourceStopper {
   @Optional.Method(modid = "waterhooks|API")
   @SubscribeEvent
   public void onWaterForming(WaterFormEvent event) {
-    final World world = FluidHelper.notnull(event.world, "Bad game state: Event has no world");
+    final World world = notnull(event.world, "Bad game state: Event has no world");
     Map<IWaterSensitive, Object> tebl = teblMap.get(world.provider.dimensionId);
     if (tebl != null) {
       BlockCoord bc = new BlockCoord(event.x, event.y, event.z);
