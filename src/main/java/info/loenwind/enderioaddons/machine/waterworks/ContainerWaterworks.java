@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -12,7 +14,7 @@ public class ContainerWaterworks extends AbstractMachineContainer<TileWaterworks
   private static final int ROW = 9 - D;
   private static final int COL = 98 - D;
 
-  public ContainerWaterworks(InventoryPlayer playerInv, TileWaterworks te) {
+  public ContainerWaterworks(InventoryPlayer playerInv, @Nonnull TileWaterworks te) {
     super(playerInv, te);
   }
 
