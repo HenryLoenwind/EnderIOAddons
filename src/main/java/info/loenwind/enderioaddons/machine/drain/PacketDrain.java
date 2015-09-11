@@ -1,11 +1,15 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import io.netty.buffer.ByteBuf;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+
 import com.enderio.core.common.network.MessageTileEntity;
 import com.enderio.core.common.network.NetworkUtil;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -18,7 +22,7 @@ public class PacketDrain extends MessageTileEntity<TileDrain> implements IMessag
   public PacketDrain() {
   }
 
-  public PacketDrain(TileDrain tile) {
+  public PacketDrain(@Nonnull TileDrain tile) {
     super(tile);
     nbtRoot = new NBTTagCompound();
     if(tile.tank.getFluidAmount() > 0) {

@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -22,8 +24,8 @@ public class DrainFluidRenderer extends TileEntitySpecialRenderer {
     renderTankFluid((TileDrain) te, (float) x, (float) y, (float) z);
   }
 
-  public static void renderTankFluid(TileDrain drain, float x, float y, float z) {
-    if (drain == null || drain.tank == null || drain.tank.getFluid() == null || drain.tank.getFluidAmount() <= 0) {
+  public static void renderTankFluid(@Nullable TileDrain drain, float x, float y, float z) {
+    if (drain == null || drain.tank.getFluid() == null || drain.tank.getFluidAmount() <= 0) {
       return;
     }
     IIcon icon_fluid = drain.tank.getFluid().getFluid().getStillIcon();

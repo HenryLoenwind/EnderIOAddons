@@ -4,6 +4,8 @@ import info.loenwind.enderioaddons.EnderIOAddons;
 
 import java.awt.Rectangle;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
@@ -17,7 +19,7 @@ import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
 public class GuiDrain extends GuiPoweredMachineBase<TileDrain> {
 
-  public GuiDrain(InventoryPlayer par1InventoryPlayer, TileDrain te) {
+  public GuiDrain(@Nonnull InventoryPlayer par1InventoryPlayer, @Nonnull TileDrain te) {
     super(te, new ContainerDrain(par1InventoryPlayer, te));
 
     addToolTip(new GuiToolTip(new Rectangle(80, 21, 16, 47), "") {

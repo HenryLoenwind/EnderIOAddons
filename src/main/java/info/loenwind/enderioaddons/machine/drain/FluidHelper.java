@@ -3,6 +3,9 @@ package info.loenwind.enderioaddons.machine.drain;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.world.World;
@@ -18,35 +21,51 @@ import com.enderio.core.common.util.BlockCoord;
 
 public final class FluidHelper {
 
+  @Nonnull
   private final World world;
+  @Nonnull
   private final FluidStack stack;
+  @Nonnull
   private final Fluid fluid;
+  @Nonnull
   private final Block block;
+  @Nonnull
   private final ForgeDirection downflowDirection;
+  @Nonnull
   private final ForgeDirection upflowDirection;
+  @Nonnull
   private final FType type;
+  @Nullable
   private final BlockCoord startbc;
   private IDrainingCallback hook;
 
   /*
    * Set this to block removed water from forming infinite pools. The block expires when the given te is gc()ed.
    */
-  public void setDrainingCallback(IDrainingCallback hook) {
+  public void setDrainingCallback(@Nonnull IDrainingCallback hook) {
     this.hook = hook;
   }
 
-  private FluidHelper(World world, FluidStack stack, BlockCoord startbc) throws Exception {
+  @Nonnull
+  public static <P> P notnull(P o, @Nonnull String message) {
+    if (o == null) {
+      throw new NullPointerException(message);
+    }
+    return o;
+  }
+
+  private FluidHelper(@Nonnull World world, @Nonnull FluidStack stack, @Nullable BlockCoord startbc) throws Exception {
     this.world = world;
     this.stack = stack;
-    this.fluid = stack.getFluid();
-    this.block = fluid.getBlock();
+    this.fluid = notnull(stack.getFluid(), "Invalid FluidStack (there's no fluid inside)");
+    this.block = notnull(fluid.getBlock(), "Invalid Fluid (it has no source block)");
     this.downflowDirection = fluid.getDensity() > 0 ? ForgeDirection.DOWN : ForgeDirection.UP;
     this.upflowDirection = downflowDirection == ForgeDirection.UP ? ForgeDirection.DOWN : ForgeDirection.UP;
-    if (block instanceof BlockFluidClassic) {
+    if (this.block instanceof BlockFluidClassic) {
       this.type = FType.CLASSIC;
-    } else if (block instanceof BlockFluidFinite) {
+    } else if (this.block instanceof BlockFluidFinite) {
       this.type = FType.FINITE;
-    } else if (block instanceof BlockLiquid) {
+    } else if (this.block instanceof BlockLiquid) {
       this.type = FType.VANILLA;
     } else {
       throw new Exception();
@@ -54,7 +73,7 @@ public final class FluidHelper {
     this.startbc = startbc;
   }
 
-  public static boolean isSourceBlock(World world, BlockCoord bc) {
+  public static boolean isSourceBlock(@Nonnull World world, @Nonnull BlockCoord bc) {
     Block block = bc.getBlock(world);
     if (block instanceof BlockFluidClassic) {
       return ((BlockFluidClassic) block).isSourceBlock(world, bc.x, bc.y, bc.z);
@@ -67,11 +86,14 @@ public final class FluidHelper {
     }
   }
 
-  private static final ForgeDirection[] DIRECTIONS_INIT = {ForgeDirection.UP, ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.EAST};
+  @Nonnull
+  private static final ForgeDirection[] DIRECTIONS_INIT = { ForgeDirection.UP, ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST,
+      ForgeDirection.EAST };
   
-  public static FluidHelper getInstance(World world, BlockCoord bc) {
+  @Nullable
+  public static FluidHelper getInstance(@Nonnull World world, @Nonnull BlockCoord bc) {
     for (ForgeDirection forgeDirection : DIRECTIONS_INIT) {
-      BlockCoord direction = bc.getLocation(forgeDirection);
+      BlockCoord direction = getLocation(bc, forgeDirection);
       if (isSourceBlock(world, direction)) {
         Fluid fluidForBlock = FluidRegistry.lookupFluidForBlock(direction.getBlock(world));
         if (fluidForBlock != null) {
@@ -83,7 +105,7 @@ public final class FluidHelper {
       }
     }
     for (ForgeDirection forgeDirection : DIRECTIONS_INIT) {
-      BlockCoord direction = bc.getLocation(forgeDirection);
+      BlockCoord direction = getLocation(bc, forgeDirection);
       Fluid fluidForBlock = FluidRegistry.lookupFluidForBlock(direction.getBlock(world));
       if (fluidForBlock != null) {
         FluidHelper result = getInstance(world, new FluidStack(fluidForBlock, 1000), direction);
@@ -95,15 +117,16 @@ public final class FluidHelper {
     return null;
   }
   
-  public static FluidHelper getInstance(World world, BlockCoord bc, FluidStack fs) {
+  @Nullable
+  public static FluidHelper getInstance(@Nonnull World world, @Nonnull BlockCoord bc, @Nonnull FluidStack fs) {
     for (ForgeDirection forgeDirection : DIRECTIONS_INIT) {
-      BlockCoord direction = bc.getLocation(forgeDirection);
+      BlockCoord direction = getLocation(bc, forgeDirection);
       if (isSourceBlock(world, direction) && isSameLiquid(fs, world, direction)) {
         return getInstance(world, fs, direction);
       }
     }
     for (ForgeDirection forgeDirection : DIRECTIONS_INIT) {
-      BlockCoord direction = bc.getLocation(forgeDirection);
+      BlockCoord direction = getLocation(bc, forgeDirection);
       if (isSameLiquid(fs, world, direction)) {
         return getInstance(world, fs, direction);
       }
@@ -111,7 +134,8 @@ public final class FluidHelper {
     return null;
   }
   
-  public static FluidHelper getInstance(World world, FluidStack stack, BlockCoord startbc) {
+  @Nullable
+  public static FluidHelper getInstance(@Nonnull World world, @Nonnull FluidStack stack, @Nullable BlockCoord startbc) {
     try {
       return new FluidHelper(world, stack, startbc);
     } catch (Throwable t) {
@@ -121,7 +145,8 @@ public final class FluidHelper {
     }
   }
 
-  public static FluidHelper getInstance(World world, FluidStack stack) {
+  @Nullable
+  public static FluidHelper getInstance(@Nonnull World world, @Nonnull FluidStack stack) {
     return getInstance(world, stack, null);
   }
 
@@ -131,22 +156,22 @@ public final class FluidHelper {
     FINITE
   }
   
-  private static boolean isInWorld(BlockCoord bc) {
+  private static boolean isInWorld(@Nonnull BlockCoord bc) {
     return bc.y > 0 && bc.y <= 255;
   }
   
   /*
    * same liquid
    */
-  public boolean isSameLiquid(BlockCoord bc) {
+  public boolean isSameLiquid(@Nonnull BlockCoord bc) {
     return bc.getBlock(world) == block;
   }
   
-  public static boolean isSameLiquid(FluidStack fs, World world, BlockCoord bc) {
+  public static boolean isSameLiquid(@Nonnull FluidStack fs, @Nonnull World world, @Nonnull BlockCoord bc) {
     return bc.getBlock(world) == fs.getFluid().getBlock();
   }
   
-  public boolean isSourceBlock(BlockCoord bc) {
+  public boolean isSourceBlock(@Nonnull BlockCoord bc) {
     switch (type) {
     case CLASSIC:
       return ((BlockFluidClassic) block).isSourceBlock(world, bc.x, bc.y, bc.z);
@@ -158,7 +183,7 @@ public final class FluidHelper {
     throw new IllegalStateException("unreachable code");
   }
   
-  public boolean isFlowingBlock(BlockCoord bc) {
+  public boolean isFlowingBlock(@Nonnull BlockCoord bc) {
 	    switch (type) {
 	    case CLASSIC:
 	      return !((BlockFluidClassic) block).isSourceBlock(world, bc.x, bc.y, bc.z);
@@ -170,22 +195,28 @@ public final class FluidHelper {
 	    throw new IllegalStateException("unreachable code");
 	  }
 	  
+  @Nonnull
+  public static BlockCoord getLocation(@Nonnull BlockCoord bc, ForgeDirection dir) {
+    notnull(dir, "ForgeDirection went AWOL");
+    return new BlockCoord(bc.x + dir.offsetX, bc.y + dir.offsetY, bc.z + dir.offsetZ);
+  }
+
   /*
    * Replacement for isFlowingVertically() that does the right thing
    */
-  public boolean isFlowingVertically2(BlockCoord bc) {
-    BlockCoord downflow = bc.getLocation(downflowDirection);
-    return isSameLiquid(bc.getLocation(ForgeDirection.UP)) && isSameLiquid(bc.getLocation(ForgeDirection.DOWN)) && !isSourceBlock(downflow);
+  public boolean isFlowingVertically2(@Nonnull BlockCoord bc) {
+    BlockCoord downflow = getLocation(bc, downflowDirection);
+    return isSameLiquid(getLocation(bc, ForgeDirection.UP)) && isSameLiquid(getLocation(bc, ForgeDirection.DOWN)) && !isSourceBlock(downflow);
   }
 
   /*
    * same liquid and nearer to a source block
    */
-  public boolean isUpflow(BlockCoord bc0, BlockCoord bc1) {
+  public boolean isUpflow(@Nonnull BlockCoord bc0, @Nonnull BlockCoord bc1) {
     switch (type) {
     case CLASSIC:
       return world.getBlockMetadata(bc1.x, bc1.y, bc1.z) < world.getBlockMetadata(bc0.x, bc0.y, bc0.z)
-    		  || isSameLiquid(bc1.getLocation(upflowDirection));
+ || isSameLiquid(getLocation(bc1, upflowDirection));
     case FINITE:
       return world.getBlockMetadata(bc1.x, bc1.y, bc1.z) > world.getBlockMetadata(bc0.x, bc0.y, bc0.z);
     case VANILLA:
@@ -199,7 +230,7 @@ public final class FluidHelper {
   /*
    * move a source block, or delete it if it flows out of the world
    */
-  public void doFlow(BlockCoord bc0, BlockCoord bc1) {
+  public void doFlow(@Nonnull BlockCoord bc0, @Nonnull BlockCoord bc1) {
     if (isInWorld(bc1)) {
       world.setBlock(bc1.x, bc1.y, bc1.z, world.getBlock(bc0.x, bc0.y, bc0.z), world.getBlockMetadata(bc0.x, bc0.y, bc0.z), 3);
     }
@@ -222,9 +253,9 @@ public final class FluidHelper {
     }
   }
 
-  private void preventWater(BlockCoord bc) {
+  private void preventWater(@Nonnull BlockCoord bc) {
     for (ForgeDirection forgeDirection : DIRECTIONS) {
-      final BlockCoord bc1 = bc.getLocation(forgeDirection);
+      final BlockCoord bc1 = getLocation(bc, forgeDirection);
       if (isSameLiquid(bc1) && !isSourceBlock(bc1)) {
         hook.onWaterDrainNearby(world, bc1);
       }
@@ -232,21 +263,22 @@ public final class FluidHelper {
     hook.onWaterDrain(world, bc);
   }
   
-  private int adjCount(BlockCoord bc) {
+  private int adjCount(@Nonnull BlockCoord bc) {
     int result = 0;
     for (ForgeDirection forgeDirection : DIRECTIONS) {
-      if (isSameLiquid(bc.getLocation(forgeDirection))) {
+      if (isSameLiquid(getLocation(bc, forgeDirection))) {
         result++;
       }
     }
     return result;
   }
   
-  public static final ForgeDirection[] DIRECTIONS = {ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.EAST};
+  @Nonnull
+  public static final ForgeDirection[] DIRECTIONS = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.EAST };
   
   private Set<BlockCoord> seen;
   
-  public boolean findAndPullSourceBlock(BlockCoord bc) {
+  public boolean findAndPullSourceBlock(@Nonnull BlockCoord bc) {
     seen = new HashSet<BlockCoord>();
     return findAndPullSourceBlock(bc, false);
   }
@@ -254,14 +286,17 @@ public final class FluidHelper {
   public static class ReturnObject {
     public boolean isDry = false;
     public boolean inProgress = false;
+    @Nullable
     public FluidStack result = null;
   }
 
+  @Nonnull
   public ReturnObject eatOrPullFluid() {
-    return eatOrPullFluid(startbc);
+    return eatOrPullFluid(notnull(startbc, "Invaliud state: Starting position has not been set"));
   }
 
-  public ReturnObject eatOrPullFluid(BlockCoord bc) {
+  @Nonnull
+  public ReturnObject eatOrPullFluid(@Nonnull BlockCoord bc) {
     ReturnObject result = new ReturnObject();
     if (isSameLiquid(bc)) {
       if (!isSourceBlock(bc)) {
@@ -280,7 +315,7 @@ public final class FluidHelper {
           break;
         case VANILLA:
           result.result = stack.copy();
-          result.result.amount = 1000;
+          notnull(result.result, "Copying a FluidStack failed").amount = 1000;
           if (fluid == FluidRegistry.WATER && hook != null) {
             hook.onWaterDrain(world, bc);
           }
@@ -295,10 +330,11 @@ public final class FluidHelper {
         // there is liquid here but we were unable to find a source block for it. Minecraft's fluid mechanics
         // may be messed up and give us some fake flowing blocks. Try to remedy this be forcing it to re-flow them.
         for (BlockCoord blockCoord : seen) {
-			if (isFlowingBlock(blockCoord) && isSameLiquid(blockCoord)) {
-				world.setBlockToAir(blockCoord.x, blockCoord.y, blockCoord.z);
-			}
-		}
+          blockCoord = notnull(blockCoord, "Invalid internal state: I remember to have visited an invalid location?");
+          if (isFlowingBlock(blockCoord) && isSameLiquid(blockCoord)) {
+            world.setBlockToAir(blockCoord.x, blockCoord.y, blockCoord.z);
+          }
+        }
       }
     } else {
       result.isDry = true;
@@ -306,11 +342,11 @@ public final class FluidHelper {
     return result;
   }
   
-  private boolean findAndPullSourceBlock(BlockCoord bc, boolean foundStepUp) {
+  private boolean findAndPullSourceBlock(@Nonnull BlockCoord bc, boolean foundStepUp) {
     if (!seen.contains(bc)) {
       seen.add(bc);
 
-      BlockCoord upflow = bc.getLocation(upflowDirection);
+      BlockCoord upflow = getLocation(bc, upflowDirection);
 
       // try to go up first
       if (isInWorld(upflow) && isSameLiquid(upflow)) {
@@ -324,14 +360,14 @@ public final class FluidHelper {
 
       // then look around
       for (ForgeDirection dir : DIRECTIONS) {
-        BlockCoord bc2 = bc.getLocation(dir);
+        BlockCoord bc2 = getLocation(bc, dir);
         if (isSameLiquid(bc2)) {
           if (isSourceBlock(bc2)) {
             if (foundStepUp) { // don't flow unless there is a "down" to flow to
-              if (isSameLiquid(bc2.getLocation(downflowDirection)) && !isSourceBlock(bc2.getLocation(downflowDirection)) && 
-                  isSameLiquid(bc.getLocation(downflowDirection)) && !isSourceBlock(bc.getLocation(downflowDirection))) {
+              if (isSameLiquid(getLocation(bc2, downflowDirection)) && !isSourceBlock(getLocation(bc2, downflowDirection))
+                  && isSameLiquid(getLocation(bc, downflowDirection)) && !isSourceBlock(getLocation(bc, downflowDirection))) {
                 // if we can drop the source block down by one without disconnecting it from us, we do so
-                doFlow(bc2, bc2.getLocation(downflowDirection));
+                doFlow(bc2, getLocation(bc2, downflowDirection));
               } else {
                 doFlow(bc2, bc);
               }

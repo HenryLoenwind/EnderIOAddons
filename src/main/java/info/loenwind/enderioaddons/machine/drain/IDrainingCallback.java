@@ -1,13 +1,15 @@
 package info.loenwind.enderioaddons.machine.drain;
 
-import com.enderio.core.common.util.BlockCoord;
+import javax.annotation.Nonnull;
 
 import net.minecraft.world.World;
 
+import com.enderio.core.common.util.BlockCoord;
+
 public interface IDrainingCallback {
 
-  public void onWaterDrain(World world, BlockCoord bc);
+  public void onWaterDrain(@Nonnull World world, @Nonnull BlockCoord bc);
 
-  public void onWaterDrainNearby(World world, BlockCoord bc);
+  public void onWaterDrainNearby(@Nonnull World world, @Nonnull BlockCoord bc);
 
 }

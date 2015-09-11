@@ -6,35 +6,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.enderio.core.common.util.BlockCoord;
+import javax.annotation.Nonnull;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
+import com.enderio.core.common.util.BlockCoord;
+
 import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class InfiniteWaterSourceStopper {
 
+  @Nonnull
   private static final InfiniteWaterSourceStopper instance = new InfiniteWaterSourceStopper();
   
-  public static InfiniteWaterSourceStopper getInstance() { return instance; }
+  @Nonnull
+  public static InfiniteWaterSourceStopper getInstance() {
+    return instance;
+  }
   
   public static void register() {
     MinecraftForge.EVENT_BUS.register(instance);
   }
  
-
-  private Map<Integer, Map<IWaterSensitive, Object>> teblMap = new HashMap<Integer, Map<IWaterSensitive, Object>>();
+  @Nonnull
+  private final Map<Integer, Map<IWaterSensitive, Object>> teblMap = new HashMap<Integer, Map<IWaterSensitive, Object>>();
   
   @Optional.Method(modid = "waterhooks|API")
   @SubscribeEvent
   public void onWaterForming(WaterFormEvent event) {
-    Map<IWaterSensitive, Object> tebl = teblMap.get(event.world.provider.dimensionId);
+    final World world = FluidHelper.notnull(event.world, "Bad game state: Event has no world");
+    Map<IWaterSensitive, Object> tebl = teblMap.get(world.provider.dimensionId);
     if (tebl != null) {
       BlockCoord bc = new BlockCoord(event.x, event.y, event.z);
       for (IWaterSensitive hook : tebl.keySet()) {
-        if (hook.preventInfiniteWaterForming(event.world, bc)) {
+        if (hook.preventInfiniteWaterForming(world, bc)) {
           event.setCanceled(true);
           return;
         }
@@ -47,7 +55,7 @@ public class InfiniteWaterSourceStopper {
     teblMap.remove(event.world.provider.dimensionId);
   }
   
-  public void unregister(World world, IWaterSensitive hook) {
+  public void unregister(@Nonnull World world, @Nonnull IWaterSensitive hook) {
     Map<IWaterSensitive, Object> tebl = teblMap.get(world.provider.dimensionId);
     if (tebl != null) {
       tebl.remove(hook);
@@ -57,7 +65,7 @@ public class InfiniteWaterSourceStopper {
     }
   }
   
-  public void register(World world, IWaterSensitive hook) {
+  public void register(@Nonnull World world, @Nonnull IWaterSensitive hook) {
     Map<IWaterSensitive, Object> tebl = teblMap.get(world.provider.dimensionId);
     if (tebl == null) {
       tebl = new WeakHashMap<IWaterSensitive, Object>();

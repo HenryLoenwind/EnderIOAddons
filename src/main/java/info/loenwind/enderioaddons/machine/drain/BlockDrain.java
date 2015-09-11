@@ -116,10 +116,10 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
     TileEntity te = world.getTileEntity(x, y, z);
-    if (!(te instanceof TileDrain)) {
-      return null;
+    if (te instanceof TileDrain && player.inventory != null) {
+      return new GuiDrain(player.inventory, (TileDrain) te);
     }
-    return new GuiDrain(player.inventory, (TileDrain) te);
+    return null;
   }
 
   @Override

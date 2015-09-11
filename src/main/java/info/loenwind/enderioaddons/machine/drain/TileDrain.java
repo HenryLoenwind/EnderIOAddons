@@ -1,10 +1,14 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import static info.loenwind.enderioaddons.machine.drain.FluidHelper.notnull;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -39,6 +43,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
 
   private static int IO_MB_TICK = 100;
 
+  @Nonnull
   protected SmartTank tank = new SmartTank(2 * ONE_BLOCK_OF_LIQUID);
   protected int lastUpdateLevel = -1;
   
@@ -49,9 +54,9 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  protected boolean doPush(ForgeDirection dir) {
+  protected boolean doPush(@Nullable ForgeDirection dir) {
 
-    if(isSideDisabled(dir.ordinal())) {
+    if (dir == null || isSideDisabled(dir.ordinal())) {
       return false;
     }
 
@@ -78,11 +83,11 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+  public int fill(@Nullable ForgeDirection from, @Nullable FluidStack resource, boolean doFill) {
     return 0;
   }
 
-  protected int fillInternal(FluidStack resource, boolean doFill) {
+  protected int fillInternal(@Nonnull FluidStack resource, boolean doFill) {
     int res = tank.fill(resource, doFill);
     if(res > 0 && doFill) {
       tankDirty = true;
@@ -91,14 +96,14 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-    if(!canDrain(from)) {
+  public FluidStack drain(@Nullable ForgeDirection from, @Nullable FluidStack resource, boolean doDrain) {
+    if (!canDrain(from) || resource == null) {
       return null;
     }
     return drainInternal(resource, doDrain);
   }
 
-  protected FluidStack drainInternal(FluidStack resource, boolean doDrain) {
+  protected FluidStack drainInternal(@Nonnull FluidStack resource, boolean doDrain) {
     FluidStack res = tank.drain(resource, doDrain);
     if(res != null && res.amount > 0 && doDrain) {
       tankDirty = true;
@@ -107,7 +112,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+  public FluidStack drain(@Nullable ForgeDirection from, int maxDrain, boolean doDrain) {
     if(!canDrain(from)) {
       return null;
     }
@@ -123,22 +128,22 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public boolean canFill(ForgeDirection from, Fluid fluid) {
+  public boolean canFill(@Nullable ForgeDirection from, @Nullable Fluid fluid) {
     return false;
   }
 
   @Override
-  public boolean canDrain(ForgeDirection from, Fluid fluid) {
+  public boolean canDrain(@Nullable ForgeDirection from, @Nullable Fluid fluid) {
     return canDrain(from) && tank.canDrainFluidType(fluid);
   }
 
-  private boolean canDrain(ForgeDirection from) {
+  private boolean canDrain(@Nullable ForgeDirection from) {
     IoMode mode = getIoMode(from);
     return mode != IoMode.PULL && mode != IoMode.DISABLED;
   }
   
   @Override
-  public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+  public FluidTankInfo[] getTankInfo(@Nullable ForgeDirection from) {
     return new FluidTankInfo[] { new FluidTankInfo(tank) };
   }
 
@@ -156,9 +161,8 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  protected boolean isMachineItemValidForSlot(int i, ItemStack item) {
-    System.out.println(i + ": " + item);
-    if(i == 0) {
+  protected boolean isMachineItemValidForSlot(int i, @Nullable ItemStack item) {
+    if (i == 0 && item != null) {
       return FluidContainerRegistry.isEmptyContainer(item) || item.getItem() == Items.bucket;
     }
     return false;
@@ -222,10 +226,13 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
     
     if (shouldDoWorkThisTick(modulo) && tank.getAvailableSpace() >= ONE_BLOCK_OF_LIQUID) {
       FluidHelper instance;
-      if (tank.getFluid() != null) {
-        instance = info.loenwind.enderioaddons.machine.drain.FluidHelper.getInstance(worldObj, getLocation(), tank.getFluid());
+      final FluidStack tankfluid = tank.getFluid();
+      if (tankfluid != null) {
+        instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
+            notnull(getLocation(), "Invalid game state: TE location is missing"), tankfluid);
       } else {
-        instance = info.loenwind.enderioaddons.machine.drain.FluidHelper.getInstance(worldObj, getLocation());
+        instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
+            notnull(getLocation(), "Invalid game state: TE location is missing"));
       }
       if (instance != null) {
         instance.setDrainingCallback(this);
@@ -243,7 +250,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
           dryruncount = 0;
           nowater.clear();
           if (registered) {
-            InfiniteWaterSourceStopper.getInstance().unregister(worldObj, this);
+            InfiniteWaterSourceStopper.getInstance().unregister(notnull(worldObj, "Invalid game state: World is missing"), this);
             registered = false;
           }
         }
@@ -349,12 +356,12 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public void setWorldObj(World p_145834_1_) {
+  public void setWorldObj(@Nullable World p_145834_1_) {
     super.setWorldObj(p_145834_1_);
     if (!nowater.isEmpty() && !registered) {
       // actually part of readCommon(nbt), but the world object is not yet set
       // when that is called
-      InfiniteWaterSourceStopper.getInstance().register(worldObj, this);
+      InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
       registered = true;
     }
   }
@@ -371,7 +378,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   @Override
   public void onWaterDrain(World world, BlockCoord bc) {
 	  if (!registered) {
-		  InfiniteWaterSourceStopper.getInstance().register(world, this);
+      InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
 		  registered = true;
 	  }
 	  nowater.add(bc);
