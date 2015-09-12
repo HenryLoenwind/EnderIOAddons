@@ -377,8 +377,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     return new TaskWaterworks(getRfPerTask(), getLiquidFactorPerTask());
   }
 
-  // TODO:  @Override instead of @SuppressWarnings
-  @SuppressWarnings("static-method")
+  @Override
   @Nullable
   protected IPoweredTask createTask(NBTTagCompound taskTagCompound) {
     return TaskWaterworks.readFromNBT(taskTagCompound);
@@ -456,9 +455,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
 
   @Override
   public void readCustomNBT(NBTTagCompound nbtRoot) {
-    IPoweredTask tmp = currentTask; // TODO
     super.readCustomNBT(nbtRoot);
-    currentTask = tmp; // TODO
     if (nbtRoot.hasKey("progress_in")) {
       progress_in = FluidRegistry.getFluid(nbtRoot.getInteger("progress_in"));
     } else {

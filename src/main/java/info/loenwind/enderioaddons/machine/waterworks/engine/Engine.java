@@ -156,8 +156,7 @@ public class Engine {
         // (3) if yes, try to add an item to the inventory
         if (good2go) {
           ItemStack item = mat.getItem().getItemStack();
-          //          if (doInsertItem(inv, startSlot, endSlot, item, doCreate) > 0) {
-          if (doInsertItem(inv, startSlot, endSlot, item) > 0) { // TODO: use line above once core catches up to PR#13
+          if (doInsertItem(inv, startSlot, endSlot, item, doCreate) > 0) {
             if (!doCreate) {
               return CreationResult.OK;
             }
