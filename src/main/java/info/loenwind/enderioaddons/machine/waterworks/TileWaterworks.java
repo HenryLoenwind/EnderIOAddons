@@ -110,11 +110,11 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   protected float getLiquidFactorPerTask() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return Config.waterWorksLiquidFactorperTask1;
+      return (float) Config.waterWorksLiquidFactorperTask1;
     case ACTIVATED_CAPACITOR:
-      return Config.waterWorksLiquidFactorperTask2;
+      return (float) Config.waterWorksLiquidFactorperTask2;
     case ENDER_CAPACITOR:
-      return Config.waterWorksLiquidFactorperTask3;
+      return (float) Config.waterWorksLiquidFactorperTask3;
     }
     return 0;
   }
@@ -122,11 +122,11 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   protected float getRfPerTask() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return Config.waterWorksRFperTask1;
+      return (float) Config.waterWorksRFperTask1;
     case ACTIVATED_CAPACITOR:
-      return Config.waterWorksRFperTask2;
+      return (float) Config.waterWorksRFperTask2;
     case ENDER_CAPACITOR:
-      return Config.waterWorksRFperTask3;
+      return (float) Config.waterWorksRFperTask3;
     }
     return 0;
   }
