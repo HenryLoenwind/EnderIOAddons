@@ -56,6 +56,7 @@ public class EnderIOAddons implements InitAware {
     config.init(event);
     proxy.init(event);
     recipes.init(event);
+    // info.loenwind.enderioaddons.machine.waterworks.engine.BootstrapHelper.dumpConfig();
   }
 
 }

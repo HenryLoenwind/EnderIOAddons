@@ -1,6 +1,15 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
+import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
+import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
+import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import info.loenwind.autosave.Reader;
+import info.loenwind.autosave.Writer;
+import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.annotations.Store;
+import info.loenwind.autosave.annotations.Store.StoreFor;
+import info.loenwind.autosave.handlers.HandleStash;
 import info.loenwind.enderioaddons.common.Fluids;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
@@ -9,11 +18,14 @@ import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine.CreationResult;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Stash;
 
+import java.util.EnumSet;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.IIcon;
@@ -38,13 +50,16 @@ import crazypants.enderio.network.PacketHandler;
 import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
 
+@Storable
 public class TileWaterworks extends AbstractPoweredTaskEntity implements IFrameworkMachine, IFluidHandler, ITankAccess {
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
   @Nonnull
+  @Store
   protected SmartTank inputTank = new SmartTank(3 * ONE_BLOCK_OF_LIQUID);
   @Nonnull
+  @Store
   protected SmartTank outputTank = new SmartTank(1 * ONE_BLOCK_OF_LIQUID);
 
   private static int IO_MB_TICK = 200;
@@ -52,14 +67,18 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   boolean tanksDirty = false;
 
   @Nullable
+  @Store({ SAVE, CLIENT })
   protected Fluid progress_in = null;
   @Nullable
+  @Store({ SAVE, CLIENT })
   protected Fluid progress_out = null;
 
   @Nonnull
   protected static final Engine engine = new Engine(ConfigProvider.readConfig());
   @Nonnull
+  @Store(value = { SAVE, ITEM }, handler = HandleStash.class)
   protected final Stash stash = new Stash();
+  @Store({ SAVE, ITEM, CLIENT })
   protected float stashProgress = 0.0f;
 
   protected static ColMap data;
@@ -451,98 +470,74 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     }
   }
 
-  // custom calls common; reading from itemstack calls common
+  /**
+   * This stops read/writeCommon(). It should be set when calling
+   * super.read/writeCustom() as it calls read/writeCommon(). This doesn't mesh
+   * well with our 3-tier nbt-handling.
+   * 
+   * <p>
+   * Remember:
+   * 
+   * <ul>
+   * <li>packet handler calls custom,
+   * <li>save/load calls custom,
+   * <li>reading from/writing to itemstack calls common,
+   * <li>custom calls common
+   * </ul>
+   */
+  private boolean inCustom = false;
 
   @Override
   public void readCustomNBT(NBTTagCompound nbtRoot) {
+    inCustom = true;
     super.readCustomNBT(nbtRoot);
-    if (nbtRoot.hasKey("progress_in")) {
-      progress_in = FluidRegistry.getFluid(nbtRoot.getInteger("progress_in"));
-    } else {
-      progress_in = null;
-    }
-    if (nbtRoot.hasKey("progress_out")) {
-      progress_out = FluidRegistry.getFluid(nbtRoot.getInteger("progress_out"));
-    } else {
-      progress_out = null;
-    }
+    inCustom = false;
+
+    Reader.read(EnumSet.of(SAVE), nbtRoot, this);
   }
 
   @Override
   public void writeCustomNBT(NBTTagCompound nbtRoot) {
+    inCustom = true;
     super.writeCustomNBT(nbtRoot);
-    if (progress_in != null) {
-      nbtRoot.setInteger("progress_in", progress_in.getID());
-    }
-    if (progress_out != null) {
-      nbtRoot.setInteger("progress_out", progress_out.getID());
-    }
+    inCustom = false;
+
+    Writer.write(EnumSet.of(SAVE), nbtRoot, this);
   }
 
   @Override
   public void readCommon(NBTTagCompound nbtRoot) {
     super.readCommon(nbtRoot);
-
-    if (nbtRoot.hasKey("inputTank")) {
-      NBTTagCompound tankRoot = (NBTTagCompound) nbtRoot.getTag("inputTank");
-      if (tankRoot != null) {
-        inputTank.readFromNBT(tankRoot);
-      } else {
-        inputTank.setFluid(null);
-      }
-    } else {
-      inputTank.setFluid(null);
+    if (!inCustom) {
+      Reader.read(EnumSet.allOf(StoreFor.class), nbtRoot, this);
     }
-
-    if (nbtRoot.hasKey("outputTank")) {
-      NBTTagCompound tankRoot = (NBTTagCompound) nbtRoot.getTag("outputTank");
-      if (tankRoot != null) {
-        outputTank.readFromNBT(tankRoot);
-      } else {
-        outputTank.setFluid(null);
-      }
-    } else {
-      outputTank.setFluid(null);
-    }
-
-    if (nbtRoot.hasKey("stash")) {
-      NBTTagCompound stashRoot = (NBTTagCompound) nbtRoot.getTag("stash");
-      stash.readFromNbt(stashRoot);
-    }
-
-    stashProgress = nbtRoot.getFloat("stashProgress");
   }
 
   @Override
   public void writeCommon(NBTTagCompound nbtRoot) {
     super.writeCommon(nbtRoot);
-
-    if (inputTank.getFluidAmount() > 0) {
-      NBTTagCompound tankRoot = new NBTTagCompound();
-      inputTank.writeToNBT(tankRoot);
-      nbtRoot.setTag("inputTank", tankRoot);
+    if (!inCustom) {
+      Writer.write(EnumSet.allOf(StoreFor.class), nbtRoot, this);
     }
-
-    if (outputTank.getFluidAmount() > 0) {
-      NBTTagCompound tankRoot = new NBTTagCompound();
-      outputTank.writeToNBT(tankRoot);
-      nbtRoot.setTag("outputTank", tankRoot);
-    }
-
-    NBTTagCompound stashRoot = new NBTTagCompound();
-    stash.writeToNbt(stashRoot);
-    nbtRoot.setTag("stash", stashRoot);
-
-    nbtRoot.setFloat("stashProgress", stashProgress);
   }
 
   @Override
   public Packet getDescriptionPacket() {
-    NBTTagCompound tag = new NBTTagCompound();
-    writeCustomNBT(tag);
-    // remove non-network-required data
-    tag.removeTag("stash");
-    return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
+    NBTTagCompound nbtRoot = new NBTTagCompound();
+    inCustom = true;
+    super.writeCustomNBT(nbtRoot);
+    inCustom = false;
+    Writer.write(CLIENT, nbtRoot, this);
+    return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbtRoot);
+  }
+
+  @Override
+  public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    final NBTTagCompound nbtRoot = pkt.func_148857_g();
+    Reader.read(EnumSet.of(CLIENT), nbtRoot, this);
+    inCustom = true;
+    super.readCustomNBT(nbtRoot);
+    inCustom = false;
   }
 
   @Override
