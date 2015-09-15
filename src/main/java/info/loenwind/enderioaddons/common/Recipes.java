@@ -83,47 +83,52 @@ public class Recipes implements InitAware {
     }
 
     // Frame parts
-    ItemStack machineFrame = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME.ordinal());
-    GameRegistry.addShapedRecipe(machineFrame, "dsd", "s s", "dsd", 's', electricSteel, 'd', darkSteel);
+    if (Config.cobbleWorksEnabled || Config.waterWorksEnabled) {
+      ItemStack machineFrame = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME.ordinal());
+      GameRegistry.addShapedRecipe(machineFrame, "dsd", "s s", "dsd", 's', electricSteel, 'd', darkSteel);
 
-    ItemStack frameTank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FRAME_TANK.ordinal());
-    GameRegistry.addShapedRecipe(frameTank, "scs", "c c", "scs", 's', silicon, 'c', clearGlass);
+      ItemStack frameTank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FRAME_TANK.ordinal());
+      GameRegistry.addShapedRecipe(frameTank, "scs", "c c", "scs", 's', silicon, 'c', clearGlass);
 
-    ItemStack frameTanks = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FRAME_TANKS.ordinal());
-    GameRegistry.addShapelessRecipe(frameTanks, frameTank, frameTank, frameTank, frameTank);
+      ItemStack frameTanks = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FRAME_TANKS.ordinal());
+      GameRegistry.addShapelessRecipe(frameTanks, frameTank, frameTank, frameTank, frameTank);
 
-    ItemStack machineFrameTank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME_TANK.ordinal());
-    GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTank, frameTank, frameTank, frameTank);
-    GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTanks);
+      ItemStack machineFrameTank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME_TANK.ordinal());
+      GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTank, frameTank, frameTank, frameTank);
+      GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTanks);
 
-    ItemStack cobbleController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COBBLE_CONTROLLER.ordinal());
-    GameRegistry.addShapedRecipe(cobbleController, "sis", "lMw", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l',
-        Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
-    GameRegistry.addShapedRecipe(cobbleController, "sis", "wMl", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l',
-        Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
+      // Cobbleworks
+      if (Config.cobbleWorksEnabled) {
+        ItemStack cobbleController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COBBLE_CONTROLLER.ordinal());
+        GameRegistry.addShapedRecipe(cobbleController, "sis", "lMw", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l',
+            Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
+        GameRegistry.addShapedRecipe(cobbleController, "sis", "wMl", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l',
+            Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
 
-    ItemStack heatingElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.HEATING_ELEMENT.ordinal());
-    GameRegistry.addShapedRecipe(heatingElement, "ccs", "srs", "scc", 's', silicon, 'c', conductiveIron, 'r', blockRedstoneAlloy);
+        ItemStack cobbleworks = new ItemStack(BlockCobbleworks.blockCobbleworks);
+        GameRegistry.addShapelessRecipe(cobbleworks, machineFrameTank, cobbleController);
+        GameRegistry.addShapelessRecipe(cobbleworks, machineFrame, frameTank, frameTank, frameTank, frameTank, cobbleController);
+        GameRegistry.addShapelessRecipe(cobbleworks, machineFrame, frameTanks, cobbleController);
+      }
 
-    ItemStack filterElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FILTER_ELEMENT.ordinal());
-    GameRegistry.addShapedRecipe(filterElement, "bbb", "ccc", "bbb", 'b', darkSteelBars, 'c', binderComposite);
+      // Waterworks
+      if (Config.waterWorksEnabled) {
+        ItemStack heatingElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.HEATING_ELEMENT.ordinal());
+        GameRegistry.addShapedRecipe(heatingElement, "ccs", "srs", "scc", 's', silicon, 'c', conductiveIron, 'r', blockRedstoneAlloy);
 
-    ItemStack waterController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.WATER_CONTROLLER.ordinal());
-    GameRegistry.addShapedRecipe(waterController, "sis", "fMf", "fhf", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'f', filterElement, 'h',
-        heatingElement);
+        ItemStack filterElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FILTER_ELEMENT.ordinal());
+        GameRegistry.addShapedRecipe(filterElement, "bbb", "ccc", "bbb", 'b', darkSteelBars, 'c', binderComposite);
 
-    // Cobbleworks
-    ItemStack cobbleworks = new ItemStack(BlockCobbleworks.blockCobbleworks);
-    GameRegistry.addShapelessRecipe(cobbleworks, machineFrameTank, cobbleController);
-    GameRegistry.addShapelessRecipe(cobbleworks, machineFrame, frameTank, frameTank, frameTank, frameTank, cobbleController);
-    GameRegistry.addShapelessRecipe(cobbleworks, machineFrame, frameTanks, cobbleController);
+        ItemStack waterController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.WATER_CONTROLLER.ordinal());
+        GameRegistry.addShapedRecipe(waterController, "sis", "fMf", "fhf", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'f', filterElement,
+            'h', heatingElement);
 
-    // Waterworks
-    ItemStack waterworks = new ItemStack(BlockWaterworks.blockWaterworks);
-    GameRegistry.addShapelessRecipe(waterworks, machineFrameTank, waterController);
-    GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTank, frameTank, frameTank, frameTank, waterController);
-    GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTanks, waterController);
-
+        ItemStack waterworks = new ItemStack(BlockWaterworks.blockWaterworks);
+        GameRegistry.addShapelessRecipe(waterworks, machineFrameTank, waterController);
+        GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTank, frameTank, frameTank, frameTank, waterController);
+        GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTanks, waterController);
+      }
+    }
   }
 
   @Override

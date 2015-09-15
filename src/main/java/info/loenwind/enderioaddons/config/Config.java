@@ -25,34 +25,41 @@ import crazypants.enderio.network.PacketHandler;
 
 public class Config implements InitAware {
 
-  public static int drainContinuousEnergyUseRF = ConfigValues.drainContinuousEnergyUseRF.getDefaultInt();
-  public static int drainPerBucketEnergyUseRF = ConfigValues.drainPerBucketEnergyUseRF.getDefaultInt();
-  public static int drainPerSourceBlockMoveEnergyUseRF = ConfigValues.drainPerSourceBlockMoveEnergyUseRF.getDefaultInt();
-  public static boolean drainAllowOnDedicatedServer = ConfigValues.drainAllowOnDedicatedServer.getDefaultBoolean();
-  public static boolean drainEnabled = ConfigValues.drainEnabled.getDefaultBoolean();
+  public static int drainContinuousEnergyUseRF;
+  public static int drainPerBucketEnergyUseRF;
+  public static int drainPerSourceBlockMoveEnergyUseRF;
+  public static boolean drainAllowOnDedicatedServer;
+  public static boolean drainEnabled;
 
-  public static int cobbleWorksRfPerCobblestone = ConfigValues.cobbleWorksRfPerCobblestone.getDefaultInt();
-  public static int cobbleWorksRfDiscountForCrafting = ConfigValues.cobbleWorksRfDiscountForCrafting.getDefaultInt(); // %
-  public static int cobbleWorksRfDiscountForSmelting = ConfigValues.cobbleWorksRfDiscountForSmelting.getDefaultInt(); // %
-  public static int cobbleWorksRfDiscountForCrushing = ConfigValues.cobbleWorksRfDiscountForCrushing.getDefaultInt(); // %
-  public static int cobbleWorksRfDiscountPerUpgrade = ConfigValues.cobbleWorksRfDiscountPerUpgrade.getDefaultInt(); // %
+  public static int cobbleWorksRfPerCobblestone;
+  public static int cobbleWorksRfDiscountForCrafting; // %
+  public static int cobbleWorksRfDiscountForSmelting; // %
+  public static int cobbleWorksRfDiscountForCrushing; // %
+  public static int cobbleWorksRfDiscountPerUpgrade; // %
+  public static boolean cobbleWorksEnabled;
 
-  public static int waterWorksWaterReductionPercentage = 10; // TODO
-  public static float waterWorksRFperTask1 = 5 * 20 * 20; // TODO
-  public static float waterWorksRFperTask2 = 5 * 20 * 20 * 1.75f * 0.9f; // TODO
-  public static float waterWorksRFperTask3 = 5 * 20 * 20 * 3 * 0.8f; // TODO
+  public static int waterWorksWaterReductionPercentage; // %
+  public static double waterWorksRFperTask1;
+  public static double waterWorksRFperTask2;
+  public static double waterWorksRFperTask3;
 
-  public static float waterWorksLiquidFactorperTask1 = 1.0f; // TODO
-  public static float waterWorksLiquidFactorperTask2 = 1.75f; // TODO
-  public static float waterWorksLiquidFactorperTask3 = 3.0f; // TODO
+  public static double waterWorksLiquidFactorperTask1;
+  public static double waterWorksLiquidFactorperTask2;
+  public static double waterWorksLiquidFactorperTask3;
 
-  public static int waterWorksRFusePerTick1 = 20; // TODO
-  public static int waterWorksRFusePerTick2 = 40; // TODO
-  public static int waterWorksRFusePerTick3 = 60; // TODO
+  public static int waterWorksRFusePerTick1;
+  public static int waterWorksRFusePerTick2;
+  public static int waterWorksRFusePerTick3;
 
-  public static int waterWorksRFinPerTick1 = 100; // TODO
-  public static int waterWorksRFinPerTick2 = 200; // TODO
-  public static int waterWorksRFinPerTick3 = 800; // TODO
+  public static int waterWorksRFinPerTick1;
+  public static int waterWorksRFinPerTick2;
+  public static int waterWorksRFinPerTick3;
+
+  public static boolean waterWorksEnabled;
+
+  static {
+    ConfigValues.loadAll();
+  }
 
   //	****************************************************************************************
 
