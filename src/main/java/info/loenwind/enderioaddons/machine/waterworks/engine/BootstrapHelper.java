@@ -61,7 +61,7 @@ public class BootstrapHelper {
     }
   }
   
-  private static void dumpConfig(@Nonnull XStream xstream, @Nonnull Engine config) throws IOException {
+  public static void dumpConfig(@Nonnull XStream xstream, @Nonnull Object config) throws IOException {
     File configFile = new File(dumpPath, "dump.xml");
     BufferedWriter writer = null;
     try {

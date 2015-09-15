@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraftforge.common.config.Configuration;
 
@@ -17,7 +16,7 @@ public enum ConfigValues {
   drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, 250,
       "The amount of power used by a drain to move a source block by one meter."), //
   drainAllowOnDedicatedServer(Section.DRAIN, false, "Allow the use of the drain on a dedicated server."), //
-  drainEnabled(Section.DRAIN, "drainEnabled", true, "Enables/disables the drain's crafting recipe."), //
+  drainEnabled(Section.DRAIN, true, "Enables/disables the drain's crafting recipe."), //
 
   cobbleWorksRfPerCobblestone(Section.COBBLEWORKS, 100, "RF used per generated cobblestone"), //
 
@@ -56,61 +55,42 @@ public enum ConfigValues {
   @Nonnull
   private final Section section;
   @Nonnull
-  private final String name;
-  @Nonnull
   private final Object defaultValue;
   @Nonnull
   private final String description;
 
-  private ConfigValues(@Nonnull Section section, @Nullable String name, @Nonnull Object defaultValue, @Nonnull String description) {
+  private ConfigValues(@Nonnull Section section, @Nonnull Object defaultValue, @Nonnull String description) {
     this.section = section;
-    this.name = name == null ? this.name() : name;
     this.description = description;
     this.defaultValue = defaultValue;
   }
 
-  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Integer defaultValue, @Nonnull String description) {
-    this(section, name, (Object) defaultValue, description);
-  }
-
-  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Double defaultValue, @Nonnull String description) {
-    this(section, name, (Object) defaultValue, description);
-  }
-
-  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull Boolean defaultValue, @Nonnull String description) {
-    this(section, name, (Object) defaultValue, description);
-  }
-
-  private ConfigValues(@Nonnull Section section, @Nonnull String name, @Nonnull String defaultValue, @Nonnull String description) {
-    this(section, name, (Object) defaultValue, description);
-  }
-
   private ConfigValues(@Nonnull Section section, @Nonnull Integer defaultValue, @Nonnull String description) {
-	    this(section, null, (Object) defaultValue, description);
+    this(section, (Object) defaultValue, description);
 	  }
 
   private ConfigValues(@Nonnull Section section, @Nonnull Double defaultValue, @Nonnull String description) {
-    this(section, null, (Object) defaultValue, description);
+    this(section, (Object) defaultValue, description);
   }
 
   private ConfigValues(@Nonnull Section section, @Nonnull Boolean defaultValue, @Nonnull String description) {
-    this(section, null, (Object) defaultValue, description);
+    this(section, (Object) defaultValue, description);
   }
 
   private ConfigValues(@Nonnull Section section, @Nonnull String defaultValue, @Nonnull String description) {
-    this(section, null, (Object) defaultValue, description);
+    this(section, (Object) defaultValue, description);
   }
 
   private void load(Configuration config) {
     Object value = null;
     if (defaultValue instanceof Integer) {
-      value = config.get(section.name, name, (Integer) defaultValue, description).getInt((Integer) defaultValue);
+      value = config.get(section.name, name(), (Integer) defaultValue, description).getInt((Integer) defaultValue);
     } else if (defaultValue instanceof Double) {
-      value = config.get(section.name, name, (Double) defaultValue, description).getDouble((Double) defaultValue);
+      value = config.get(section.name, name(), (Double) defaultValue, description).getDouble((Double) defaultValue);
     } else if (defaultValue instanceof Boolean) {
-      value = config.get(section.name, name, (Boolean) defaultValue, description).getBoolean((Boolean) defaultValue);
+      value = config.get(section.name, name(), (Boolean) defaultValue, description).getBoolean((Boolean) defaultValue);
     } else if (defaultValue instanceof String) {
-      value = config.get(section.name, name, (String) defaultValue, description).getString();
+      value = config.get(section.name, name(), (String) defaultValue, description).getString();
     }
 
     setField(value);
@@ -118,7 +98,7 @@ public enum ConfigValues {
 
   private void setField(Object value) {
     try {
-      Field field = Config.class.getDeclaredField(name);
+      Field field = Config.class.getDeclaredField(name());
       field.set(null, value);
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -135,7 +115,7 @@ public enum ConfigValues {
 
   private void store(ByteBuf buf) {
     try {
-      Field field = Config.class.getDeclaredField(name);
+      Field field = Config.class.getDeclaredField(name());
       if (defaultValue instanceof Integer) {
         buf.writeInt(field.getInt(null));
       } else if (defaultValue instanceof Double) {
