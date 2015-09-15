@@ -66,6 +66,7 @@ public class Config implements InitAware {
   public static Configuration configuration;
   public static File configDirectory;
   public static boolean configLockedByServer = false;
+  public static boolean iAmTheServer = false;
 
   public Config() {
   }
@@ -140,6 +141,9 @@ public class Config implements InitAware {
   }
 
   public static void fromBytes(ByteBuf buf) {
+    if (iAmTheServer) {
+      return;
+    }
     ConfigValues.fromBytes(buf);
     computeDerivedValues(true);
     configLockedByServer = true;
@@ -148,6 +152,7 @@ public class Config implements InitAware {
   @SuppressWarnings("static-method")
   @SubscribeEvent
   public void onPlayerLoggon(PlayerLoggedInEvent evt) {
+    iAmTheServer = true;
     PacketHandler.INSTANCE.sendTo(new PacketConfigSync(), (EntityPlayerMP) evt.player);
   }
 
