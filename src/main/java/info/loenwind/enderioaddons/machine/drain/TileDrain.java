@@ -237,8 +237,9 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
       if (instance != null) {
         instance.setDrainingCallback(this);
         ReturnObject pullFluid = instance.eatOrPullFluid();
-        if (pullFluid.result != null) {
-          fillInternal(pullFluid.result, true);
+        final FluidStack resultFluid = pullFluid.result;
+        if (resultFluid != null) {
+          fillInternal(resultFluid, true);
           usePower(Config.drainPerBucketEnergyUseRF);
         } else if (pullFluid.inProgress) {
           usePower(Config.drainPerSourceBlockMoveEnergyUseRF);
@@ -371,12 +372,12 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   protected int dryruncount = 0;
   
   @Override
-  public boolean preventInfiniteWaterForming(World world, BlockCoord bc) {
+  public boolean preventInfiniteWaterForming(@Nonnull World world, @Nonnull BlockCoord bc) {
     return nowater.contains(bc);
   }
 
   @Override
-  public void onWaterDrain(World world, BlockCoord bc) {
+  public void onWaterDrain(@Nonnull World world, @Nonnull BlockCoord bc) {
 	  if (!registered) {
       InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
 		  registered = true;
@@ -385,7 +386,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public void onWaterDrainNearby(World world, BlockCoord bc) {
+  public void onWaterDrainNearby(@Nonnull World world, @Nonnull BlockCoord bc) {
 	  nowater.add(bc);
   }
 

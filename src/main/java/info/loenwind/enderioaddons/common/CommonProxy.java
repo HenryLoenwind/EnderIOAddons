@@ -41,11 +41,11 @@ public class CommonProxy extends ServerProxy {
 
     RendererFrameworkMachine rendererFrameworkMachine = new RendererFrameworkMachine();
 
-    BlockCobbleworks.renderId = RenderingRegistry.getNextAvailableRenderId();
+    BlockCobbleworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererCobbleworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileCobbleworks.class, new TESRFrameworkMachine());
 
-    BlockWaterworks.renderId = RenderingRegistry.getNextAvailableRenderId();
+    BlockWaterworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererWaterworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileWaterworks.class, new TESRFrameworkMachine());
 

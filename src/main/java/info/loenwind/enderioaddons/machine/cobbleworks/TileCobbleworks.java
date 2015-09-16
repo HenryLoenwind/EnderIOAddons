@@ -517,12 +517,12 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Override
-  public boolean hasTank(TankSlot tankSlot) {
+  public boolean hasTank(@Nonnull TankSlot tankSlot) {
     return true;
   }
 
   @Override
-  public Fluid getTankFluid(TankSlot tankSlot) {
+  public Fluid getTankFluid(@Nonnull TankSlot tankSlot) {
     switch (tankSlot) {
     case FRONT_LEFT:
     case BACK_RIGHT:
@@ -545,7 +545,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Override
-  public boolean renderSlot(TankSlot tankSlot) {
+  public boolean renderSlot(@Nonnull TankSlot tankSlot) {
     if (tankSlot != TankSlot.FRONT_LEFT) {
       ItemStack stack = inputSlot(tankSlot.ordinal());
       return stack != null && stack.getItem() != null;
@@ -555,7 +555,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Override
-  public IIcon getSlotIcon(TankSlot tankSlot, int side) {
+  public IIcon getSlotIcon(@Nonnull TankSlot tankSlot, int side) {
     ItemStack stack = inputSlot(tankSlot.ordinal());
     if (stack == null) {
       return null;

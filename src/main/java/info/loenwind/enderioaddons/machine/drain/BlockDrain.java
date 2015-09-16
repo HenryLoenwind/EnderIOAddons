@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -115,9 +116,10 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-    TileEntity te = world.getTileEntity(x, y, z);
-    if (te instanceof TileDrain && player.inventory != null) {
-      return new GuiDrain(player.inventory, (TileDrain) te);
+    final TileEntity te = world.getTileEntity(x, y, z);
+    final InventoryPlayer inventory = player.inventory;
+    if (te instanceof TileDrain && inventory != null) {
+      return new GuiDrain(inventory, (TileDrain) te);
     }
     return null;
   }
@@ -254,12 +256,11 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
     }
   }
 
-  @SuppressWarnings("hiding")
-  public static int renderId;
+  public static int localRenderId;
 
   @Override
   public int getRenderType() {
-    return renderId;
+    return localRenderId;
   }
 
   @SideOnly(Side.CLIENT)
