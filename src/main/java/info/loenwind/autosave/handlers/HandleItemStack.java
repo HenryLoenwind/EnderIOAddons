@@ -40,7 +40,7 @@ public class HandleItemStack implements IHandler<ItemStack> {
       if (object != null) {
         object.readFromNBT(tag);
       } else {
-        object = ItemStack.loadItemStackFromNBT(tag);
+        return ItemStack.loadItemStackFromNBT(tag);
       }
     }
     return object;

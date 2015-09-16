@@ -44,19 +44,20 @@ public class HandleSetBlockCoord implements IHandler<Set<BlockCoord>> {
   @Override
   public Set<BlockCoord> read(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name,
       @Nullable Set<BlockCoord> object) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
-    if (object == null) {
-      object = new HashSet<BlockCoord>();
+    Set<BlockCoord> result = object;
+    if (result == null) {
+      result = new HashSet<BlockCoord>();
     } else {
-      object.clear();
+      result.clear();
     }
     if (nbt.hasKey(name)) {
       int[] intArray = nbt.getIntArray(name);
       int i = 0;
       while (i < intArray.length) {
-        object.add(new BlockCoord(intArray[i++], intArray[i++], intArray[i++]));
+        result.add(new BlockCoord(intArray[i++], intArray[i++], intArray[i++]));
       }
     }
-    return object;
+    return result;
   }
 
 }

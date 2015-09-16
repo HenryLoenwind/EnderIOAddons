@@ -36,7 +36,7 @@ public class HandleFluidStack implements IHandler<FluidStack> {
   public FluidStack read(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name,
       @Nullable FluidStack object) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     if (nbt.hasKey(name)) {
-      object = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(name));
+      return FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(name));
     }
     return null;
   }

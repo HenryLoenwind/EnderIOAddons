@@ -36,7 +36,7 @@ public class HandleBlockCoord implements IHandler<BlockCoord> {
       @Nullable BlockCoord object) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     if (nbt.hasKey(name)) {
       int[] intArray = nbt.getIntArray(name);
-      object = new BlockCoord(intArray[0], intArray[1], intArray[2]);
+      return new BlockCoord(intArray[0], intArray[1], intArray[2]);
     }
     return object;
   }

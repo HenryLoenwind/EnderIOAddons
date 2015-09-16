@@ -37,7 +37,7 @@ public class HandleItem implements IHandler<Item> {
   public Item read(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nullable Item object)
       throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     if (nbt.hasKey(name)) {
-      object = Item.getItemById(nbt.getShort(name));
+      return Item.getItemById(nbt.getShort(name));
     }
     return object;
   }
