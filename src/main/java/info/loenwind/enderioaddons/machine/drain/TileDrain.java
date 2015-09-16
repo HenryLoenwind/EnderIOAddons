@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import info.loenwind.autosave.annotations.Store;
+import info.loenwind.autosave.handlers.HandleSetBlockCoord;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
@@ -359,7 +362,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   @Override
   public void setWorldObj(@Nullable World p_145834_1_) {
     super.setWorldObj(p_145834_1_);
-    if (!nowater.isEmpty() && !registered) {
+    if (!worldObj.isRemote && !nowater.isEmpty() && !registered) {
       // actually part of readCommon(nbt), but the world object is not yet set
       // when that is called
       InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
@@ -367,6 +370,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
     }
   }
 
+  @Store(value = { SAVE }, handler = HandleSetBlockCoord.class)
   protected Set<BlockCoord> nowater = new HashSet<BlockCoord>();
   protected boolean registered = false;
   protected int dryruncount = 0;
@@ -378,7 +382,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
 
   @Override
   public void onWaterDrain(@Nonnull World world, @Nonnull BlockCoord bc) {
-	  if (!registered) {
+    if (!worldObj.isRemote && !registered) {
       InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
 		  registered = true;
 	  }

@@ -1,10 +1,15 @@
 package info.loenwind.autosave;
 
 import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.handlers.HandleBlockCoord;
 import info.loenwind.autosave.handlers.HandleFloat;
 import info.loenwind.autosave.handlers.HandleFluid;
+import info.loenwind.autosave.handlers.HandleFluidStack;
 import info.loenwind.autosave.handlers.HandleInteger;
+import info.loenwind.autosave.handlers.HandleItem;
+import info.loenwind.autosave.handlers.HandleItemStack;
 import info.loenwind.autosave.handlers.HandleSmartTank;
+import info.loenwind.autosave.handlers.HandleStash;
 import info.loenwind.autosave.handlers.HandleStorable;
 
 import java.util.ArrayList;
@@ -19,12 +24,28 @@ public class Registry {
   public static final Registry GLOBAL_REGISTRY = new Registry(true);
 
   static {
-    GLOBAL_REGISTRY.register(new HandleFluid());
+    // TODO: move to an eioa registry
+    GLOBAL_REGISTRY.register(new HandleStash());
+
+    // TODO: move to an eio registry
     GLOBAL_REGISTRY.register(new HandleSmartTank());
 
+    // TODO: move to an ec registry
+    GLOBAL_REGISTRY.register(new HandleBlockCoord());
+
+    // Java primitives
     GLOBAL_REGISTRY.register(new HandleFloat());
     GLOBAL_REGISTRY.register(new HandleInteger());
 
+    // Forge basic types
+    GLOBAL_REGISTRY.register(new HandleFluidStack());
+    GLOBAL_REGISTRY.register(new HandleFluid());
+
+    // Minecraft basic types
+    GLOBAL_REGISTRY.register(new HandleItemStack());
+    GLOBAL_REGISTRY.register(new HandleItem());
+
+    // Annotated objects
     GLOBAL_REGISTRY.register(new HandleStorable());
   }
 
