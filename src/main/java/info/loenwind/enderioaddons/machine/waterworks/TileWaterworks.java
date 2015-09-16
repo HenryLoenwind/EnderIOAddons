@@ -151,7 +151,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   }
 
   @Override
-  public boolean hasTank(TankSlot tankSlot) {
+  public boolean hasTank(@Nonnull TankSlot tankSlot) {
     return true;
   }
 

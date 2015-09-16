@@ -56,8 +56,9 @@ public class Registry {
         return handler;
       }
     }
-    if (parent != null) {
-      return parent.findHandler(clazz);
+    final Registry thisParent = parent;
+    if (thisParent != null) {
+      return thisParent.findHandler(clazz);
     } else {
       Storable annotation = clazz.getAnnotation(Storable.class);
       if (annotation != null && annotation.handler() != HandleStorable.class) {
@@ -75,8 +76,9 @@ public class Registry {
         result.add(handler);
       }
     }
-    if (parent != null) {
-      result.addAll(parent.findHandlers(clazz));
+    final Registry thisParent = parent;
+    if (thisParent != null) {
+      result.addAll(thisParent.findHandlers(clazz));
     } else {
       Storable annotation = clazz.getAnnotation(Storable.class);
       while (annotation != null && annotation.handler() != HandleStorable.class) {

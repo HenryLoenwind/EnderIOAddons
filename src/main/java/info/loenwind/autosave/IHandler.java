@@ -5,6 +5,9 @@ import info.loenwind.autosave.exceptions.NoHandlerFoundException;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public interface IHandler<T> {
@@ -27,9 +30,8 @@ public interface IHandler<T> {
    * @throws InstantiationException
    * @throws NoHandlerFoundException
    */
-  boolean store(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, T object) throws IllegalArgumentException,
-      IllegalAccessException,
-      InstantiationException, NoHandlerFoundException;
+  boolean store(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nonnull T object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException;
 
   /**
    * Reads an object from a NBT structure
@@ -51,6 +53,6 @@ public interface IHandler<T> {
    * @throws InstantiationException
    * @throws NoHandlerFoundException
    */
-  T read(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, T object) throws IllegalArgumentException, IllegalAccessException,
-      InstantiationException, NoHandlerFoundException;
+  T read(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nullable T object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException;
 }

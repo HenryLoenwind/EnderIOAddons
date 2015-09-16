@@ -7,6 +7,9 @@ import info.loenwind.autosave.exceptions.NoHandlerFoundException;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 // Dummy handler
@@ -21,14 +24,14 @@ public class NullHandler implements IHandler<NullHandler> {
   }
 
   @Override
-  public boolean store(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, NullHandler object) throws IllegalArgumentException,
-      IllegalAccessException, InstantiationException, NoHandlerFoundException {
+  public boolean store(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name,
+      @Nonnull NullHandler object) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     return false;
   }
 
   @Override
-  public NullHandler read(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, NullHandler object) throws IllegalArgumentException,
-      IllegalAccessException, InstantiationException, NoHandlerFoundException {
+  public NullHandler read(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name,
+      @Nullable NullHandler object) throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     return null;
   }
 

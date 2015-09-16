@@ -9,6 +9,9 @@ import info.loenwind.enderioaddons.machine.waterworks.engine.Stash;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class HandleStash implements IHandler<Stash> {
@@ -22,8 +25,8 @@ public class HandleStash implements IHandler<Stash> {
   }
 
   @Override
-  public boolean store(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, Stash object) throws IllegalArgumentException,
-      IllegalAccessException, InstantiationException, NoHandlerFoundException {
+  public boolean store(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nonnull Stash object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     NBTTagCompound tag = new NBTTagCompound();
     for (Entry<String, Double> entry : object.getContents().entrySet()) {
       tag.setDouble(entry.getKey(), entry.getValue());
@@ -33,8 +36,8 @@ public class HandleStash implements IHandler<Stash> {
   }
 
   @Override
-  public Stash read(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, Stash object) throws IllegalArgumentException,
-      IllegalAccessException, InstantiationException, NoHandlerFoundException {
+  public Stash read(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nullable Stash object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     Stash stash = object;
     if (stash == null) {
       stash = new Stash();

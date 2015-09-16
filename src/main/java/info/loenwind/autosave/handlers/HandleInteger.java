@@ -6,6 +6,9 @@ import info.loenwind.autosave.annotations.Store;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class HandleInteger implements IHandler<Integer> {
@@ -19,14 +22,15 @@ public class HandleInteger implements IHandler<Integer> {
   }
 
   @Override
-  public boolean store(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, Integer object) throws IllegalArgumentException,
-      IllegalAccessException {
+  public boolean store(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name,
+      @Nonnull Integer object) throws IllegalArgumentException, IllegalAccessException {
     nbt.setInteger(name, object);
     return true;
   }
 
   @Override
-  public Integer read(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, Integer object) {
+  public Integer read(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name,
+      @Nullable Integer object) {
     return nbt.hasKey(name) ? nbt.getInteger(name) : object != null ? object : 0;
   }
 

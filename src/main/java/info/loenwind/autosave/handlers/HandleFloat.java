@@ -6,6 +6,9 @@ import info.loenwind.autosave.annotations.Store;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class HandleFloat implements IHandler<Float> {
@@ -19,14 +22,14 @@ public class HandleFloat implements IHandler<Float> {
   }
 
   @Override
-  public boolean store(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, Float object) throws IllegalArgumentException,
-      IllegalAccessException {
+  public boolean store(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nonnull Float object)
+      throws IllegalArgumentException, IllegalAccessException {
     nbt.setFloat(name, object);
     return true;
   }
 
   @Override
-  public Float read(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound nbt, String name, Float object) {
+  public Float read(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nullable Float object) {
     return nbt.hasKey(name) ? nbt.getFloat(name) : object != null ? object : 0f;
   }
 

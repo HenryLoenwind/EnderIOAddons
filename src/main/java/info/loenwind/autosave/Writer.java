@@ -4,15 +4,19 @@ import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.annotations.Store.StoreFor;
 import info.loenwind.autosave.exceptions.NoHandlerFoundException;
 import info.loenwind.autosave.handlers.HandleStorable;
+import info.loenwind.enderioaddons.common.NullHelper;
 
 import java.util.EnumSet;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 public class Writer {
 
-  public static <T> void write(Registry registry, Set<Store.StoreFor> phase, NBTTagCompound tag, T object) {
+  public static <T> void write(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound tag, @Nonnull T object) {
     try {
       (new HandleStorable<T>()).toplevelStore(registry, phase, tag, object);
     } catch (IllegalAccessException | InstantiationException | NoHandlerFoundException e) {
@@ -20,24 +24,24 @@ public class Writer {
     }
   }
 
-  public static <T> void write(Set<Store.StoreFor> phase, NBTTagCompound tag, T object) {
-    write(Registry.GLOBAL_REGISTRY, phase, tag, object);
+  public static <T> void write(@Nullable Set<Store.StoreFor> phase, @Nullable NBTTagCompound tag, @Nonnull T object) {
+    write(Registry.GLOBAL_REGISTRY, NullHelper.notnull(phase, "Missing phase"), NullHelper.notnull(tag, "Missing NBT"), object);
   }
 
-  public static <T> void write(Registry registry, StoreFor phase, NBTTagCompound tag, T object) {
-    write(registry, EnumSet.of(phase), tag, object);
+  public static <T> void write(@Nonnull Registry registry, @Nonnull StoreFor phase, @Nullable NBTTagCompound tag, @Nonnull T object) {
+    write(registry, NullHelper.notnull(EnumSet.of(phase), "Java broke"), NullHelper.notnull(tag, "Missing NBT"), object);
   }
 
-  public static <T> void write(StoreFor phase, NBTTagCompound tag, T object) {
-    write(Registry.GLOBAL_REGISTRY, EnumSet.of(phase), tag, object);
+  public static <T> void write(@Nonnull StoreFor phase, @Nullable NBTTagCompound tag, @Nonnull T object) {
+    write(Registry.GLOBAL_REGISTRY, NullHelper.notnull(EnumSet.of(phase), "Java broke"), NullHelper.notnull(tag, "Missing NBT"), object);
   }
 
-  public static <T> void write(Registry registry, NBTTagCompound tag, T object) {
-    write(registry, EnumSet.allOf(StoreFor.class), tag, object);
+  public static <T> void write(@Nonnull Registry registry, @Nullable NBTTagCompound tag, @Nonnull T object) {
+    write(registry, NullHelper.notnull(EnumSet.allOf(StoreFor.class), "Java broke"), NullHelper.notnull(tag, "Missing NBT"), object);
   }
 
-  public static <T> void write(NBTTagCompound tag, T object) {
-    write(Registry.GLOBAL_REGISTRY, EnumSet.allOf(StoreFor.class), tag, object);
+  public static <T> void write(@Nullable NBTTagCompound tag, @Nonnull T object) {
+    write(Registry.GLOBAL_REGISTRY, NullHelper.notnull(EnumSet.allOf(StoreFor.class), "Java broke"), NullHelper.notnull(tag, "Missing NBT"), object);
   }
 
 }

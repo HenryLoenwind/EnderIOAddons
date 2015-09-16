@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import javax.annotation.Nonnull;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -46,12 +47,14 @@ public class PacketWaterworksProgress extends MessageTileEntity<TileWaterworks> 
       outputTankId = te.outputTank.getFluid().getFluidID();
     }
 
-    if (te.progress_in != null) {
-      progress_inId = te.progress_in.getID();
+    final Fluid progress_in = te.progress_in;
+    if (progress_in != null) {
+      progress_inId = progress_in.getID();
     }
 
-    if (te.progress_out != null) {
-      progress_outId = te.progress_out.getID();
+    final Fluid progress_out = te.progress_out;
+    if (progress_out != null) {
+      progress_outId = progress_out.getID();
     }
 
     stashProgress = te.stashProgress;

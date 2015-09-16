@@ -6,10 +6,14 @@ import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.annotations.Store.StoreFor;
 import info.loenwind.autosave.exceptions.NoHandlerFoundException;
+import info.loenwind.enderioaddons.common.NullHelper;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -25,8 +29,8 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
   }
 
   @Override
-  public boolean store(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, T object) throws IllegalArgumentException,
-      IllegalAccessException, InstantiationException, NoHandlerFoundException {
+  public boolean store(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nonnull T object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     NBTTagCompound tag = new NBTTagCompound();
     toplevelStore(registry, phase, tag, object);
     nbt.setTag(name, tag);
@@ -42,26 +46,27 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
     return false;
   }
 
-  public void toplevelStore(Registry registry, Set<StoreFor> phase, NBTTagCompound tag, T object) throws IllegalAccessException, InstantiationException,
-      NoHandlerFoundException {
+  public void toplevelStore(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound tag, @Nonnull T object)
+      throws IllegalAccessException, InstantiationException, NoHandlerFoundException {
     for (Field field : object.getClass().getDeclaredFields()) {
       Store annotation = field.getAnnotation(Store.class);
       if (annotation != null && containsAny(phase, annotation.value())) {
         field.setAccessible(true);
         Object fieldData = field.get(object);
-        if (fieldData != null) {
+        String fieldName = field.getName();
+        if (fieldData != null && fieldName != null) {
           Class<?> fieldType = field.getType();
           boolean done = false;
           boolean foundHandler = false;
           if (annotation.handler() != NullHandler.class) {
-            done = annotation.handler().newInstance().store(registry, phase, tag, field.getName(), fieldData);
+            done = annotation.handler().newInstance().store(registry, phase, tag, fieldName, fieldData);
             foundHandler = true;
           }
           if (!done) {
             List<IHandler> handlers = registry.findHandlers(fieldType);
             for (IHandler handler : handlers) {
               if (!done) {
-                done = handler.store(registry, phase, tag, field.getName(), fieldData);
+                done = handler.store(registry, phase, tag, fieldName, fieldData);
                 foundHandler = true;
               }
             }
@@ -70,43 +75,43 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
             throw new NoHandlerFoundException(field, object);
           }
         } else {
-          tag.setBoolean(field.getName() + "__null", true);
+          tag.setBoolean(fieldName + "__null", true);
         }
       }
     }
   }
 
   @Override
-  public T read(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, T object) throws IllegalArgumentException,
-      IllegalAccessException,
-      InstantiationException, NoHandlerFoundException {
+  public T read(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound nbt, @Nonnull String name, @Nullable T object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
     if (nbt.hasKey(name) && object != null) {
-      NBTTagCompound tag = nbt.getCompoundTag(name);
+      NBTTagCompound tag = NullHelper.notnull(nbt.getCompoundTag(name), "Minecraft broken? getCompoundTag() gave null!");
       toplevelRead(registry, phase, tag, object);
     }
     return object;
   }
 
-  public void toplevelRead(Registry registry, Set<StoreFor> phase, NBTTagCompound tag, T object) throws IllegalAccessException, InstantiationException,
-      NoHandlerFoundException {
+  public void toplevelRead(@Nonnull Registry registry, @Nonnull Set<StoreFor> phase, @Nonnull NBTTagCompound tag, @Nonnull T object)
+      throws IllegalAccessException, InstantiationException, NoHandlerFoundException {
     for (Field field : object.getClass().getDeclaredFields()) {
       Store annotation = field.getAnnotation(Store.class);
       if (annotation != null && containsAny(phase, annotation.value())) {
         field.setAccessible(true);
-        if (!tag.hasKey(field.getName() + "__null")) {
+        String fieldName = field.getName();
+        if (!tag.hasKey(fieldName + "__null") && fieldName != null) {
           Object fieldData = field.get(object);
           Class<?> fieldType = field.getType();
           Object done = null;
           boolean foundHandler = false;
           if (annotation.handler() != NullHandler.class) {
-            done = annotation.handler().newInstance().read(registry, phase, tag, field.getName(), fieldData);
+            done = annotation.handler().newInstance().read(registry, phase, tag, fieldName, fieldData);
             foundHandler = true;
           }
           if (done == null) {
             List<IHandler> handlers = registry.findHandlers(fieldType);
             for (IHandler handler : handlers) {
               if (done == null) {
-                done = handler.read(registry, phase, tag, field.getName(), fieldData);
+                done = handler.read(registry, phase, tag, fieldName, fieldData);
                 foundHandler = true;
               }
             }

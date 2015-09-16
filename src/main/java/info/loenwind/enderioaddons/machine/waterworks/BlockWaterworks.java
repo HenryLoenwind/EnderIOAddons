@@ -87,7 +87,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
   }
 
   @Override
-  public String getControllerModelName() {
+  public @Nonnull String getControllerModelName() {
     return "waterController";
   }
 
