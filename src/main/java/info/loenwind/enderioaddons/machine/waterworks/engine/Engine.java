@@ -85,6 +85,9 @@ public class Engine {
   
   public void processWater(@Nonnull Stash stash, int level, double factor) {
     computeLevels();
+    if (level < 0) {
+      return;
+    }
     Stash use = levels.get(level);
     for (Entry<String, Double> comp : use.getContents().entrySet()) {
       stash.getContents().put(comp.getKey(),
@@ -128,6 +131,9 @@ public class Engine {
   @Nonnull
   public CreationResult createItems(@Nonnull Stash stash, int level, @Nonnull IInventory inv, int startSlot, int endSlot, boolean doCreate) {
     computeLevels();
+    if (level < 0) {
+      return CreationResult.NO_INPUTS;
+    }
     boolean haveInserted = false;
     progress = 0.0;
     for (Material mat : levels.get(level).getMaterials()) {
