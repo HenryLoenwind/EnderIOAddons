@@ -42,7 +42,7 @@ public enum Fluids {
       newFluid.setDensity(fluid.density).setViscosity(fluid.viscosity);
       if (FluidRegistry.registerFluid(newFluid)) {
         fluid.fluid = newFluid;
-        fluid.block = BlockFluidEioA.create(newFluid, NullHelper.notnull(Material.water, "Forge broke, there's no water"));
+        fluid.block = BlockFluidEioA.create(newFluid, NullHelper.notnullF(Material.water, "Material.water"));
         fluid.block.setQuantaPerBlock(fluid.quanta);
         fluid.bucket = ItemBucketEio.create(newFluid);
         fluid.bucket.setTextureName(EnderIOAddons.DOMAIN + ":" + "bucket" + StringUtils.capitalize(fluid.name));

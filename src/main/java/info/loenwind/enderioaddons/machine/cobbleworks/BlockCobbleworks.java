@@ -39,7 +39,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   @Nonnull
   public static BlockCobbleworks getBlock() {
-    return notnull(blockCobbleworks, "Internal statwe error: BlockCobbleworks has not been initialized");
+    return notnull(blockCobbleworks, "BlockCobbleworks has not been initialized");
   }
 
   @Override

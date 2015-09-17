@@ -1,4 +1,4 @@
-package info.loenwind.autosave.handlers;
+package info.loenwind.autosave.handlers.internal;
 
 import info.loenwind.autosave.IHandler;
 import info.loenwind.autosave.Registry;
@@ -12,7 +12,16 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-// Dummy handler
+/**
+ * A dummy {@link IHandler} that is used as default value for fields. It will be
+ * ignored and the fields' handlers will be looked up in the {@link Registry}
+ * instead.
+ * <p>
+ * This is needed because Java annotations do not allow "null" as a default
+ * value for class parameters.
+ * <p>
+ * Do not add this handler to an annotation.
+ */
 public class NullHandler implements IHandler<NullHandler> {
 
   private NullHandler() {

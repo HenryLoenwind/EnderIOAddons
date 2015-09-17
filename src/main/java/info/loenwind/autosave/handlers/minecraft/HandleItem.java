@@ -1,4 +1,4 @@
-package info.loenwind.autosave.handlers;
+package info.loenwind.autosave.handlers.minecraft;
 
 import info.loenwind.autosave.IHandler;
 import info.loenwind.autosave.Registry;

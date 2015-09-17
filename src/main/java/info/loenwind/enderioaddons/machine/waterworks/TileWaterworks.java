@@ -3,7 +3,7 @@ package info.loenwind.enderioaddons.machine.waterworks;
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
-import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
 import info.loenwind.autosave.Reader;
 import info.loenwind.autosave.Writer;
 import info.loenwind.autosave.annotations.Storable;
@@ -89,7 +89,7 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     if (data == null) {
       int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage / 100;
       data = new ColMap(5);
-      data.set(0, notnull(FluidRegistry.WATER, "Forge error: There is no water!"), Fluids.BRINE1, 0, amount);
+      data.set(0, notnullF(FluidRegistry.WATER, "FluidRegistry.WATER"), Fluids.BRINE1, 0, amount);
       data.set(1, Fluids.BRINE1, Fluids.BRINE2, 1, amount);
       data.set(2, Fluids.BRINE2, Fluids.BRINE3, 2, amount);
       data.set(3, Fluids.BRINE3, Fluids.BRINE4, 3, amount);

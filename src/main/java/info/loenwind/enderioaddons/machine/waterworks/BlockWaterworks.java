@@ -44,7 +44,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
 
   @Nonnull
   public static BlockWaterworks getBlock() {
-    return notnull(blockWaterworks, "Internal statwe error: BlockWaterworks has not been initialized");
+    return notnull(blockWaterworks, "BlockWaterworks has not been initialized");
   }
 
   @Override
