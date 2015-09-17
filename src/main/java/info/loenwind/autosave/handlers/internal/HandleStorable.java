@@ -11,6 +11,7 @@ import info.loenwind.enderioaddons.common.NullHelper;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +84,7 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
     cacheHandlers(registry, clazz);
 
     for (Field field : fieldCache.get(clazz)) {
-      if (phaseCache.get(field).contains(phase)) {
+      if (!Collections.disjoint(phaseCache.get(field), phase)) {
         Object fieldData = field.get(object);
         String fieldName = field.getName();
         if (fieldData != null && fieldName != null) {
@@ -114,7 +115,7 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
     cacheHandlers(registry, clazz);
 
     for (Field field : fieldCache.get(clazz)) {
-      if (phaseCache.get(field).contains(phase)) {
+      if (!Collections.disjoint(phaseCache.get(field), phase)) {
         Object fieldData = field.get(object);
         String fieldName = field.getName();
         if (!tag.hasKey(fieldName + NULL_POSTFIX) && fieldName != null) {
