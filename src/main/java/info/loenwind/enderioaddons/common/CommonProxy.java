@@ -34,18 +34,18 @@ public class CommonProxy extends ServerProxy {
   public void init(FMLInitializationEvent event) {
     super.init(event);
 
-    BlockDrain.renderId = RenderingRegistry.getNextAvailableRenderId();
+    BlockDrain.blockDrain.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new DrainBlockRenderer());
     ClientRegistry.bindTileEntitySpecialRenderer(TileDrain.class, new DrainFluidRenderer());
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockDrain.blockDrain), new DrainItemRenderer());
 
     RendererFrameworkMachine rendererFrameworkMachine = new RendererFrameworkMachine();
 
-    BlockCobbleworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    BlockCobbleworks.blockCobbleworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererCobbleworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileCobbleworks.class, new TESRFrameworkMachine());
 
-    BlockWaterworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    BlockWaterworks.blockWaterworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererWaterworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileWaterworks.class, new TESRFrameworkMachine());
 

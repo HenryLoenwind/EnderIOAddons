@@ -29,7 +29,7 @@ public class BlockWaterworks extends AbstractMachineBlock<TileWaterworks> implem
 
   public static final ModObject ModObject_blockWaterworks = EnumHelper.addEnum(ModObject.class, "blockWaterworks", new Class<?>[0], new Object[0]);
   public static BlockWaterworks blockWaterworks;
-  public static int localRenderId;
+  public int localRenderId;
 
   public static BlockWaterworks create() {
     PacketHandler.INSTANCE.registerMessage(PacketWaterworksProgress.class, PacketWaterworksProgress.class, PacketHandler.nextID(), Side.CLIENT);

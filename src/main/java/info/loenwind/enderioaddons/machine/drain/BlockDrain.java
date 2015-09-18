@@ -44,6 +44,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   public static final ModObject ModObject_blockDrain = EnumHelper.addEnum(ModObject.class, "blockDrain", new Class<?>[0], new Object[0]);
   public static BlockDrain blockDrain;
+  public int localRenderId;
 
   public static BlockDrain create() {
     PacketHandler.INSTANCE.registerMessage(PacketDrain.class, PacketDrain.class, PacketHandler.nextID(), Side.CLIENT);
@@ -255,8 +256,6 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
           EnderIO.lang.localize("fluid.millibucket.abr")));
     }
   }
-
-  public static int localRenderId;
 
   @Override
   public int getRenderType() {

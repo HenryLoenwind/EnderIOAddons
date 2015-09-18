@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.machine.framework;
+package info.loenwind.enderioaddons.common;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
@@ -10,31 +10,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import crazypants.enderio.machine.AbstractPowerConsumerEntity;
+import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.SlotDefinition;
 
 @Storable
-public abstract class AbstractTileFramework extends AbstractPowerConsumerEntity {
+public abstract class TileEnderIOAddons extends AbstractPoweredTaskEntity {
 
-  public AbstractTileFramework(SlotDefinition slotDefinition) {
+  public TileEnderIOAddons(SlotDefinition slotDefinition) {
     super(slotDefinition);
-  }
-
-  @Override
-  public int[] getAccessibleSlotsFromSide(int var1) {
-    if (isSideDisabled(var1)) {
-      return new int[0];
-    }
-
-    int[] res = new int[inventory.length - slotDefinition.getNumUpgradeSlots()];
-    int index = 0;
-    for (int i = 0; i < inventory.length; i++) {
-      if (!slotDefinition.isUpgradeSlot(i)) {
-        res[index] = i;
-        index++;
-      }
-    }
-    return res;
   }
 
   /**

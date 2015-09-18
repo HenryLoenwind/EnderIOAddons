@@ -2,8 +2,10 @@ package info.loenwind.enderioaddons.machine.drain;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.handlers.HandleSetBlockCoord;
+import info.loenwind.enderioaddons.common.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
@@ -31,8 +33,8 @@ import com.enderio.core.common.util.FluidUtil;
 import com.enderio.core.common.util.FluidUtil.FluidAndStackResult;
 import com.enderio.core.common.util.ItemUtil;
 
-import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.ContinuousTask;
+import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
 import crazypants.enderio.machine.IoMode;
 import crazypants.enderio.machine.SlotDefinition;
@@ -40,17 +42,24 @@ import crazypants.enderio.network.PacketHandler;
 import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
 
-public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandler, IWaterSensitive, IDrainingCallback, ITankAccess {
+@Storable
+public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWaterSensitive, IDrainingCallback, ITankAccess {
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
   private static int IO_MB_TICK = 100;
 
   @Nonnull
+  @Store
   protected SmartTank tank = new SmartTank(2 * ONE_BLOCK_OF_LIQUID);
   protected int lastUpdateLevel = -1;
   
   private boolean tankDirty = false;
+
+  @Store(value = { SAVE }, handler = HandleSetBlockCoord.class)
+  protected Set<BlockCoord> nowater = new HashSet<BlockCoord>();
+  protected boolean registered = false;
+  protected int dryruncount = 0;
 
   public TileDrain() {
     super(new SlotDefinition(1, 1, 1));
@@ -203,8 +212,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
     int filledLevel = getFilledLevel();
     if(lastUpdateLevel != filledLevel) {
       lastUpdateLevel = filledLevel;
-      tankDirty = false;
-      return true;
+      tankDirty = true;
     }
 
     if(tankDirty && shouldDoWorkThisTick(10)) {
@@ -293,54 +301,13 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
   }
 
   @Override
-  public void writeCommon(NBTTagCompound nbtRoot) {
-    super.writeCommon(nbtRoot);
-    if(tank.getFluidAmount() > 0) {
-      NBTTagCompound fluidRoot = new NBTTagCompound();
-      tank.getFluid().writeToNBT(fluidRoot);
-      nbtRoot.setTag("tankContents", fluidRoot);
-    }
-    if (!nowater.isEmpty()) {
-      int[] nowaterArray = new int[nowater.size() * 3];
-      int i = 0;
-      for (BlockCoord bc : nowater) {
-        nowaterArray[i++] = bc.x;
-        nowaterArray[i++] = bc.y;
-        nowaterArray[i++] = bc.z;
-      }
-      nbtRoot.setIntArray("nowater", nowaterArray);
-    }
-  }
-
-  @Override
-  public void readCommon(NBTTagCompound nbtRoot) {
-    super.readCommon(nbtRoot);
-    if(nbtRoot.hasKey("tankContents")) {
-      FluidStack fl = FluidStack.loadFluidStackFromNBT((NBTTagCompound) nbtRoot.getTag("tankContents"));
-      tank.setFluid(fl);
-    } else {
-      tank.setFluid(null);
-    }
-    
-    if(nbtRoot.hasKey("nowater")) {
-      int[] nowaterArray = nbtRoot.getIntArray("nowater");
-      int i = 0;
-      while (i < nowaterArray.length) {
-        nowater.add(new BlockCoord(nowaterArray[i++], nowaterArray[i++], nowaterArray[i++]));
-      }
-    } else {
-      nowater.clear();
-    }
-  }
-
-  @Override
-  public void readCustomNBT(NBTTagCompound nbtRoot) {
-    super.readCustomNBT(nbtRoot);
-    currentTask = createTask();
-  }
-  
-  IPoweredTask createTask() {
+  protected IPoweredTask createTask(NBTTagCompound taskTagCompound) {
     return new ContinuousTask(getPowerUsePerTick());
+  }
+
+  @Override
+  protected IPoweredTask createTask(IMachineRecipe nextRecipe, float chance) {
+    return createTask(null);
   }
 
   @Override
@@ -356,7 +323,7 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
       setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF * 40, 1000000, Config.drainContinuousEnergyUseRF));
       break;
     }
-    currentTask = createTask();
+    currentTask = createTask(null);
   }
 
   @Override
@@ -370,11 +337,6 @@ public class TileDrain extends AbstractPoweredTaskEntity implements IFluidHandle
     }
   }
 
-  @Store(value = { SAVE }, handler = HandleSetBlockCoord.class)
-  protected Set<BlockCoord> nowater = new HashSet<BlockCoord>();
-  protected boolean registered = false;
-  protected int dryruncount = 0;
-  
   @Override
   public boolean preventInfiniteWaterForming(@Nonnull World world, @Nonnull BlockCoord bc) {
     return nowater.contains(bc);

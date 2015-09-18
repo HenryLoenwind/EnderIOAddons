@@ -1,13 +1,14 @@
 package info.loenwind.enderioaddons.machine.cobbleworks;
 
+import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
+import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.AbstractTileFramework;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,10 +20,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.IMachineRecipe;
@@ -32,6 +33,7 @@ import crazypants.enderio.machine.MachineRecipeRegistry;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.power.BasicCapacitor;
 
+@Storable
 public class TileCobbleworks extends AbstractTileFramework implements IFrameworkMachine {
 
   static final int SLOTS_PER_WORK = 4;
@@ -39,22 +41,24 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   @Nonnull
   private static final Mapping[] outputMapping = new Mapping[1 + SLOTS_PER_WORK * WORKS];
 
-  private static Item alloySmelter;
-  private static Item sagMill;
-  private static Item crafter;
-  private static Set<Item> upgradeMachines;
+  @ItemStackHolder(value = "EnderIO:blockCrafter", meta = 0)
+  public static final ItemStack blockCrafter = null;
+  @ItemStackHolder(value = "EnderIO:blockAlloySmelter", meta = 0)
+  public static final ItemStack blockAlloySmelter = null;
+  @ItemStackHolder(value = "EnderIO:blockSagMill", meta = 0)
+  public static final ItemStack blockSagMill = null;
 
   private boolean inputsChanged = true;
   private int capTickLimit = 0;
 
+  // will be sent to the client to allow for visual effects
+  @Store({ CLIENT })
+  private int active = 0;
+  @Store({ CLIENT })
+  private int activeWorks = 0;
+
   public TileCobbleworks() {
     super(new SlotDefinition(WORKS, 1 + SLOTS_PER_WORK * WORKS, 1));
-    if (upgradeMachines == null) {
-      upgradeMachines = new HashSet<Item>();
-      upgradeMachines.add(alloySmelter = Item.getItemFromBlock(EnderIO.blockAlloySmelter));
-      upgradeMachines.add(sagMill = Item.getItemFromBlock(EnderIO.blockCrusher));
-      upgradeMachines.add(crafter = Item.getItemFromBlock(EnderIO.blockCrafter));
-    }
   }
 
   @Override
@@ -69,10 +73,18 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     computeOutputMapping();
   }
 
+  private static boolean isUpgradeMachine(@Nullable ItemStack stack) {
+    if (stack == null) {
+      return false;
+    }
+    Item item = stack.getItem();
+    return item == blockCrafter.getItem() || item == blockAlloySmelter.getItem() || item == blockSagMill.getItem();
+  }
+
   @Override
   protected boolean isMachineItemValidForSlot(int i, ItemStack itemstack) {
     if (slotDefinition.isInputSlot(i)) {
-      return inventory[i] == null && upgradeMachines.contains(itemstack.getItem());
+      return isUpgradeMachine(itemstack);
     } else if (slotDefinition.isOutputSlot(i)) {
       Mapping mapping = outputMapping[i - slotDefinition.minOutputSlot];
       return mapping != null && itemstack != null && mapping.itemStack.isItemEqual(itemstack);
@@ -94,10 +106,6 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return getInventoryStackLimit(0);
   }
 
-  // will be sent to the client to allow for visual effects
-  private int active = 0;
-  private int activeWorks = 0;
-
   @Override
   public boolean isActive() {
     return hasPower() && redstoneCheckPassed && active > 0;
@@ -107,11 +115,11 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     if (work == 0) {
       return activeWorks != 0;
     } else if (work == 1) {
-      return (activeWorks & 8190) != 0; // 0b1111111111110
+      return (activeWorks & 0b1111111111110) != 0;
     } else if (work == 2) {
-      return (activeWorks & 8160) != 0; // 0b1111111100000
+      return (activeWorks & 0b1111111100000) != 0;
     } else if (work == 3) {
-      return (activeWorks & 7680) != 0; // 0b1111000000000
+      return (activeWorks & 0b1111000000000) != 0;
     } else {
       return false;
     }
@@ -134,8 +142,13 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     } else {
       if (active > 0) {
         active--;
+        return updateClient;
+      } else if (activeWorks != 0) {
+        activeWorks = 0;
+        return true;
+      } else {
+        return updateClient;
       }
-      return updateClient;
     }
   }
 
@@ -207,7 +220,8 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     clear(outputMapping);
 
     outputMapping(0, 0, new Mapping(OperationType.NONE, new ItemStack(Item.getItemFromBlock(Blocks.cobblestone), 1),
-        Config.cobbleWorksRfPerCobblestone, -1, 0));
+ Config.cobbleWorksRfPerCobblestone, -1,
+        null, 0));
 
     for (int work = 1; work <= WORKS; work++) {
       ItemStack machine = inputSlot(work);
@@ -216,11 +230,11 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       if (machine != null && machine.getItem() != null && !input.isEmpty()) {
         for (Mapping mapping : input) {
           if (mapping != null) {
-            if (machine.getItem() == crafter) {
+            if (machine.getItem() == blockCrafter.getItem()) {
               computeCrafterOutput(output, mapping);
-            } else if (machine.getItem() == alloySmelter) {
+            } else if (machine.getItem() == blockAlloySmelter.getItem()) {
               computeMachineOutput(output, mapping, ModObject.blockAlloySmelter.unlocalisedName, OperationType.SMELTING);
-            } else if (machine.getItem() == sagMill) {
+            } else if (machine.getItem() == blockSagMill.getItem()) {
               computeMachineOutput(output, mapping, ModObject.blockSagMill.unlocalisedName, OperationType.CRUSHING);
             } else {
               // invalid machine...
@@ -284,7 +298,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       ResultStack[] completedResult = recipe.getCompletedResult(0, mri);
       for (ResultStack resultStack : completedResult) {
         if (resultStack.item != null) {
-          output.add(new Mapping(operationType, resultStack.item.copy(), recipe.getEnergyRequired(mri), input.position, 1));
+          output.add(new Mapping(operationType, resultStack.item.copy(), recipe.getEnergyRequired(mri), input.position, input.itemStack, 1));
         }
       }
     }
@@ -303,7 +317,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     }
     ItemStack crafted = CraftingManager.getInstance().findMatchingRecipe(inv, worldObj);
     if (crafted != null) {
-      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, 9));
+      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, input.itemStack, 9));
     }
     // 2x2
     for (int i = 0; i < 9; i++) {
@@ -315,7 +329,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     inv.setInventorySlotContents(4, input.itemStack);
     crafted = CraftingManager.getInstance().findMatchingRecipe(inv, worldObj);
     if (crafted != null) {
-      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, 4));
+      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, input.itemStack, 4));
     }
     // 1x1
     for (int i = 0; i < 9; i++) {
@@ -324,7 +338,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     inv.setInventorySlotContents(0, input.itemStack);
     crafted = CraftingManager.getInstance().findMatchingRecipe(inv, worldObj);
     if (crafted != null) {
-      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, 1));
+      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, input.itemStack, 1));
     }
     // 3x2 (glass panes, cobblestone walls)
     for (int i = 0; i < 6; i++) {
@@ -335,7 +349,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     }
     crafted = CraftingManager.getInstance().findMatchingRecipe(inv, worldObj);
     if (crafted != null) {
-      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, 4));
+      output.add(new Mapping(OperationType.CRAFTING, crafted.copy(), crazypants.enderio.config.Config.crafterRfPerCraft, input.position, input.itemStack, 4));
     }
   }
 
@@ -372,6 +386,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       capTickLimit += getCapacitor().getMaxEnergyExtracted();
     }
     boolean reSync = false;
+    activeWorks = 0;
     for (int i = outputMapping.length - 1; i >= 0; i--) {
       Mapping mapping = outputMapping[i];
       if (mapping != null) {
@@ -385,7 +400,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
           ItemStack parentStack = null;
           if (mapping.parent >= 0) {
             parentStack = outputSlot(mapping.parent);
-            if (parentStack == null || parentStack.stackSize < mapping.inputAmount) {
+            if (parentStack == null || parentStack.stackSize < mapping.inputAmount || !parentStack.isItemEqual(mapping.inputItemStack)) {
               goodToGo = false;
             }
           }
@@ -455,23 +470,8 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
           crazypants.enderio.config.Config.powerConduitTierThreeRF));
       break;
     }
-  }
-
-  @Override
-  public void readCommon(NBTTagCompound nbtRoot) {
-    super.readCommon(nbtRoot);
     inputsChanged = true;
     computeOutputMapping();
-    active = nbtRoot.getInteger("cwactive");
-    activeWorks = nbtRoot.getInteger("activeWorks");
-  }
-
-  @Override
-  public void writeCommon(NBTTagCompound nbtRoot) {
-    super.writeCommon(nbtRoot);
-    nbtRoot.setInteger("cwactive", active);
-    nbtRoot.setInteger("activeWorks", activeWorks);
-    activeWorks = 0;
   }
 
   @Override
@@ -503,8 +503,10 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     final int parent;
     int position = 0;
     final int inputAmount;
+    @Nullable
+    final ItemStack inputItemStack;
 
-    public Mapping(@Nonnull OperationType operationType, ItemStack itemStack, int costInRF, int parent, int inputAmount) {
+    public Mapping(@Nonnull OperationType operationType, ItemStack itemStack, int costInRF, int parent, @Nullable ItemStack inputItemStack, int inputAmount) {
       if (itemStack == null) {
         throw new NullPointerException("Unexpected NULL ItemStack");
       }
@@ -512,6 +514,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       this.itemStack = itemStack;
       this.costInRF = costInRF;
       this.parent = parent;
+      this.inputItemStack = inputItemStack;
       this.inputAmount = inputAmount;
     }
   }
@@ -559,11 +562,11 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     ItemStack stack = inputSlot(tankSlot.ordinal());
     if (stack == null) {
       return null;
-    } else if (stack.getItem() == crafter) {
+    } else if (stack.getItem() == blockCrafter.getItem()) {
       return EnderIO.blockCrafter.getIcon(side, 0);
-    } else if (stack.getItem() == alloySmelter) {
+    } else if (stack.getItem() == blockAlloySmelter.getItem()) {
       return EnderIO.blockAlloySmelter.getIcon(side, 0);
-    } else if (stack.getItem() == sagMill) {
+    } else if (stack.getItem() == blockSagMill.getItem()) {
       return EnderIO.blockCrusher.getIcon(side, 0);
     }
     return null;

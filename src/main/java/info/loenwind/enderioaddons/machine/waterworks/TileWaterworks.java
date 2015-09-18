@@ -4,13 +4,11 @@ import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
-import info.loenwind.autosave.Reader;
-import info.loenwind.autosave.Writer;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
-import info.loenwind.autosave.annotations.Store.StoreFor;
 import info.loenwind.autosave.handlers.HandleStash;
 import info.loenwind.enderioaddons.common.Fluids;
+import info.loenwind.enderioaddons.common.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.ConfigProvider;
@@ -18,16 +16,11 @@ import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine.CreationResult;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Stash;
 
-import java.util.EnumSet;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -41,7 +34,6 @@ import com.enderio.core.api.common.util.ITankAccess;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.FluidUtil;
 
-import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
 import crazypants.enderio.machine.MachineRecipeInput;
@@ -51,7 +43,7 @@ import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
 
 @Storable
-public class TileWaterworks extends AbstractPoweredTaskEntity implements IFrameworkMachine, IFluidHandler, ITankAccess {
+public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachine, IFluidHandler, ITankAccess {
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
@@ -468,76 +460,6 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
         markDirty();
       }
     }
-  }
-
-  /**
-   * This stops read/writeCommon(). It should be set when calling
-   * super.read/writeCustom() as it calls read/writeCommon(). This doesn't mesh
-   * well with our 3-tier nbt-handling.
-   * 
-   * <p>
-   * Remember:
-   * 
-   * <ul>
-   * <li>packet handler calls custom,
-   * <li>save/load calls custom,
-   * <li>reading from/writing to itemstack calls common,
-   * <li>custom calls common
-   * </ul>
-   */
-  private boolean inCustom = false;
-
-  @Override
-  public void readCustomNBT(NBTTagCompound nbtRoot) {
-    inCustom = true;
-    super.readCustomNBT(nbtRoot);
-    inCustom = false;
-
-    Reader.read(EnumSet.of(SAVE), nbtRoot, this);
-  }
-
-  @Override
-  public void writeCustomNBT(NBTTagCompound nbtRoot) {
-    inCustom = true;
-    super.writeCustomNBT(nbtRoot);
-    inCustom = false;
-
-    Writer.write(EnumSet.of(SAVE), nbtRoot, this);
-  }
-
-  @Override
-  public void readCommon(NBTTagCompound nbtRoot) {
-    super.readCommon(nbtRoot);
-    if (!inCustom) {
-      Reader.read(EnumSet.allOf(StoreFor.class), nbtRoot, this);
-    }
-  }
-
-  @Override
-  public void writeCommon(NBTTagCompound nbtRoot) {
-    super.writeCommon(nbtRoot);
-    if (!inCustom) {
-      Writer.write(EnumSet.allOf(StoreFor.class), nbtRoot, this);
-    }
-  }
-
-  @Override
-  public Packet getDescriptionPacket() {
-    NBTTagCompound nbtRoot = new NBTTagCompound();
-    inCustom = true;
-    super.writeCustomNBT(nbtRoot);
-    inCustom = false;
-    Writer.write(CLIENT, nbtRoot, this);
-    return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbtRoot);
-  }
-
-  @Override
-  public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-    final NBTTagCompound nbtRoot = pkt.func_148857_g();
-    Reader.read(EnumSet.of(CLIENT), nbtRoot, this);
-    inCustom = true;
-    super.readCustomNBT(nbtRoot);
-    inCustom = false;
   }
 
   @Override
