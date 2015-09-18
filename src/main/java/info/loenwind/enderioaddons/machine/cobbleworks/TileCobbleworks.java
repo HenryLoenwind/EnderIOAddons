@@ -41,12 +41,9 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   @Nonnull
   private static final Mapping[] outputMapping = new Mapping[1 + SLOTS_PER_WORK * WORKS];
 
-  @ItemStackHolder(value = "EnderIO:blockCrafter", meta = 0)
-  public static final ItemStack blockCrafter = null;
-  @ItemStackHolder(value = "EnderIO:blockAlloySmelter", meta = 0)
-  public static final ItemStack blockAlloySmelter = null;
-  @ItemStackHolder(value = "EnderIO:blockSagMill", meta = 0)
-  public static final ItemStack blockSagMill = null;
+  public static final @ItemStackHolder("EnderIO:blockCrafter") ItemStack blockCrafter = null;
+  public static final @ItemStackHolder("EnderIO:blockAlloySmelter") ItemStack blockAlloySmelter = null;
+  public static final @ItemStackHolder("EnderIO:blockSagMill") ItemStack blockSagMill = null;
 
   private boolean inputsChanged = true;
   private int capTickLimit = 0;
