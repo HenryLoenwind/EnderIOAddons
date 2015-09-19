@@ -1,6 +1,6 @@
 package info.loenwind.enderioaddons.machine.framework;
 
-import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import static info.loenwind.enderioaddons.common.NullHelper.notnullJ;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 
 import javax.annotation.Nonnull;
@@ -58,7 +58,7 @@ public class TESRFrameworkMachine extends TileEntitySpecialRenderer {
   private static void renderTankPass(@Nonnull TileEntity te, double x, double y, double z, boolean waterPass) {
     int facing = ((AbstractMachineEntity) te).facing;
     for (TankSlot tankSlot : TankSlot.values()) {
-      tankSlot = notnull(tankSlot, "Java's broken, enum has null values");
+      tankSlot = notnullJ(tankSlot, "enum.values()[i]");
       if (((IFrameworkMachine) te).hasTank(tankSlot)) {
         Fluid fluid = ((IFrameworkMachine) te).getTankFluid(tankSlot);
         if (fluid != null && (fluid == FluidRegistry.WATER) == waterPass) {

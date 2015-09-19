@@ -3,7 +3,7 @@ package info.loenwind.enderioaddons.config;
 import javax.annotation.Nonnull;
 
 public enum Section {
-  DRAIN("drain"), COBBLEWORKS("cobbleworks"), WATERWORKS("waterworks");
+  DRAIN("drain"), COBBLEWORKS("cobbleworks"), WATERWORKS("waterworks"), RECIPES("recipes"), DEV("development");
 
   @Nonnull
   public final String name;

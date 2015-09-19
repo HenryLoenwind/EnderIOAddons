@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.framework;
 
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import static info.loenwind.enderioaddons.common.NullHelper.notnullJ;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 
@@ -85,7 +86,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
       }
 
       for (TankSlot tankSlot : TankSlot.values()) {
-        tankSlot = notnull(tankSlot, "Java's broken, enum has null values");
+        tankSlot = notnullJ(tankSlot, "enum.values()[i]");
         if (frameworkMachine.renderSlot(tankSlot)) {
           renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
         }
@@ -193,7 +194,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
 
       boolean stem1 = false, stem2 = false;
       for (TankSlot tankSlot : TankSlot.values()) {
-        tankSlot = notnull(tankSlot, "Java's broken, enum has null values");
+        tankSlot = notnullJ(tankSlot, "enum.values()[i]");
         if (frameworkMachine.hasTank(tankSlot)) {
           int i = tankSlot.ordinal();
           result.add(tanks[i]);

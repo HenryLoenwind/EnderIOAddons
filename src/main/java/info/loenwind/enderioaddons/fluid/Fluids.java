@@ -1,6 +1,8 @@
-package info.loenwind.enderioaddons.common;
+package info.loenwind.enderioaddons.fluid;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.baseclass.BlockFluidEioA;
+import info.loenwind.enderioaddons.common.NullHelper;
 
 import javax.annotation.Nonnull;
 
@@ -36,14 +38,15 @@ public enum Fluids {
     this.quanta = quanta;
   }
 
-  @SuppressWarnings("null")
   public static void init(@SuppressWarnings("unused") FMLPreInitializationEvent event) {
     for (Fluids fluid : values()) {
-      fluid.fluid = new Fluid(fluid.name).setDensity(fluid.density).setViscosity(fluid.viscosity);
-      if (FluidRegistry.registerFluid(fluid.fluid)) {
-        fluid.block = BlockFluidEioA.create(fluid.fluid, Material.water);
+      Fluid newFluid = new Fluid(fluid.name);
+      newFluid.setDensity(fluid.density).setViscosity(fluid.viscosity);
+      if (FluidRegistry.registerFluid(newFluid)) {
+        fluid.fluid = newFluid;
+        fluid.block = BlockFluidEioA.create(newFluid, NullHelper.notnullF(Material.water, "Material.water"));
         fluid.block.setQuantaPerBlock(fluid.quanta);
-        fluid.bucket = ItemBucketEio.create(fluid.fluid);
+        fluid.bucket = ItemBucketEio.create(newFluid);
         fluid.bucket.setTextureName(EnderIOAddons.DOMAIN + ":" + "bucket" + StringUtils.capitalize(fluid.name));
       } else {
         throw new RuntimeException("Failed to register fluid '" + fluid.name + "', there already is a confliction fluid with the same name.");

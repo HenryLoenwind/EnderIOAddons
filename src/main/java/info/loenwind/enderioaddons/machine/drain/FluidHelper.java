@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.drain;
 
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +43,8 @@ public final class FluidHelper {
   private IDrainingCallback hook;
 
   /*
-   * Set this to block removed water from forming infinite pools. The block expires when the given te is gc()ed.
+   * Set this to prevent removed water from forming infinite pools. The block
+   * expires when the given te is gc()ed.
    */
   public void setDrainingCallback(@Nonnull IDrainingCallback hook) {
     this.hook = hook;
@@ -51,7 +53,7 @@ public final class FluidHelper {
   private FluidHelper(@Nonnull World world, @Nonnull FluidStack stack, @Nullable BlockCoord startbc) throws Exception {
     this.world = world;
     this.stack = stack;
-    this.fluid = notnull(stack.getFluid(), "Invalid FluidStack (there's no fluid inside)");
+    this.fluid = notnullF(stack.getFluid(), "FluidStack.getFluid()");
     this.block = notnull(fluid.getBlock(), "Invalid Fluid (it has no source block)");
     this.downflowDirection = fluid.getDensity() > 0 ? ForgeDirection.DOWN : ForgeDirection.UP;
     this.upflowDirection = downflowDirection == ForgeDirection.UP ? ForgeDirection.DOWN : ForgeDirection.UP;
@@ -286,7 +288,7 @@ public final class FluidHelper {
 
   @Nonnull
   public ReturnObject eatOrPullFluid() {
-    return eatOrPullFluid(notnull(startbc, "Invaliud state: Starting position has not been set"));
+    return eatOrPullFluid(notnull(startbc, "FluidHelper starting position has not been set"));
   }
 
   @Nonnull
@@ -309,7 +311,7 @@ public final class FluidHelper {
           break;
         case VANILLA:
           result.result = stack.copy();
-          notnull(result.result, "Copying a FluidStack failed").amount = 1000;
+          notnullF(result.result, "FluidStack.copy()").amount = 1000;
           if (fluid == FluidRegistry.WATER && hook != null) {
             hook.onWaterDrain(world, bc);
           }
@@ -324,7 +326,7 @@ public final class FluidHelper {
         // there is liquid here but we were unable to find a source block for it. Minecraft's fluid mechanics
         // may be messed up and give us some fake flowing blocks. Try to remedy this be forcing it to re-flow them.
         for (BlockCoord blockCoord : seen) {
-          blockCoord = notnull(blockCoord, "Invalid internal state: I remember to have visited an invalid location?");
+          blockCoord = notnull(blockCoord, "FluidHelper is confused: I remember to have visited an invalid location?");
           if (isFlowingBlock(blockCoord) && isSameLiquid(blockCoord)) {
             world.setBlockToAir(blockCoord.x, blockCoord.y, blockCoord.z);
           }

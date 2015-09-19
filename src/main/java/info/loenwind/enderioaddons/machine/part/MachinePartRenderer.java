@@ -1,6 +1,6 @@
 package info.loenwind.enderioaddons.machine.part;
 
-import static info.loenwind.enderioaddons.common.NullHelper.notnull;
+import static info.loenwind.enderioaddons.common.NullHelper.notnullM;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 
@@ -45,9 +45,9 @@ public class MachinePartRenderer implements IItemRenderer {
   @Override
   public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
     @Nonnull
-    final RenderBlocks renderBlocks = notnull((RenderBlocks) data[0], "Game state error: Missing RenderBlock parameter");
+    final RenderBlocks renderBlocks = notnullM((RenderBlocks) data[0], "Game state error: Missing RenderBlock parameter");
     @Nonnull
-    final ItemStack itemToRender = notnull(item, "Game state error: Missing item to render");
+    final ItemStack itemToRender = notnullM(item, "Game state error: Missing item to render");
     if(type == ItemRenderType.INVENTORY) {
       renderToInventory(itemToRender, renderBlocks);
     } else if(type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {

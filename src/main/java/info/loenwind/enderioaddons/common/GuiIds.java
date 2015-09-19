@@ -15,7 +15,7 @@ public class GuiIds {
   private GuiIds() {
   }
 
-  static void compute_GUI_IDs() {
+  public static void compute_GUI_IDs() {
     GUI_ID_DRAIN = nextID();
     GUI_ID_COBBLEWORKS = nextID();
     GUI_ID_WATERWORKS = nextID();

@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,6 +44,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   public static final ModObject ModObject_blockDrain = EnumHelper.addEnum(ModObject.class, "blockDrain", new Class<?>[0], new Object[0]);
   public static BlockDrain blockDrain;
+  public int localRenderId;
 
   public static BlockDrain create() {
     PacketHandler.INSTANCE.registerMessage(PacketDrain.class, PacketDrain.class, PacketHandler.nextID(), Side.CLIENT);
@@ -115,9 +117,10 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-    TileEntity te = world.getTileEntity(x, y, z);
-    if (te instanceof TileDrain && player.inventory != null) {
-      return new GuiDrain(player.inventory, (TileDrain) te);
+    final TileEntity te = world.getTileEntity(x, y, z);
+    final InventoryPlayer inventory = player.inventory;
+    if (te instanceof TileDrain && inventory != null) {
+      return new GuiDrain(inventory, (TileDrain) te);
     }
     return null;
   }
@@ -161,7 +164,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   protected String getMachineFrontIconKey(boolean active) {
-    return "enderio:machineSide";
+    return EnderIOAddons.DOMAIN + ":blockDrainSide";
   }
 
   @Override
@@ -180,13 +183,14 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   }
 
   @SuppressWarnings("static-method")
+  // TODO: @Override after EIO#2827
   protected String getBottomIconKey(@SuppressWarnings("unused") boolean active) {
     return "enderio:machineTemplate";
   }
 
   @Override
   @SideOnly(Side.CLIENT)
-  public void registerBlockIcons(IIconRegister iIconRegister) {
+  public void registerBlockIcons(IIconRegister iIconRegister) { // TODO: remove after EIO#2827
     super.registerBlockIcons(iIconRegister);
 
     iconBuffer[0][0] = iIconRegister.registerIcon(getBottomIconKey(false));
@@ -197,7 +201,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   @Override
   @SideOnly(Side.CLIENT)
   public void addCommonEntries(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
-    if (!Config.drainAllowOnDedicatedServer && !Minecraft.getMinecraft().isSingleplayer()) {
+    if (!Config.drainAllowOnDedicatedServer.getBoolean() && !Minecraft.getMinecraft().isSingleplayer()) {
       list.add(EnderIO.lang.localize("blockDrain.tooltip.disabledMessage"));
     }
   }
@@ -254,12 +258,9 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
     }
   }
 
-  @SuppressWarnings("hiding")
-  public static int renderId;
-
   @Override
   public int getRenderType() {
-    return renderId;
+    return localRenderId;
   }
 
   @SideOnly(Side.CLIENT)

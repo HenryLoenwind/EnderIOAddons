@@ -111,7 +111,7 @@ public class GuiWaterworks extends GuiPoweredMachineBase<TileWaterworks> {
       if (progress0 >= 0) {
         float progress = MathHelper.clamp_float(progress0 * 1.3f - 0.15f, 0, 1);
         final Fluid progress_out = getTileEntity().progress_out;
-        int cfactor = progress_out != null ? Config.waterWorksWaterReductionPercentage : 0;
+        int cfactor = progress_out != null ? Config.waterWorksWaterReductionPercentage.getInt() : 0;
         int hmin = 26 * cfactor / 100;
         int h = (int) (hmin + (1f - progress) * (26 - hmin));
         int offset = 26 - h;

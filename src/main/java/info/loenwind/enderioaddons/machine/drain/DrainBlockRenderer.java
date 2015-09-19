@@ -1,13 +1,14 @@
 package info.loenwind.enderioaddons.machine.drain;
 
-import com.enderio.core.client.render.BoundingBox;
-import com.enderio.core.client.render.CubeRenderer;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+
+import com.enderio.core.client.render.BoundingBox;
+import com.enderio.core.client.render.CubeRenderer;
+
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import crazypants.enderio.EnderIO;
 
@@ -82,7 +83,7 @@ public class DrainBlockRenderer implements ISimpleBlockRenderingHandler {
 
   @Override
   public int getRenderId() {
-    return BlockDrain.blockDrain.renderId;
+    return BlockDrain.blockDrain.getRenderType();
   }
   
 }

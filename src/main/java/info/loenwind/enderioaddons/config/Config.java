@@ -1,174 +1,305 @@
 package info.loenwind.enderioaddons.config;
 
-import info.loenwind.enderioaddons.EnderIOAddons;
-import info.loenwind.enderioaddons.common.InitAware;
-import info.loenwind.enderioaddons.common.Log;
 import io.netty.buffer.ByteBuf;
 
-import java.io.File;
+import java.nio.charset.Charset;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.common.config.Configuration;
 
-import com.enderio.core.common.event.ConfigFileChangedEvent;
+public enum Config {
 
-import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
-import cpw.mods.fml.relauncher.Side;
-import crazypants.enderio.network.PacketHandler;
+  drainContinuousEnergyUseRF(Section.DRAIN, 10, "The amount of power used by a drain per tick."), // 
+  drainPerBucketEnergyUseRF(Section.DRAIN, 400, "The amount of power used by a drain per 1000mB of liquid collected."), //
+  drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, 250,
+      "The amount of power used by a drain to move a source block by one meter."), //
+  drainAllowOnDedicatedServer(Section.DRAIN, false, "Allow the use of the drain on a dedicated server."), //
+  drainEnabled(Section.RECIPES, true, "Enable the crafting recipe for the drain"), //
 
-public class Config implements InitAware {
+  cobbleWorksRfPerCobblestone(Section.COBBLEWORKS, 100, "RF used per generated cobblestone"), //
 
-  public static int drainContinuousEnergyUseRF;
-  public static int drainPerBucketEnergyUseRF;
-  public static int drainPerSourceBlockMoveEnergyUseRF;
-  public static boolean drainAllowOnDedicatedServer;
-  public static boolean drainEnabled;
+  cobbleWorksRfDiscountForCrafting(Section.COBBLEWORKS, 10,
+      "Discount on the RF cost of crafting operations in percent (0-100)"), //
+  cobbleWorksRfDiscountForSmelting(Section.COBBLEWORKS, 10,
+      "Discount on the RF cost of smelting operations in percent (0-100)"), //
+  cobbleWorksRfDiscountForCrushing(Section.COBBLEWORKS, 10,
+      "Discount on the RF cost of crusing (sagmilling) operations in percent (0-100)"), //
+  cobbleWorksRfDiscountPerUpgrade(Section.COBBLEWORKS, 10,
+      "Discount on the RF cost of any operation in percent (0-100). This discount is applied once for a double-layer capacitor "
+          + "and twice for an octadic capacitor upgrade."), //
 
-  public static int cobbleWorksRfPerCobblestone;
-  public static int cobbleWorksRfDiscountForCrafting; // %
-  public static int cobbleWorksRfDiscountForSmelting; // %
-  public static int cobbleWorksRfDiscountForCrushing; // %
-  public static int cobbleWorksRfDiscountPerUpgrade; // %
-  public static boolean cobbleWorksEnabled;
+  cobbleWorksEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Cobbleworks"), //
 
-  public static int waterWorksWaterReductionPercentage; // %
-  public static double waterWorksRFperTask1;
-  public static double waterWorksRFperTask2;
-  public static double waterWorksRFperTask3;
+  waterWorksWaterReductionPercentage(Section.WATERWORKS, 10, "Amount of liquid produced when processing in percent (0-100) of the input liquid"), //
 
-  public static double waterWorksLiquidFactorperTask1;
-  public static double waterWorksLiquidFactorperTask2;
-  public static double waterWorksLiquidFactorperTask3;
+  waterWorksRFperTask1(Section.WATERWORKS, 5 * 20 * 20 * 1.0d, "RF per task (machine with no capacitor upgrades)"), //
+  waterWorksRFperTask2(Section.WATERWORKS, 5 * 20 * 20 * 1.75f * 0.9d, "RF per task (machine with first capacitor upgrades)"), //
+  waterWorksRFperTask3(Section.WATERWORKS, 5 * 20 * 20 * 3 * 0.8d, "RF per task (machine with second capacitor upgrades)"), //
 
-  public static int waterWorksRFusePerTick1;
-  public static int waterWorksRFusePerTick2;
-  public static int waterWorksRFusePerTick3;
+  waterWorksLiquidFactorperTask1(Section.WATERWORKS, 1.0d,
+      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with no capacitor upgrades)"), //
+  waterWorksLiquidFactorperTask2(Section.WATERWORKS, 1.75d,
+      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with first capacitor upgrades)"), //
+  waterWorksLiquidFactorperTask3(Section.WATERWORKS, 3.0d,
+      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with second capacitor upgrades)"), //
 
-  public static int waterWorksRFinPerTick1;
-  public static int waterWorksRFinPerTick2;
-  public static int waterWorksRFinPerTick3;
+  waterWorksRFusePerTick1(Section.WATERWORKS, 20, "RF a machine can use per tick (machine with no capacitor upgrades)"), //
+  waterWorksRFusePerTick2(Section.WATERWORKS, 40, "RF a machine can use per tick (machine with first capacitor upgrades)"), //
+  waterWorksRFusePerTick3(Section.WATERWORKS, 60, "RF a machine can use per tick (machine with second capacitor upgrades)"), //
 
-  public static boolean waterWorksEnabled;
+  waterWorksRFinPerTick1(Section.WATERWORKS, 100, "RF a machine can accept per tick (machine with no capacitor upgrades)"), //
+  waterWorksRFinPerTick2(Section.WATERWORKS, 200, "RF a machine can accept per tick (machine with first capacitor upgrades)"), //
+  waterWorksRFinPerTick3(Section.WATERWORKS, 800, "RF a machine can accept per tick (machine with second capacitor upgrades)"), //
 
-  static {
-    ConfigValues.loadAll();
+  waterWorksEnabled(Section.RECIPES, false, "Enable the crafting recipe for the Waterworks"), //
+
+  ;
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Nothing to see beyond this point. End of configuration values.
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  @Nonnull
+  private final Section section;
+  @Nonnull
+  private final Object defaultValue;
+  @Nonnull
+  private final String description;
+  @Nonnull
+  private Object currentValue;
+
+  private Config(@Nonnull Section section, @Nonnull Object defaultValue, @Nonnull String description) {
+    this.section = section;
+    this.description = description;
+    this.currentValue = this.defaultValue = defaultValue;
   }
 
-  //	****************************************************************************************
+  private Config(@Nonnull Section section, @Nonnull Integer defaultValue, @Nonnull String description) {
+    this(section, (Object) defaultValue, description);
+	  }
 
-  public static Configuration configuration;
-  public static File configDirectory;
-  public static boolean configLockedByServer = false;
-  public static boolean iAmTheServer = false;
-
-  public Config() {
+  private Config(@Nonnull Section section, @Nonnull Double defaultValue, @Nonnull String description) {
+    this(section, (Object) defaultValue, description);
   }
 
-  @Override
-  public void init(FMLPreInitializationEvent event) {
-    PacketHandler.INSTANCE.registerMessage(PacketConfigSync.class, PacketConfigSync.class, PacketHandler.nextID(), Side.CLIENT);
-    FMLCommonHandler.instance().bus().register(new Config());
-    configDirectory = new File(event.getModConfigurationDirectory(), EnderIOAddons.MODID.toLowerCase());
-    if (!configDirectory.exists()) {
-      configDirectory.mkdir();
+  private Config(@Nonnull Section section, @Nonnull Boolean defaultValue, @Nonnull String description) {
+    this(section, (Object) defaultValue, description);
+  }
+
+  private Config(@Nonnull Section section, @Nonnull String defaultValue, @Nonnull String description) {
+    this(section, (Object) defaultValue, description);
+  }
+
+  void load(Configuration config) {
+    Object value = null;
+    if (defaultValue instanceof Integer) {
+      value = config.get(section.name, name(), (Integer) defaultValue, description).getInt((Integer) defaultValue);
+    } else if (defaultValue instanceof Double) {
+      value = config.get(section.name, name(), (Double) defaultValue, description).getDouble((Double) defaultValue);
+    } else if (defaultValue instanceof Boolean) {
+      value = config.get(section.name, name(), (Boolean) defaultValue, description).getBoolean((Boolean) defaultValue);
+    } else if (defaultValue instanceof String) {
+      value = config.get(section.name, name(), (String) defaultValue, description).getString();
     }
 
-    File configFile = new File(configDirectory, EnderIOAddons.MODID + ".cfg");
-    configuration = new Configuration(configFile);
-    syncConfig(false);
+    setField(value);
   }
 
-  private static void syncConfig(boolean load) {
-    try {
-      if (load) {
-        configuration.load();
-      }
-      processConfig();
-    } catch (Exception e) {
-      Log.error("EnderIOAddons has a problem loading it's configuration");
-      e.printStackTrace();
-    } finally {
-      if (configuration.hasChanged()) {
-        configuration.save();
-      }
-    }
-  }
-
-  @SuppressWarnings("static-method")
-  @SubscribeEvent
-  public void onConfigChanged(OnConfigChangedEvent event) {
-    if (event.modID.equals(EnderIOAddons.MODID)) {
-      Log.info("Updating config...");
-      syncConfig(false);
-    }
-  }
-
-  @SuppressWarnings("static-method")
-  @SubscribeEvent
-  public void onConfigFileChanged(ConfigFileChangedEvent event) {
-    if (event.modID.equals(EnderIOAddons.MODID)) {
-      Log.info("Updating config...");
-      syncConfig(true);
-      event.setSuccessful();
+  private void setField(Object value) {
+    if (value != null) {
+      currentValue = value;
     }
   }
 
-  private static void processConfig() {
-    ConfigValues.loadAll(configuration);
-    computeDerivedValues(false);
-    if (configuration.hasChanged()) {
-      configuration.save();
+  void store(ByteBuf buf) {
+    if (defaultValue instanceof Integer) {
+      buf.writeInt(getInt());
+    } else if (defaultValue instanceof Double) {
+      buf.writeDouble(getDouble());
+    } else if (defaultValue instanceof Boolean) {
+      buf.writeBoolean(getBoolean());
+    } else if (defaultValue instanceof String) {
+      String value = getString();
+      byte[] bytes = value.getBytes(Charset.forName("UTF-8"));
+      buf.writeInt(bytes.length);
+      buf.writeBytes(bytes);
     }
   }
 
-  private static void computeDerivedValues(boolean serverSync) {
-    if (serverSync) {
-      drainEnabled = drainEnabled && drainAllowOnDedicatedServer;
+  void read(ByteBuf buf) {
+    Object value = null;
+    if (defaultValue instanceof Integer) {
+      value = buf.readInt();
+    } else if (defaultValue instanceof Double) {
+      value = buf.readDouble();
+    } else if (defaultValue instanceof Boolean) {
+      value = buf.readBoolean();
+    } else if (defaultValue instanceof String) {
+      int len = buf.readInt();
+      byte[] bytes = new byte[len];
+      buf.readBytes(bytes, 0, len);
+      value = new String(bytes, Charset.forName("UTF-8"));
+    }
+    setField(value);
+  }
+
+  protected void resetToDefault() {
+    setField(defaultValue);
+  }
+
+  public Section getSection() {
+    return section;
+  }
+
+  //
+
+  private class DataTypeErrorInConfigException extends RuntimeException {
+  }
+
+  public int getDefaultInt() {
+    if (defaultValue instanceof Integer) {
+      return (Integer) defaultValue;
+    } else if (defaultValue instanceof Double) {
+      return ((Double) defaultValue).intValue();
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) defaultValue ? 1 : 0;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
     } else {
-      drainEnabled = drainEnabled && (drainAllowOnDedicatedServer || FMLCommonHandler.instance().getSide().isClient());
+      throw new DataTypeErrorInConfigException();
     }
   }
 
-  public static void toBytes(ByteBuf buf) {
-    ConfigValues.toBytes(buf);
-  }
-
-  public static void fromBytes(ByteBuf buf) {
-    if (iAmTheServer) {
-      return;
+  public double getDefaultDouble() {
+    if (defaultValue instanceof Integer) {
+      return (Integer) defaultValue;
+    } else if (defaultValue instanceof Double) {
+      return (Double) defaultValue;
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) defaultValue ? 1 : 0;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
     }
-    ConfigValues.fromBytes(buf);
-    computeDerivedValues(true);
-    configLockedByServer = true;
   }
 
-  @SuppressWarnings("static-method")
-  @SubscribeEvent
-  public void onPlayerLoggon(PlayerLoggedInEvent evt) {
-    iAmTheServer = true;
-    PacketHandler.INSTANCE.sendTo(new PacketConfigSync(), (EntityPlayerMP) evt.player);
+  public float getDefaultFloat() {
+    if (defaultValue instanceof Integer) {
+      return (Integer) defaultValue;
+    } else if (defaultValue instanceof Double) {
+      return ((Double) defaultValue).floatValue();
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) defaultValue ? 1 : 0;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
   }
 
-  @SuppressWarnings("static-method")
-  @SubscribeEvent
-  public void onPlayerLogout(@SuppressWarnings("unused") ClientDisconnectionFromServerEvent event) {
-    syncConfig(false);
-    configLockedByServer = false;
+  public boolean getDefaultBoolean() {
+    if (defaultValue instanceof Integer) {
+      throw new DataTypeErrorInConfigException();
+    } else if (defaultValue instanceof Double) {
+      throw new DataTypeErrorInConfigException();
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) defaultValue;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
   }
 
-  @Override
-  public void init(FMLInitializationEvent event) {
+  @SuppressWarnings("null")
+  @Nonnull
+  public String getDefaultString() {
+    if (defaultValue instanceof Integer) {
+      return ((Integer) defaultValue).toString();
+    } else if (defaultValue instanceof Double) {
+      return ((Double) defaultValue).toString();
+    } else if (defaultValue instanceof Boolean) {
+      return ((Boolean) defaultValue).toString();
+    } else if (defaultValue instanceof String) {
+      return (String) defaultValue;
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
   }
 
-  @Override
-  public void init(FMLPostInitializationEvent event) {
+  //
+
+  public int getInt() {
+    if (defaultValue instanceof Integer) {
+      return (Integer) currentValue;
+    } else if (defaultValue instanceof Double) {
+      return ((Double) currentValue).intValue();
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) currentValue ? 1 : 0;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
   }
 
+  public double getDouble() {
+    if (defaultValue instanceof Integer) {
+      return (Integer) currentValue;
+    } else if (defaultValue instanceof Double) {
+      return (Double) currentValue;
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) currentValue ? 1 : 0;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
+  }
+
+  public float getFloat() {
+    if (defaultValue instanceof Integer) {
+      return (Integer) currentValue;
+    } else if (defaultValue instanceof Double) {
+      return ((Double) currentValue).floatValue();
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) currentValue ? 1 : 0;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
+  }
+
+  public boolean getBoolean() {
+    if (defaultValue instanceof Integer) {
+      throw new DataTypeErrorInConfigException();
+    } else if (defaultValue instanceof Double) {
+      throw new DataTypeErrorInConfigException();
+    } else if (defaultValue instanceof Boolean) {
+      return (Boolean) currentValue;
+    } else if (defaultValue instanceof String) {
+      throw new DataTypeErrorInConfigException();
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
+  }
+
+  @SuppressWarnings("null")
+  @Nonnull
+  public String getString() {
+    if (defaultValue instanceof Integer) {
+      return ((Integer) currentValue).toString();
+    } else if (defaultValue instanceof Double) {
+      return ((Double) currentValue).toString();
+    } else if (defaultValue instanceof Boolean) {
+      return ((Boolean) currentValue).toString();
+    } else if (defaultValue instanceof String) {
+      return (String) currentValue;
+    } else {
+      throw new DataTypeErrorInConfigException();
+    }
+  }
 }

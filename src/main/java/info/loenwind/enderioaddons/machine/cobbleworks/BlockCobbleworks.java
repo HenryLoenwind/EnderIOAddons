@@ -25,8 +25,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   public static final ModObject ModObject_blockCobbleworks = EnumHelper.addEnum(ModObject.class, "blockCobbleworks", new Class<?>[0], new Object[0]);
   public static BlockCobbleworks blockCobbleworks;
-  @SuppressWarnings("hiding")
-  public static int renderId;
+  public int localRenderId;
 
   public static BlockCobbleworks create() {
     blockCobbleworks = new BlockCobbleworks();
@@ -40,7 +39,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   @Nonnull
   public static BlockCobbleworks getBlock() {
-    return notnull(blockCobbleworks, "Internal statwe error: BlockCobbleworks has not been initialized");
+    return notnull(blockCobbleworks, "BlockCobbleworks has not been initialized");
   }
 
   @Override
@@ -73,7 +72,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
 
   @Override
   public int getRenderType() {
-    return renderId;
+    return localRenderId;
   }
 
   @Override
@@ -82,7 +81,7 @@ public class BlockCobbleworks extends AbstractMachineBlock<TileCobbleworks> impl
   }
 
   @Override
-  public String getControllerModelName() {
+  public @Nonnull String getControllerModelName() {
     return "cobbleController";
   }
 

@@ -23,9 +23,9 @@ public class OreDictionaryItem implements Item {
   @Nullable
   public ItemStack getItemStack() {
     if (stack == null && oreDictionary != null) {
-      stack = OreDictionaryPreferences.instance.getPreferred(oreDictionary);
-      if (stack != null) {
-        stack = stack.copy();
+      final ItemStack stack2 = OreDictionaryPreferences.instance.getPreferred(oreDictionary);
+      if (stack2 != null) {
+        stack = stack2.copy();
         stack.stackSize = 1;
       } else {
         oreDictionary = null;

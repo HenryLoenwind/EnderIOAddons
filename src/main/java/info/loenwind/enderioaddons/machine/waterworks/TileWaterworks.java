@@ -1,8 +1,15 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
-import static info.loenwind.enderioaddons.common.NullHelper.notnull;
-import info.loenwind.enderioaddons.common.Fluids;
+import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
+import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
+import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
+import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.annotations.Store;
+import info.loenwind.autosave.handlers.HandleStash;
+import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.fluid.Fluids;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.ConfigProvider;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
@@ -14,8 +21,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -29,7 +34,6 @@ import com.enderio.core.api.common.util.ITankAccess;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.FluidUtil;
 
-import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
 import crazypants.enderio.machine.MachineRecipeInput;
@@ -38,13 +42,16 @@ import crazypants.enderio.network.PacketHandler;
 import crazypants.enderio.power.BasicCapacitor;
 import crazypants.enderio.tool.SmartTank;
 
-public class TileWaterworks extends AbstractPoweredTaskEntity implements IFrameworkMachine, IFluidHandler, ITankAccess {
+@Storable
+public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachine, IFluidHandler, ITankAccess {
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
   @Nonnull
+  @Store
   protected SmartTank inputTank = new SmartTank(3 * ONE_BLOCK_OF_LIQUID);
   @Nonnull
+  @Store
   protected SmartTank outputTank = new SmartTank(1 * ONE_BLOCK_OF_LIQUID);
 
   private static int IO_MB_TICK = 200;
@@ -52,14 +59,18 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   boolean tanksDirty = false;
 
   @Nullable
+  @Store({ SAVE, CLIENT })
   protected Fluid progress_in = null;
   @Nullable
+  @Store({ SAVE, CLIENT })
   protected Fluid progress_out = null;
 
   @Nonnull
   protected static final Engine engine = new Engine(ConfigProvider.readConfig());
   @Nonnull
+  @Store(value = { SAVE, ITEM }, handler = HandleStash.class)
   protected final Stash stash = new Stash();
+  @Store({ SAVE, ITEM, CLIENT })
   protected float stashProgress = 0.0f;
 
   protected static ColMap data;
@@ -68,9 +79,9 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
     super(new SlotDefinition(0, 14, 1));
 
     if (data == null) {
-      int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage / 100;
+      int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage.getInt() / 100;
       data = new ColMap(5);
-      data.set(0, notnull(FluidRegistry.WATER, "Forge error: There is no water!"), Fluids.BRINE1, 0, amount);
+      data.set(0, notnullF(FluidRegistry.WATER, "FluidRegistry.WATER"), Fluids.BRINE1, 0, amount);
       data.set(1, Fluids.BRINE1, Fluids.BRINE2, 1, amount);
       data.set(2, Fluids.BRINE2, Fluids.BRINE3, 2, amount);
       data.set(3, Fluids.BRINE3, Fluids.BRINE4, 3, amount);
@@ -96,13 +107,13 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   public void onCapacitorTypeChange() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick1, 100000, Config.waterWorksRFusePerTick1));
+      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick1.getInt(), 100000, Config.waterWorksRFusePerTick1.getInt()));
       break;
     case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick2, 200000, Config.waterWorksRFusePerTick2));
+      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick2.getInt(), 200000, Config.waterWorksRFusePerTick2.getInt()));
       break;
     case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick3, 500000, Config.waterWorksRFusePerTick3));
+      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick3.getInt(), 500000, Config.waterWorksRFusePerTick3.getInt()));
       break;
     }
   }
@@ -110,11 +121,11 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   protected float getLiquidFactorPerTask() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return (float) Config.waterWorksLiquidFactorperTask1;
+      return Config.waterWorksLiquidFactorperTask1.getFloat();
     case ACTIVATED_CAPACITOR:
-      return (float) Config.waterWorksLiquidFactorperTask2;
+      return Config.waterWorksLiquidFactorperTask2.getFloat();
     case ENDER_CAPACITOR:
-      return (float) Config.waterWorksLiquidFactorperTask3;
+      return Config.waterWorksLiquidFactorperTask3.getFloat();
     }
     return 0;
   }
@@ -122,17 +133,17 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
   protected float getRfPerTask() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return (float) Config.waterWorksRFperTask1;
+      return Config.waterWorksRFperTask1.getFloat();
     case ACTIVATED_CAPACITOR:
-      return (float) Config.waterWorksRFperTask2;
+      return Config.waterWorksRFperTask2.getFloat();
     case ENDER_CAPACITOR:
-      return (float) Config.waterWorksRFperTask3;
+      return Config.waterWorksRFperTask3.getFloat();
     }
     return 0;
   }
 
   @Override
-  public boolean hasTank(TankSlot tankSlot) {
+  public boolean hasTank(@Nonnull TankSlot tankSlot) {
     return true;
   }
 
@@ -449,100 +460,6 @@ public class TileWaterworks extends AbstractPoweredTaskEntity implements IFramew
         markDirty();
       }
     }
-  }
-
-  // custom calls common; reading from itemstack calls common
-
-  @Override
-  public void readCustomNBT(NBTTagCompound nbtRoot) {
-    super.readCustomNBT(nbtRoot);
-    if (nbtRoot.hasKey("progress_in")) {
-      progress_in = FluidRegistry.getFluid(nbtRoot.getInteger("progress_in"));
-    } else {
-      progress_in = null;
-    }
-    if (nbtRoot.hasKey("progress_out")) {
-      progress_out = FluidRegistry.getFluid(nbtRoot.getInteger("progress_out"));
-    } else {
-      progress_out = null;
-    }
-  }
-
-  @Override
-  public void writeCustomNBT(NBTTagCompound nbtRoot) {
-    super.writeCustomNBT(nbtRoot);
-    if (progress_in != null) {
-      nbtRoot.setInteger("progress_in", progress_in.getID());
-    }
-    if (progress_out != null) {
-      nbtRoot.setInteger("progress_out", progress_out.getID());
-    }
-  }
-
-  @Override
-  public void readCommon(NBTTagCompound nbtRoot) {
-    super.readCommon(nbtRoot);
-
-    if (nbtRoot.hasKey("inputTank")) {
-      NBTTagCompound tankRoot = (NBTTagCompound) nbtRoot.getTag("inputTank");
-      if (tankRoot != null) {
-        inputTank.readFromNBT(tankRoot);
-      } else {
-        inputTank.setFluid(null);
-      }
-    } else {
-      inputTank.setFluid(null);
-    }
-
-    if (nbtRoot.hasKey("outputTank")) {
-      NBTTagCompound tankRoot = (NBTTagCompound) nbtRoot.getTag("outputTank");
-      if (tankRoot != null) {
-        outputTank.readFromNBT(tankRoot);
-      } else {
-        outputTank.setFluid(null);
-      }
-    } else {
-      outputTank.setFluid(null);
-    }
-
-    if (nbtRoot.hasKey("stash")) {
-      NBTTagCompound stashRoot = (NBTTagCompound) nbtRoot.getTag("stash");
-      stash.readFromNbt(stashRoot);
-    }
-
-    stashProgress = nbtRoot.getFloat("stashProgress");
-  }
-
-  @Override
-  public void writeCommon(NBTTagCompound nbtRoot) {
-    super.writeCommon(nbtRoot);
-
-    if (inputTank.getFluidAmount() > 0) {
-      NBTTagCompound tankRoot = new NBTTagCompound();
-      inputTank.writeToNBT(tankRoot);
-      nbtRoot.setTag("inputTank", tankRoot);
-    }
-
-    if (outputTank.getFluidAmount() > 0) {
-      NBTTagCompound tankRoot = new NBTTagCompound();
-      outputTank.writeToNBT(tankRoot);
-      nbtRoot.setTag("outputTank", tankRoot);
-    }
-
-    NBTTagCompound stashRoot = new NBTTagCompound();
-    stash.writeToNbt(stashRoot);
-    nbtRoot.setTag("stash", stashRoot);
-
-    nbtRoot.setFloat("stashProgress", stashProgress);
-  }
-
-  @Override
-  public Packet getDescriptionPacket() {
-    NBTTagCompound tag = new NBTTagCompound();
-    writeCustomNBT(tag);
-    // remove non-network-required data
-    tag.removeTag("stash");
-    return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
   }
 
   @Override
