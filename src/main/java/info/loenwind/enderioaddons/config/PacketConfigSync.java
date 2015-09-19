@@ -14,12 +14,12 @@ public class PacketConfigSync implements IMessage, IMessageHandler<PacketConfigS
 
   @Override
   public void fromBytes(ByteBuf buf) {
-    Config.fromBytes(buf);
+    ConfigHandler.fromBytes(buf);
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
-    Config.toBytes(buf);
+    ConfigHandler.toBytes(buf);
   }
 
 }

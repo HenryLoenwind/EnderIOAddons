@@ -1,6 +1,8 @@
-package info.loenwind.enderioaddons.common;
+package info.loenwind.enderioaddons.fluid;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.baseclass.BlockFluidEioA;
+import info.loenwind.enderioaddons.common.NullHelper;
 
 import javax.annotation.Nonnull;
 

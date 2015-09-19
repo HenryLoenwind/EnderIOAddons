@@ -5,7 +5,7 @@ import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.handlers.HandleSetBlockCoord;
-import info.loenwind.enderioaddons.common.TileEnderIOAddons;
+import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
@@ -251,9 +251,9 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
         final FluidStack resultFluid = pullFluid.result;
         if (resultFluid != null) {
           fillInternal(resultFluid, true);
-          usePower(Config.drainPerBucketEnergyUseRF);
+          usePower(Config.drainPerBucketEnergyUseRF.getInt());
         } else if (pullFluid.inProgress) {
-          usePower(Config.drainPerSourceBlockMoveEnergyUseRF);
+          usePower(Config.drainPerSourceBlockMoveEnergyUseRF.getInt());
         }
         dryruncount = 0;
         return true;
@@ -314,13 +314,13 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
   public void onCapacitorTypeChange() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF * 40, 250000, Config.drainContinuousEnergyUseRF));
+      setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF.getInt() * 40, 250000, Config.drainContinuousEnergyUseRF.getInt()));
       break;
     case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF * 40, 500000, Config.drainContinuousEnergyUseRF));
+      setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF.getInt() * 40, 500000, Config.drainContinuousEnergyUseRF.getInt()));
       break;
     case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF * 40, 1000000, Config.drainContinuousEnergyUseRF));
+      setCapacitor(new BasicCapacitor(Config.drainContinuousEnergyUseRF.getInt() * 40, 1000000, Config.drainContinuousEnergyUseRF.getInt()));
       break;
     }
     currentTask = createTask(null);

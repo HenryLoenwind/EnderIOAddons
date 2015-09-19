@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.common;
+package info.loenwind.enderioaddons.proxy;
 
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.RendererCobbleworks;
@@ -23,7 +23,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-public class CommonProxy extends ServerProxy {
+public class ClientOnlyProxy extends ClientAndServerProxy {
 
   @Override
   public void init(FMLPreInitializationEvent event) {

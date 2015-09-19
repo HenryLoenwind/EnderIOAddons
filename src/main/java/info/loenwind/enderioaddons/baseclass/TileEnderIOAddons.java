@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.common;
+package info.loenwind.enderioaddons.baseclass;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;

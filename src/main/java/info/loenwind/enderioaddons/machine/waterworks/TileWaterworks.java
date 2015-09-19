@@ -7,9 +7,9 @@ import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.handlers.HandleStash;
-import info.loenwind.enderioaddons.common.Fluids;
-import info.loenwind.enderioaddons.common.TileEnderIOAddons;
+import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.fluid.Fluids;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.waterworks.engine.ConfigProvider;
 import info.loenwind.enderioaddons.machine.waterworks.engine.Engine;
@@ -79,7 +79,7 @@ public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachi
     super(new SlotDefinition(0, 14, 1));
 
     if (data == null) {
-      int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage / 100;
+      int amount = ONE_BLOCK_OF_LIQUID * Config.waterWorksWaterReductionPercentage.getInt() / 100;
       data = new ColMap(5);
       data.set(0, notnullF(FluidRegistry.WATER, "FluidRegistry.WATER"), Fluids.BRINE1, 0, amount);
       data.set(1, Fluids.BRINE1, Fluids.BRINE2, 1, amount);
@@ -107,13 +107,13 @@ public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachi
   public void onCapacitorTypeChange() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick1, 100000, Config.waterWorksRFusePerTick1));
+      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick1.getInt(), 100000, Config.waterWorksRFusePerTick1.getInt()));
       break;
     case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick2, 200000, Config.waterWorksRFusePerTick2));
+      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick2.getInt(), 200000, Config.waterWorksRFusePerTick2.getInt()));
       break;
     case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick3, 500000, Config.waterWorksRFusePerTick3));
+      setCapacitor(new BasicCapacitor(Config.waterWorksRFinPerTick3.getInt(), 500000, Config.waterWorksRFusePerTick3.getInt()));
       break;
     }
   }
@@ -121,11 +121,11 @@ public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachi
   protected float getLiquidFactorPerTask() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return (float) Config.waterWorksLiquidFactorperTask1;
+      return Config.waterWorksLiquidFactorperTask1.getFloat();
     case ACTIVATED_CAPACITOR:
-      return (float) Config.waterWorksLiquidFactorperTask2;
+      return Config.waterWorksLiquidFactorperTask2.getFloat();
     case ENDER_CAPACITOR:
-      return (float) Config.waterWorksLiquidFactorperTask3;
+      return Config.waterWorksLiquidFactorperTask3.getFloat();
     }
     return 0;
   }
@@ -133,11 +133,11 @@ public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachi
   protected float getRfPerTask() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return (float) Config.waterWorksRFperTask1;
+      return Config.waterWorksRFperTask1.getFloat();
     case ACTIVATED_CAPACITOR:
-      return (float) Config.waterWorksRFperTask2;
+      return Config.waterWorksRFperTask2.getFloat();
     case ENDER_CAPACITOR:
-      return (float) Config.waterWorksRFperTask3;
+      return Config.waterWorksRFperTask3.getFloat();
     }
     return 0;
   }

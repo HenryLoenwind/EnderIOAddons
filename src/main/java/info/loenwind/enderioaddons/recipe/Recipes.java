@@ -1,5 +1,6 @@
-package info.loenwind.enderioaddons.common;
+package info.loenwind.enderioaddons.recipe;
 
+import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
@@ -66,7 +67,7 @@ public class Recipes implements InitAware {
   @Override
   public void init(FMLInitializationEvent event) {
     //Drain
-    if (Config.drainEnabled) {
+    if (Config.drainEnabled.getBoolean()) {
       ItemStack drain = new ItemStack(BlockDrain.blockDrain, 1, 0);
       GameRegistry.addRecipe(new ShapedOreRecipe(drain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
           electricSteel, 'v', Items.cauldron));
@@ -83,7 +84,7 @@ public class Recipes implements InitAware {
     }
 
     // Frame parts
-    if (Config.cobbleWorksEnabled || Config.waterWorksEnabled) {
+    if (Config.cobbleWorksEnabled.getBoolean() || Config.waterWorksEnabled.getBoolean()) {
       ItemStack machineFrame = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME.ordinal());
       GameRegistry.addShapedRecipe(machineFrame, "dsd", "s s", "dsd", 's', electricSteel, 'd', darkSteel);
 
@@ -98,7 +99,7 @@ public class Recipes implements InitAware {
       GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTanks);
 
       // Cobbleworks
-      if (Config.cobbleWorksEnabled) {
+      if (Config.cobbleWorksEnabled.getBoolean()) {
         ItemStack cobbleController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COBBLE_CONTROLLER.ordinal());
         GameRegistry.addShapedRecipe(cobbleController, "sis", "lMw", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l',
             Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
@@ -112,7 +113,7 @@ public class Recipes implements InitAware {
       }
 
       // Waterworks
-      if (Config.waterWorksEnabled) {
+      if (Config.waterWorksEnabled.getBoolean()) {
         ItemStack heatingElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.HEATING_ELEMENT.ordinal());
         GameRegistry.addShapedRecipe(heatingElement, "ccs", "srs", "scc", 's', silicon, 'c', conductiveIron, 'r', blockRedstoneAlloy);
 

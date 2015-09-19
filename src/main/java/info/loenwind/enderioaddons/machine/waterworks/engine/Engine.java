@@ -17,7 +17,7 @@ public class Engine {
   private static final int num_levels = 5;
   @Nonnull
   private final List<Water> levels = new ArrayList<Water>();
-  private double waterWorksWaterReductionPercentageUsedInCalcs = 0.0;
+  private int waterWorksWaterReductionPercentageUsedInCalcs = 0;
   @Nonnull
   private final Water config;
   
@@ -27,8 +27,8 @@ public class Engine {
   }
 
   private void computeLevels() {
-    if (waterWorksWaterReductionPercentageUsedInCalcs != Config.waterWorksWaterReductionPercentage) {
-      waterWorksWaterReductionPercentageUsedInCalcs = Config.waterWorksWaterReductionPercentage;
+    if (waterWorksWaterReductionPercentageUsedInCalcs != Config.waterWorksWaterReductionPercentage.getInt()) {
+      waterWorksWaterReductionPercentageUsedInCalcs = Config.waterWorksWaterReductionPercentage.getInt();
       levels.clear();
       Stash input = config;
       for (int i = 0; i < num_levels; i++) {
@@ -76,7 +76,7 @@ public class Engine {
     }
     
     for (Entry<String, Double> content : remains.getContents().entrySet()) {
-      content.setValue(content.getValue() * 100.0 / Config.waterWorksWaterReductionPercentage);
+      content.setValue(content.getValue() * 100.0 / Config.waterWorksWaterReductionPercentage.getInt());
     }
     
     levels.add(level, used);

@@ -1,7 +1,7 @@
 package info.loenwind.enderioaddons.machine.waterworks.engine;
 
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
-import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.config.ConfigHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,7 +58,7 @@ public class ConfigProvider {
   }
 
   private static Object readConfig(@Nonnull XStream xstream, @Nonnull String fileName) throws IOException {
-    File configFile = new File(Config.configDirectory, fileName);
+    File configFile = new File(ConfigHandler.configDirectory, fileName);
 
     if (configFile.exists()) {
       return xstream.fromXML(configFile);

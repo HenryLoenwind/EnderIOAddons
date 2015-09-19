@@ -216,9 +216,8 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
 
     clear(outputMapping);
 
-    outputMapping(0, 0, new Mapping(OperationType.NONE, new ItemStack(Item.getItemFromBlock(Blocks.cobblestone), 1),
- Config.cobbleWorksRfPerCobblestone, -1,
-        null, 0));
+    outputMapping(0, 0,
+        new Mapping(OperationType.NONE, new ItemStack(Item.getItemFromBlock(Blocks.cobblestone), 1), Config.cobbleWorksRfPerCobblestone.getInt(), -1, null, 0));
 
     for (int work = 1; work <= WORKS; work++) {
       ItemStack machine = inputSlot(work);
@@ -354,22 +353,22 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     int cost = RFcost;
     switch (operationType) {
     case CRAFTING:
-      cost -= cost * Config.cobbleWorksRfDiscountForCrafting / 100;
+      cost -= cost * Config.cobbleWorksRfDiscountForCrafting.getInt() / 100;
       break;
     case CRUSHING:
-      cost -= cost * Config.cobbleWorksRfDiscountForCrushing / 100;
+      cost -= cost * Config.cobbleWorksRfDiscountForCrushing.getInt() / 100;
       break;
     case SMELTING:
-      cost -= cost * Config.cobbleWorksRfDiscountForSmelting / 100;
+      cost -= cost * Config.cobbleWorksRfDiscountForSmelting.getInt() / 100;
       break;
     default:
       break;
     }
     switch (getCapacitorType()) {
     case ENDER_CAPACITOR:
-      cost -= cost * Config.cobbleWorksRfDiscountPerUpgrade / 100;
+      cost -= cost * Config.cobbleWorksRfDiscountPerUpgrade.getInt() / 100;
     case ACTIVATED_CAPACITOR:
-      cost -= cost * Config.cobbleWorksRfDiscountPerUpgrade / 100;
+      cost -= cost * Config.cobbleWorksRfDiscountPerUpgrade.getInt() / 100;
     default:
     }
     if (cost < 0) {

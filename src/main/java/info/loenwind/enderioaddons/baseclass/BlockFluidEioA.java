@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.common;
+package info.loenwind.enderioaddons.baseclass;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
 

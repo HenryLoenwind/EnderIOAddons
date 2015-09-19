@@ -164,7 +164,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   protected String getMachineFrontIconKey(boolean active) {
-    return "enderio:machineSide";
+    return EnderIOAddons.DOMAIN + ":blockDrainSide";
   }
 
   @Override
@@ -183,13 +183,14 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   }
 
   @SuppressWarnings("static-method")
+  // TODO: @Override after EIO#2827
   protected String getBottomIconKey(@SuppressWarnings("unused") boolean active) {
     return "enderio:machineTemplate";
   }
 
   @Override
   @SideOnly(Side.CLIENT)
-  public void registerBlockIcons(IIconRegister iIconRegister) {
+  public void registerBlockIcons(IIconRegister iIconRegister) { // TODO: remove after EIO#2827
     super.registerBlockIcons(iIconRegister);
 
     iconBuffer[0][0] = iIconRegister.registerIcon(getBottomIconKey(false));
@@ -200,7 +201,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   @Override
   @SideOnly(Side.CLIENT)
   public void addCommonEntries(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
-    if (!Config.drainAllowOnDedicatedServer && !Minecraft.getMinecraft().isSingleplayer()) {
+    if (!Config.drainAllowOnDedicatedServer.getBoolean() && !Minecraft.getMinecraft().isSingleplayer()) {
       list.add(EnderIO.lang.localize("blockDrain.tooltip.disabledMessage"));
     }
   }

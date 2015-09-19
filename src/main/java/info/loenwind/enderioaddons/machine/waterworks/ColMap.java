@@ -1,6 +1,6 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
-import info.loenwind.enderioaddons.common.Fluids;
+import info.loenwind.enderioaddons.fluid.Fluids;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

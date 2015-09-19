@@ -1,8 +1,8 @@
 package info.loenwind.enderioaddons;
 
 import info.loenwind.enderioaddons.common.InitAware;
-import info.loenwind.enderioaddons.common.Recipes;
-import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.config.ConfigHandler;
+import info.loenwind.enderioaddons.recipe.Recipes;
 
 import java.util.Locale;
 
@@ -27,10 +27,10 @@ public class EnderIOAddons implements InitAware {
   @Nonnull
   public static final String VERSION = "@VERSION@";
 
-  @SidedProxy(clientSide = "info.loenwind.enderioaddons.common.CommonProxy", serverSide = "info.loenwind.enderioaddons.common.ServerProxy")
+  @SidedProxy(clientSide = "info.loenwind.enderioaddons.proxy.ClientOnlyProxy", serverSide = "info.loenwind.enderioaddons.proxy.ClientAndServerProxy")
   public static InitAware proxy;
   @Nonnull
-  public static final Config config = new Config();
+  public static final ConfigHandler config = new ConfigHandler();
   @Nonnull
   public static final Recipes recipes = new Recipes();
 
