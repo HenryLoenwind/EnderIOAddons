@@ -51,7 +51,6 @@ public enum Fluids {
       } else {
         throw new RuntimeException("Failed to register fluid '" + fluid.name + "', there already is a confliction fluid with the same name.");
       }
-      System.out.println(fluid.name + ": " + fluid.block + " and " + fluid.bucket);
     }
   }
 

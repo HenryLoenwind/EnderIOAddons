@@ -14,8 +14,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 
 import com.enderio.core.common.util.BlockCoord;
+import com.enderio.core.common.util.Log;
 
-import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.ModAPIManager;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class InfiniteWaterSourceStopper {
@@ -30,12 +32,14 @@ public class InfiniteWaterSourceStopper {
   
   public static void register() {
     MinecraftForge.EVENT_BUS.register(instance);
+    for (ModContainer modContainer : ModAPIManager.INSTANCE.getAPIList()) {
+      Log.info(modContainer.getModId() + " version " + modContainer.getVersion() + " from " + modContainer.getSource().getName());
+    }
   }
  
   @Nonnull
   private final Map<Integer, Map<IWaterSensitive, Object>> teblMap = new HashMap<Integer, Map<IWaterSensitive, Object>>();
   
-  @Optional.Method(modid = "waterhooks|API")
   @SubscribeEvent
   public void onWaterForming(WaterFormEvent event) {
     final World world = notnullM(event.world, "event.world");
