@@ -39,7 +39,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   static final int SLOTS_PER_WORK = 4;
   static final int WORKS = 3;
   @Nonnull
-  private static final Mapping[] outputMapping = new Mapping[1 + SLOTS_PER_WORK * WORKS];
+  private final Mapping[] outputMapping = new Mapping[1 + SLOTS_PER_WORK * WORKS];
 
   public static final @ItemStackHolder("EnderIO:blockCrafter") ItemStack blockCrafter = null;
   public static final @ItemStackHolder("EnderIO:blockAlloySmelter") ItemStack blockAlloySmelter = null;
@@ -170,12 +170,12 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return work == 0 ? 0 : (work - 1) * SLOTS_PER_WORK + no;
   }
 
-  private static void outputMapping(int work, int no, @Nullable Mapping mapping) {
+  private void outputMapping(int work, int no, @Nullable Mapping mapping) {
     outputMapping[outputMappingNo(work, no)] = mapping;
   }
 
   @Nullable
-  private static Mapping outputMapping(int work, int no) {
+  private Mapping outputMapping(int work, int no) {
     return outputMapping[outputMappingNo(work, no)];
   }
 
@@ -195,7 +195,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Nonnull
-  private static List<Mapping> getInputForWork(int work) {
+  private List<Mapping> getInputForWork(int work) {
     List<Mapping> result = new ArrayList<Mapping>();
     if (work == 1) {
       result.add(outputMapping(0, 0));
