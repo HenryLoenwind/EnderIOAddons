@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.ihopper;
 
+import info.loenwind.enderioaddons.gui.IconEIOA;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -12,8 +14,39 @@ import crazypants.enderio.gui.IconEIO;
 
 public enum RedstoneMode implements ICycleEnum {
 
-  IGNORE(IconEIO.REDSTONE_MODE_ALWAYS), ON(IconEIO.REDSTONE_MODE_WITH_SIGNAL), OFF(IconEIO.REDSTONE_MODE_WITHOUT_SIGNAL), NEVER(IconEIO.REDSTONE_MODE_NEVER), RAISING_EDGE(
-      null), FALLING_EDGE(null);
+  /**
+   * Fire once when the power goes from LOW (0) to any HIGH value (1-15)
+   */
+  RISING_EDGE(IconEIOA.REDSTONE_MODE_RISING_EDGE), //
+  /**
+   * Fire once when the power goes from any HIGH value (1-15) to LOW (0)
+   */
+  FALLING_EDGE(IconEIOA.REDSTONE_MODE_FALLING_EDGE), //
+  /**
+   * Fire once when the power goes from LOW (0) to HIGH (14/15)
+   */
+  HIGH_PULSE(IconEIOA.REDSTONE_MODE_HIGH_PULSE), //
+  /**
+   * Fire once when the power goes from HIGH (14/15) to LOW (0)
+   */
+  LOW_PULSE(IconEIOA.REDSTONE_MODE_LOW_PULSE), //
+  /**
+   * Fire while the power is any HIGH value (1-15)
+   */
+  ON(IconEIOA.REDSTONE_MODE_ON_HIGH), //
+  /**
+   * Fire while the power is LOW (0)
+   */
+  OFF(IconEIOA.REDSTONE_MODE_ON_LOW), // 
+  /**
+   * Fire always
+   */
+  IGNORE(IconEIO.REDSTONE_MODE_ALWAYS), //
+  /**
+   * Fire never
+   */
+  NEVER(IconEIO.REDSTONE_MODE_NEVER), //
+  ;
 
   private IWidgetIcon icon;
 
@@ -34,26 +67,6 @@ public enum RedstoneMode implements ICycleEnum {
   public List<String> getTooltipLines() {
     return Lists.newArrayList(getTooltip());
   }
-
-  public boolean isConditionMet(int powerLevel, int prevPowerLevel) {
-    switch (this) {
-    case IGNORE:
-      return true;
-    case NEVER:
-      return false;
-    case OFF:
-      return powerLevel < 1;
-    case ON:
-      return powerLevel > 0;
-    case RAISING_EDGE:
-      return prevPowerLevel < 1 && powerLevel > 0;
-    case FALLING_EDGE:
-      return prevPowerLevel > 0 && powerLevel < 1;
-    }
-    throw new RuntimeException("enum has unexpected values");
-  }
-
-  //te.getWorldObj().getStrongestIndirectPower(te.xCoord, te.yCoord, te.zCoord));
 
   public RedstoneMode next() {
     int ord = ordinal();
