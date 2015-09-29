@@ -10,6 +10,9 @@ import info.loenwind.enderioaddons.machine.drain.DrainItemRenderer;
 import info.loenwind.enderioaddons.machine.drain.TileDrain;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.TESRFrameworkMachine;
+import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
+import info.loenwind.enderioaddons.machine.ihopper.RendererIHopper;
+import info.loenwind.enderioaddons.machine.ihopper.TileIHopper;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePartRenderer;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
@@ -48,6 +51,10 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     BlockWaterworks.blockWaterworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererWaterworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileWaterworks.class, new TESRFrameworkMachine());
+
+    BlockIHopper.blockIHopper.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new RendererIHopper(rendererFrameworkMachine));
+    ClientRegistry.bindTileEntitySpecialRenderer(TileIHopper.class, new TESRFrameworkMachine());
 
     MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
 

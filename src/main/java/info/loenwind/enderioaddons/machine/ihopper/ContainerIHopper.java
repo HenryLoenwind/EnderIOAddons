@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.machine.waterworks;
+package info.loenwind.enderioaddons.machine.ihopper;
 
 import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 
@@ -9,29 +9,27 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerWaterworks extends AbstractMachineContainerA<TileWaterworks> {
+public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
 
   private static final int D = 18;
-  private static final int ROW = 9 - D;
-  private static final int COL = 98 - D;
+  private static final int ROW1 = 9;
+  private static final int ROW2 = ROW1 + D + D / 2;
+  private static final int ROW3 = ROW2 + D + D / 2;
+  private static final int COL = 44 - D;
 
-  public ContainerWaterworks(InventoryPlayer playerInv, @Nonnull TileWaterworks te) {
+  public ContainerIHopper(InventoryPlayer playerInv, @Nonnull TileIHopper te) {
     super(playerInv, te);
   }
 
   @Override
   protected void addMachineSlots(InventoryPlayer playerInv) {
 
-    int i = 0;
-    for (int r = 1; r <= 2; r++) {
-      for (int c = 1; c <= 3; c++) {
-        addSlotToContainer(new OutputSlot(getInv(), getInv().outputSlotNo(i++), COL + c * D, ROW + r * D));
-      }
+    for (int r = 1; r <= 6; r++) {
+      addSlotToContainer(new Slot(getInv(), getInv().inputSlotNo(r), COL + r * D, ROW1));
     }
-    for (int r = 3; r <= 4; r++) {
-      for (int c = 1; c <= 4; c++) {
-        addSlotToContainer(new OutputSlot(getInv(), getInv().outputSlotNo(i++), COL + c * D, ROW + r * D));
-      }
+    // TODO Ghost slots here
+    for (int r = 1; r <= 6; r++) {
+      addSlotToContainer(new OutputSlot(getInv(), getInv().outputSlotNo(r), COL + r * D, ROW3));
     }
   }
 
