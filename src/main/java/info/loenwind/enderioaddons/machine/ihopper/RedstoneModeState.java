@@ -1,10 +1,21 @@
 package info.loenwind.enderioaddons.machine.ihopper;
 
+import info.loenwind.autosave.IHandler;
+import info.loenwind.autosave.Registry;
+import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.annotations.Store.StoreFor;
+import info.loenwind.autosave.exceptions.NoHandlerFoundException;
+import info.loenwind.enderioaddons.common.NullHelper;
+
+import java.util.Set;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import com.enderio.core.common.util.BlockCoord;
 
-public class RedstoneModeState {
+@Storable(handler = RedstoneModeState.class)
+public class RedstoneModeState implements IHandler<RedstoneModeState> {
 
   private RedstoneMode mode;
   private PrevStates prevState = PrevStates.NONE;
@@ -18,8 +29,10 @@ public class RedstoneModeState {
   }
 
   public void setMode(RedstoneMode mode) {
-    this.mode = mode;
-    prevState = PrevStates.NONE;
+    if (this.mode != mode) {
+      this.mode = mode;
+      prevState = PrevStates.NONE;
+    }
   }
 
   public boolean isConditionMet(World world, BlockCoord bc) {
@@ -98,6 +111,33 @@ public class RedstoneModeState {
       break;
     }
     throw new RuntimeException("enum has unexpected values");
+  }
+
+  @Override
+  public boolean canHandle(Class<?> clazz) {
+    return RedstoneModeState.class.isAssignableFrom(clazz);
+  }
+
+  @Override
+  public boolean store(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, RedstoneModeState object) throws IllegalArgumentException,
+      IllegalAccessException, InstantiationException, NoHandlerFoundException {
+    NBTTagCompound tag = new NBTTagCompound();
+    tag.setInteger("mode", object.mode.ordinal());
+    tag.setInteger("prevState", object.prevState.ordinal());
+    nbt.setTag(name, tag);
+    return true;
+  }
+
+  @Override
+  public RedstoneModeState read(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, RedstoneModeState object)
+      throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
+    RedstoneModeState result = object != null ? object : new RedstoneModeState(RedstoneMode.values()[0]);
+    if (nbt.hasKey(name)) {
+      NBTTagCompound tag = NullHelper.notnullM(nbt.getCompoundTag(name), "NBTTagCompound.getCompoundTag()");
+      result.mode = RedstoneMode.values()[tag.hasKey("mode") ? tag.getInteger("mode") : 0];
+      result.prevState = PrevStates.values()[tag.hasKey("prevState") ? tag.getInteger("prevState") : 0];
+    }
+    return result;
   }
 
 }
