@@ -17,12 +17,15 @@ import com.enderio.core.common.util.BlockCoord;
 @Storable(handler = RedstoneModeState.class)
 public class RedstoneModeState implements IHandler<RedstoneModeState> {
 
-  private RedstoneMode mode;
+  private RedstoneMode mode = RedstoneMode.values()[0];
   private PrevStates prevState = PrevStates.NONE;
 
   private static enum PrevStates {
     NONE, OFF, ON,
   };
+
+  public RedstoneModeState() {
+  }
 
   public RedstoneModeState(RedstoneMode mode) {
     this.mode = mode;
@@ -131,7 +134,7 @@ public class RedstoneModeState implements IHandler<RedstoneModeState> {
   @Override
   public RedstoneModeState read(Registry registry, Set<StoreFor> phase, NBTTagCompound nbt, String name, RedstoneModeState object)
       throws IllegalArgumentException, IllegalAccessException, InstantiationException, NoHandlerFoundException {
-    RedstoneModeState result = object != null ? object : new RedstoneModeState(RedstoneMode.values()[0]);
+    RedstoneModeState result = object != null ? object : new RedstoneModeState();
     if (nbt.hasKey(name)) {
       NBTTagCompound tag = NullHelper.notnullM(nbt.getCompoundTag(name), "NBTTagCompound.getCompoundTag()");
       result.mode = RedstoneMode.values()[tag.hasKey("mode") ? tag.getInteger("mode") : 0];
