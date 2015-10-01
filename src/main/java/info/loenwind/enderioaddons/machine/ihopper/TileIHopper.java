@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
@@ -183,7 +182,6 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
       float neededPower = 0;
       boolean doSomething = false;
       for (int slot = 1; slot <= SLOTS; slot++) {
-        final ItemStack ghostSlot = ghostSlot(slot);
         if (checkGhostSlot(slot)) {
           if (checkInputSlot(slot) && checkOutputSlot(slot)) {
             doSomething = true;
@@ -339,13 +337,12 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
 
   @Override
   public boolean renderSlot(@Nonnull TankSlot tankSlot) {
-    // render all slots (upper level) but the controller slot
-    return tankSlot != TankSlot.FRONT_LEFT;
+    return false; // is handled by our renderer
   }
 
   @Override
   public IIcon getSlotIcon(@Nonnull TankSlot tankSlot, int side) {
-    return Blocks.hopper.getIcon(side, 0); // TODO we need a model here
+    return null;
   }
 
   @Override

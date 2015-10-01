@@ -82,7 +82,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     if (frameworkMachine != null && machineEntity != null) {
       float[] brightnessPerSide = new float[6];
       for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-        brightnessPerSide[dir.ordinal()] = Math.max(RenderUtil.getColorMultiplierForFace(dir) + 0.1f, 1f);
+        brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
       }
 
       for (TankSlot tankSlot : TankSlot.values()) {

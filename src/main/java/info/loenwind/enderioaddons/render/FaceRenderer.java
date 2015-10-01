@@ -50,13 +50,13 @@ public class FaceRenderer {
     float maxV = tex.getMaxV();
     float sizeU = maxU - minU;
     float sizeV = maxV - minV;
-    minU += texMinU * sizeU / 16.0f;
-    maxU -= texMaxU * sizeU / 16.0f;
-    minV += texMinV * sizeV / 16.0f;
-    maxV -= texMaxV * sizeV / 16.0f;
+    minU += texMinU / 16.0f * sizeU;
+    maxU -= (16.0f - texMaxU) / 16.0f * sizeU;
+    minV += (16.0f - texMaxV) / 16.0f * sizeV;
+    maxV -= texMinV / 16.0f * sizeV;
 
     if (brightnessPerSide != null) {
-      float cm = brightnessPerSide[face.ordinal()];
+      float cm = brightnessPerSide[inside ? face.getOpposite().ordinal() : face.ordinal()];
       Tessellator.instance.setColorOpaque_F(cm, cm, cm);
     }
 
@@ -68,36 +68,42 @@ public class FaceRenderer {
         addVecWithUV(verts[1], maxU, maxV);
         addVecWithUV(verts[2], maxU, minV);
         addVecWithUV(verts[3], minU, minV);
+        break;
       case SOUTH:
         Tessellator.instance.setNormal(0, 0, -1);
         addVecWithUV(verts[5], minU, maxV);
         addVecWithUV(verts[4], maxU, maxV);
         addVecWithUV(verts[7], maxU, minV);
         addVecWithUV(verts[6], minU, minV);
+        break;
       case UP:
         Tessellator.instance.setNormal(0, -1, 0);
-        addVecWithUV(verts[2], minU, minV);
-        addVecWithUV(verts[6], minU, maxV);
-        addVecWithUV(verts[7], maxU, maxV);
-        addVecWithUV(verts[3], maxU, minV);
+        addVecWithUV(verts[2], maxU, maxV);
+        addVecWithUV(verts[6], maxU, minV);
+        addVecWithUV(verts[7], minU, minV);
+        addVecWithUV(verts[3], minU, maxV);
+        break;
       case DOWN:
         Tessellator.instance.setNormal(0, 1, 0);
-        addVecWithUV(verts[1], maxU, maxV);
-        addVecWithUV(verts[0], minU, maxV);
-        addVecWithUV(verts[4], minU, minV);
-        addVecWithUV(verts[5], maxU, minV);
+        addVecWithUV(verts[1], maxU, minV);
+        addVecWithUV(verts[0], minU, minV);
+        addVecWithUV(verts[4], minU, maxV);
+        addVecWithUV(verts[5], maxU, maxV);
+        break;
       case EAST:
         Tessellator.instance.setNormal(-1, 0, 0);
-        addVecWithUV(verts[6], minU, minV);
-        addVecWithUV(verts[2], maxU, minV);
-        addVecWithUV(verts[1], maxU, maxV);
-        addVecWithUV(verts[5], minU, maxV);
+        addVecWithUV(verts[6], maxU, minV);
+        addVecWithUV(verts[2], minU, minV);
+        addVecWithUV(verts[1], minU, maxV);
+        addVecWithUV(verts[5], maxU, maxV);
+        break;
       case WEST:
         Tessellator.instance.setNormal(1, 0, 0);
         addVecWithUV(verts[4], minU, maxV);
         addVecWithUV(verts[0], maxU, maxV);
         addVecWithUV(verts[3], maxU, minV);
         addVecWithUV(verts[7], minU, minV);
+        break;
       default:
         break;
       }
@@ -109,30 +115,35 @@ public class FaceRenderer {
         addVecWithUV(verts[0], maxU, maxV);
         addVecWithUV(verts[3], maxU, minV);
         addVecWithUV(verts[2], minU, minV);
+        break;
       case SOUTH:
         Tessellator.instance.setNormal(0, 0, 1);
         addVecWithUV(verts[4], minU, maxV);
         addVecWithUV(verts[5], maxU, maxV);
         addVecWithUV(verts[6], maxU, minV);
         addVecWithUV(verts[7], minU, minV);
+        break;
       case UP:
         Tessellator.instance.setNormal(0, 1, 0);
-        addVecWithUV(verts[6], minU, minV);
-        addVecWithUV(verts[2], minU, maxV);
-        addVecWithUV(verts[3], maxU, maxV);
-        addVecWithUV(verts[7], maxU, minV);
+        addVecWithUV(verts[6], maxU, maxV);
+        addVecWithUV(verts[2], maxU, minV);
+        addVecWithUV(verts[3], minU, minV);
+        addVecWithUV(verts[7], minU, maxV);
+        break;
       case DOWN:
         Tessellator.instance.setNormal(0, -1, 0);
-        addVecWithUV(verts[0], maxU, maxV);
-        addVecWithUV(verts[1], minU, maxV);
-        addVecWithUV(verts[5], minU, minV);
-        addVecWithUV(verts[4], maxU, minV);
+        addVecWithUV(verts[0], minU, minV);
+        addVecWithUV(verts[1], maxU, minV);
+        addVecWithUV(verts[5], maxU, maxV);
+        addVecWithUV(verts[4], minU, maxV);
+        break;
       case EAST:
         Tessellator.instance.setNormal(1, 0, 0);
-        addVecWithUV(verts[2], minU, minV);
-        addVecWithUV(verts[6], maxU, minV);
-        addVecWithUV(verts[5], maxU, maxV);
-        addVecWithUV(verts[1], minU, maxV);
+        addVecWithUV(verts[2], maxU, minV);
+        addVecWithUV(verts[6], minU, minV);
+        addVecWithUV(verts[5], minU, maxV);
+        addVecWithUV(verts[1], maxU, maxV);
+        break;
       case WEST:
         Tessellator.instance.setNormal(-1, 0, 0);
         addVecWithUV(verts[0], minU, maxV);

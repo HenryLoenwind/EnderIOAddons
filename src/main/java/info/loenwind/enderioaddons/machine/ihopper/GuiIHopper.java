@@ -154,14 +154,14 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
     for (int slot = 1; slot <= SLOTS; slot++) {
       if (te.checkGhostSlot(slot)) {
         if (te.checkInputSlot(slot)) {
-          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW1 + D, 200, D / 2, D, D / 2);
+          drawTexturedModalRect(guiLeft + COL + slot * D - 1, guiTop + ROW1 + D - 1, 200, D / 2, D, D / 2);
         } else {
-          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW1 + D, 200, 0, D, D / 2);
+          drawTexturedModalRect(guiLeft + COL + slot * D - 1, guiTop + ROW1 + D - 1, 200, 0, D, D / 2);
         }
         if (te.checkOutputSlot(slot)) {
-          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW2 + D, 200, D / 2, D, D / 2);
+          drawTexturedModalRect(guiLeft + COL + slot * D - 1, guiTop + ROW2 + D - 1, 200, D / 2, D, D / 2);
         } else {
-          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW2 + D, 200, 0, D, D / 2);
+          drawTexturedModalRect(guiLeft + COL + slot * D - 1, guiTop + ROW2 + D - 1, 200, 0, D, D / 2);
         }
       }
     }
@@ -171,8 +171,16 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
     RenderUtil.bindBlockTexture();
   }
 
+  private boolean doneGraying = false;
+
   @Override
   protected void drawFakeItemHover(int x, int y) {
+    doGraying();
+    doneGraying = true;
+    super.drawFakeItemHover(x, y);
+  }
+
+  private void doGraying() {
     GL11.glDisable(GL11.GL_LIGHTING);
     GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -181,8 +189,15 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
     GL11.glEnable(GL11.GL_BLEND);
     drawTexturedModalRect(guiLeft + 43, guiTop + 35, 43, 35, 108, 18);
     GL11.glDisable(GL11.GL_BLEND);
+  }
 
-    super.drawFakeItemHover(x, y);
+  @Override
+  protected void drawFakeItemsEnd() {
+    if (!doneGraying) {
+      doGraying();
+    }
+    doneGraying = false;
+    super.drawFakeItemsEnd();
   }
 
 }
