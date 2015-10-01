@@ -123,7 +123,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
   @Nonnull
   private static final int[][] positions = { { -1, 1 }, { 1, 1 }, { 1, -1 }, { -1, -1 } };
 
-  private static int[] translateToSlotPosition(@Nonnull ForgeDirection dir, @Nonnull TankSlot tankSlot) {
+  public static int[] translateToSlotPosition(@Nonnull ForgeDirection dir, @Nonnull TankSlot tankSlot) {
     switch (dir) {
     case NORTH:
       return positions[(2 + tankSlot.ordinal()) & 3];
