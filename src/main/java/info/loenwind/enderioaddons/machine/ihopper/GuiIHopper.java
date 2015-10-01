@@ -150,4 +150,18 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
     RenderUtil.bindBlockTexture();
   }
 
+  @Override
+  protected void drawFakeItemHover(int x, int y) {
+    GL11.glDisable(GL11.GL_LIGHTING);
+    GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+    GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+    RenderUtil.bindTexture(GUI_TEXTURE);
+    GL11.glEnable(GL11.GL_BLEND);
+    drawTexturedModalRect(guiLeft + 43, guiTop + 35, 43, 35, 108, 18);
+    GL11.glDisable(GL11.GL_BLEND);
+
+    super.drawFakeItemHover(x, y);
+  }
+
 }
