@@ -14,7 +14,7 @@ Current state:
 * Cobbleworks: working and stable
 * Drain: working and stable
 * Waterworks: in progress, not yet doing anything
-* Processing Buffer: not started
+* Impulse Hopper: working
 * Mine: not started
 * Metal Liquifier: not started
 * Metal Caster: not started
