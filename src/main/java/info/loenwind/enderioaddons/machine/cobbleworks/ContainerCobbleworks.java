@@ -1,14 +1,15 @@
 package info.loenwind.enderioaddons.machine.cobbleworks;
 
+import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
+
 import java.awt.Point;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerCobbleworks extends AbstractMachineContainer<TileCobbleworks> {
+public class ContainerCobbleworks extends AbstractMachineContainerA<TileCobbleworks> {
 
   public ContainerCobbleworks(InventoryPlayer playerInv, TileCobbleworks te) {
     super(playerInv, te);
