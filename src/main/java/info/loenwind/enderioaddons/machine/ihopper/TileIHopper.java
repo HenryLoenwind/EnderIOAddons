@@ -35,7 +35,7 @@ import crazypants.enderio.power.BasicCapacitor;
 @Storable
 public class TileIHopper extends AbstractTileFramework implements IFrameworkMachine, IAdvancedRedstoneModeControlable {
 
-  private static final int SLOTS = 6;
+  static final int SLOTS = 6;
 
   @Store
   private RedstoneModeState redstoneModeState = new RedstoneModeState();
@@ -133,6 +133,50 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
     }
   }
 
+  /**
+   * Check if the an input slot satisfies its ghost slot.
+   * 
+   * @param slot
+   *          The slot to check (1..6)
+   * @return true if the input slots satisfies the requirement, false otherwise.
+   */
+  public boolean checkInputSlot(int slot) {
+    final ItemStack ghostSlot = ghostSlot(slot);
+    final ItemStack inputSlot = inputSlot(slot);
+    return ghostSlot != null && inputSlot != null && ItemUtil.areStacksEqual(ghostSlot, inputSlot) && ghostSlot.stackSize <= inputSlot.stackSize;
+  }
+
+  /**
+   * Check if the a ghost slot is active.
+   * 
+   * @param slot
+   *          The slot to check (1..6)
+   * @return true if the ghost slots is filled, false otherwise.
+   */
+  public boolean checkGhostSlot(int slot) {
+    final ItemStack ghostSlot = ghostSlot(slot);
+    return ghostSlot != null;
+  }
+
+  /**
+   * Check if the an output slot can take an operation's output.
+   * 
+   * @param slot
+   *          The slot to check (1..6)
+   * @return true if the output slots has space, false otherwise.
+   */
+  public boolean checkOutputSlot(int slot) {
+    final ItemStack ghostSlot = ghostSlot(slot);
+    final ItemStack outputSlot = outputSlot(slot);
+    return outputSlot == null
+        || (ghostSlot != null && ItemUtil.areStackMergable(ghostSlot, outputSlot) && outputSlot.stackSize + ghostSlot.stackSize <= outputSlot.getMaxStackSize());
+  }
+
+  private float getPowerNeedForSlot(int slot) {
+    final ItemStack ghostSlot = ghostSlot(slot);
+    return ghostSlot != null ? ghostSlot.stackSize * impulseHopperRFusePerItem.getFloat() : 0f;
+  }
+
   private boolean processTasksImpl() {
     if (usePower(impulseHopperRFusePerOperation.getInt())) {
       // (1) Check if we can do a copy operation
@@ -140,15 +184,10 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
       boolean doSomething = false;
       for (int slot = 1; slot <= SLOTS; slot++) {
         final ItemStack ghostSlot = ghostSlot(slot);
-        if (ghostSlot != null) {
-          final ItemStack inputSlot = inputSlot(slot);
-          final ItemStack outputSlot = outputSlot(slot);
-          if (inputSlot != null
-              && ItemUtil.areStacksEqual(ghostSlot, inputSlot)
-              && ghostSlot.stackSize <= inputSlot.stackSize
-              && (outputSlot == null || (ItemUtil.areStackMergable(ghostSlot, outputSlot) && outputSlot.stackSize + ghostSlot.stackSize <= outputSlot
-                  .getMaxStackSize())) && canUsePower(neededPower += ghostSlot.stackSize * impulseHopperRFusePerItem.getFloat())) {
+        if (checkGhostSlot(slot)) {
+          if (checkInputSlot(slot) && checkOutputSlot(slot)) {
             doSomething = true;
+            neededPower += getPowerNeedForSlot(slot);
           } else {
             // We cannot, one of the preconditions is false
             return false;

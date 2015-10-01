@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.ihopper;
 
+import static info.loenwind.enderioaddons.machine.ihopper.TileIHopper.SLOTS;
 import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import crazypants.enderio.network.PacketHandler;
 
 public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
 
-  private static final int D = 18;
-  private static final int ROW1 = 9;
-  private static final int ROW2 = ROW1 + D + D / 2;
-  private static final int ROW3 = ROW2 + D + D / 2;
-  private static final int COL = 44 - D;
+  static final int D = 18;
+  static final int ROW1 = 9;
+  static final int ROW2 = ROW1 + D + D / 2;
+  static final int ROW3 = ROW2 + D + D / 2;
+  static final int COL = 44 - D;
 
   public ContainerIHopper(InventoryPlayer playerInv, @Nonnull TileIHopper te) {
     super(playerInv, te);
@@ -29,20 +30,18 @@ public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
 
   @Override
   protected void addMachineSlots(InventoryPlayer playerInv) {
-    for (int r = 1; r <= 6; r++) {
-      addSlotToContainer(new InputSlot(getInv(), getInv().inputSlotNo(r), COL + r * D, ROW1));
+    for (int slot = 1; slot <= SLOTS; slot++) {
+      addSlotToContainer(new InputSlot(getInv(), getInv().inputSlotNo(slot), COL + slot * D, ROW1));
     }
-    for (int r = 1; r <= 6; r++) {
-      addSlotToContainer(new OutputSlot(getInv(), getInv().outputSlotNo(r), COL + r * D, ROW3));
+    for (int slot = 1; slot <= SLOTS; slot++) {
+      addSlotToContainer(new OutputSlot(getInv(), getInv().outputSlotNo(slot), COL + slot * D, ROW3));
     }
 
   }
 
   public void addGhostSlots(List<GhostSlot> ghostSlots) {
-    int minGhostSlot = ((GhostlySlotDefinition) getInv().getSlotDefinition()).getMinGhostSlot();
-    int maxGhostSlot = ((GhostlySlotDefinition) getInv().getSlotDefinition()).getMaxGhostSlot();
-    for (int r = minGhostSlot; r <= maxGhostSlot; r++) {
-      ghostSlots.add(new IHopperGhostSlot(r, COL + (r - minGhostSlot + 1) * D, ROW2));
+    for (int slot = 1; slot <= SLOTS; slot++) {
+      ghostSlots.add(new IHopperGhostSlot(getInv().ghostSlotNo(slot), COL + slot * D, ROW2));
     }
   }
 

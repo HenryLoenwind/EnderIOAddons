@@ -1,5 +1,10 @@
 package info.loenwind.enderioaddons.machine.ihopper;
 
+import static info.loenwind.enderioaddons.machine.ihopper.ContainerIHopper.COL;
+import static info.loenwind.enderioaddons.machine.ihopper.ContainerIHopper.D;
+import static info.loenwind.enderioaddons.machine.ihopper.ContainerIHopper.ROW1;
+import static info.loenwind.enderioaddons.machine.ihopper.ContainerIHopper.ROW2;
+import static info.loenwind.enderioaddons.machine.ihopper.TileIHopper.SLOTS;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.gui.AdvancedRedstoneModeButton;
 
@@ -144,6 +149,22 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     RenderUtil.bindTexture(GUI_TEXTURE);
     drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+
+    TileIHopper te = getTileEntity();
+    for (int slot = 1; slot <= SLOTS; slot++) {
+      if (te.checkGhostSlot(slot)) {
+        if (te.checkInputSlot(slot)) {
+          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW1 + D, 200, D / 2, D, D / 2);
+        } else {
+          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW1 + D, 200, 0, D, D / 2);
+        }
+        if (te.checkOutputSlot(slot)) {
+          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW2 + D, 200, D / 2, D, D / 2);
+        } else {
+          drawTexturedModalRect(guiLeft + COL + slot * D, guiTop + ROW2 + D, 200, 0, D, D / 2);
+        }
+      }
+    }
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
