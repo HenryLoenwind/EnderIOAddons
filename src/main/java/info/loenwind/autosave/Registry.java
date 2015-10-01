@@ -8,6 +8,7 @@ import info.loenwind.autosave.handlers.endercore.HandleBlockCoord;
 import info.loenwind.autosave.handlers.forge.HandleFluid;
 import info.loenwind.autosave.handlers.forge.HandleFluidStack;
 import info.loenwind.autosave.handlers.internal.HandleStorable;
+import info.loenwind.autosave.handlers.java.HandleBoolean;
 import info.loenwind.autosave.handlers.java.HandleFloat;
 import info.loenwind.autosave.handlers.java.HandleInteger;
 import info.loenwind.autosave.handlers.minecraft.HandleItem;
@@ -55,6 +56,7 @@ public class Registry {
     // Java primitives
     GLOBAL_REGISTRY.register(new HandleFloat());
     GLOBAL_REGISTRY.register(new HandleInteger());
+    GLOBAL_REGISTRY.register(new HandleBoolean());
 
     // Forge basic types
     GLOBAL_REGISTRY.register(new HandleFluidStack());

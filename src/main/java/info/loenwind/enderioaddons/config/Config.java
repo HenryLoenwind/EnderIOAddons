@@ -54,6 +54,15 @@ public enum Config {
 
   waterWorksEnabled(Section.RECIPES, false, "Enable the crafting recipe for the Waterworks"), //
 
+  impulseHopperRFusePerOperation(Section.IHOPPER, 20, "RF use per operation (regardless of its outcome)"), //
+  impulseHopperRFusePerItem(Section.IHOPPER, 1.0d, "RF use per transfered item"), //
+
+  impulseHopperWorkEveryTick1(Section.IHOPPER, 20, "How many ticks does it take to execute one operation (machine with no capacitor upgrades)"), //
+  impulseHopperWorkEveryTick2(Section.IHOPPER, 10, "How many ticks does it take to execute one operation (machine with first capacitor upgrades)"), //
+  impulseHopperWorkEveryTick3(Section.IHOPPER, 4, "How many ticks does it take to execute one operation (machine with second capacitor upgrades)"), //
+
+  impulseHopperEnabled(Section.RECIPES, false, "Enable the crafting recipe for the Impulse Hopper"), //
+
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

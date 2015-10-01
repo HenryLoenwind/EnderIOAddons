@@ -20,7 +20,9 @@ public enum MachinePart {
   COBBLE_CONTROLLER("cobbleController", true, true, false, "cobbleController", false, false), //
   HEATING_ELEMENT("heatingElement", false, false, false, null, false, false), //
   FILTER_ELEMENT("filterElement", true, false, false, null, false, false), //
-  WATER_CONTROLLER("waterController", true, true, false, "waterController", false, false); //
+  WATER_CONTROLLER("waterController", true, true, false, "waterController", false, false), //
+  IHOPPER_CONTROLLER("ihopperController", true, true, false, "ihopperController", false, false), //
+  ;
 
   @Nonnull
   public final String unlocalisedName;

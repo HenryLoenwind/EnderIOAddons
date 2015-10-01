@@ -1,6 +1,4 @@
-package info.loenwind.enderioaddons.machine.ihopper;
-
-import info.loenwind.enderioaddons.gui.IconEIOA;
+package info.loenwind.enderioaddons.gui;
 
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +10,7 @@ import com.google.common.collect.Lists;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.gui.IconEIO;
 
-public enum RedstoneMode implements ICycleEnum {
+public enum AdvancedRedstoneMode implements ICycleEnum {
 
   /**
    * Fire once when the power goes from LOW (0) to any HIGH value (1-15)
@@ -50,12 +48,12 @@ public enum RedstoneMode implements ICycleEnum {
 
   private IWidgetIcon icon;
 
-  RedstoneMode(IWidgetIcon icon) {
+  AdvancedRedstoneMode(IWidgetIcon icon) {
     this.icon = icon;
   }
 
   public String getTooltip() {
-    return EnderIO.lang.localize("gui.tooltip.redstoneControlMode." + name().toLowerCase(Locale.US));
+    return EnderIO.lang.localizeExact("enderioaddons.gui.tooltip.redstoneControlMode." + name().toLowerCase(Locale.US));
   }
 
   @Override
@@ -68,7 +66,7 @@ public enum RedstoneMode implements ICycleEnum {
     return Lists.newArrayList(getTooltip());
   }
 
-  public RedstoneMode next() {
+  public AdvancedRedstoneMode next() {
     int ord = ordinal();
     if (ord == values().length - 1) {
       ord = 0;
@@ -78,7 +76,7 @@ public enum RedstoneMode implements ICycleEnum {
     return values()[ord];
   }
 
-  public RedstoneMode previous() {
+  public AdvancedRedstoneMode previous() {
     int ord = ordinal();
     ord--;
     if (ord < 0) {

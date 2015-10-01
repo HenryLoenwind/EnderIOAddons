@@ -12,6 +12,7 @@ enderioaddons.cobbleController.name=Cobblestone Framework Controller
 enderioaddons.heatingElement.name=Heating Element
 enderioaddons.filterElement.name=Filter Element
 enderioaddons.waterController.name=Water Extraction Framework Controller
+enderioaddons.ihopperController.name=Impulse Hopper Framework Controller
 
 tile.blockCobbleworks.name=Cobblestone Framework
 tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.
@@ -38,3 +39,16 @@ tile.fluid.brine4.name=Solid Brine
 item.bucketBrine4.name=Solid Brine Bucket
 
 enderio.waterworks.stashprogress=Internal Buffer
+
+tile.blockIHopper.name=Impulse Hopper
+
+enderioaddons.gui.tooltip.redstoneControlMode=Redstone Mode
+enderioaddons.gui.tooltip.redstoneControlMode.rising_edge=Rising edge
+enderioaddons.gui.tooltip.redstoneControlMode.falling_edge=Falling edge
+enderioaddons.gui.tooltip.redstoneControlMode.high_pulse=High pulse
+enderioaddons.gui.tooltip.redstoneControlMode.low_pulse=Low pulse
+enderioaddons.gui.tooltip.redstoneControlMode.on=High signal
+enderioaddons.gui.tooltip.redstoneControlMode.off=Low signal
+enderioaddons.gui.tooltip.redstoneControlMode.ignore=Always active
+enderioaddons.gui.tooltip.redstoneControlMode.never=Never active
+

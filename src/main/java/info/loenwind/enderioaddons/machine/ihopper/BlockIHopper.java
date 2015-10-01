@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
+import crazypants.enderio.network.PacketHandler;
 
 public class BlockIHopper extends AbstractMachineBlock<TileIHopper> implements IFrameworkBlock, ITextureProvider {
 
@@ -28,6 +29,7 @@ public class BlockIHopper extends AbstractMachineBlock<TileIHopper> implements I
   public int localRenderId;
 
   public static BlockIHopper create() {
+    PacketHandler.INSTANCE.registerMessage(PacketIHopper.class, PacketIHopper.class, PacketHandler.nextID(), Side.SERVER);
     blockIHopper = new BlockIHopper();
     blockIHopper.init();
     return blockIHopper;

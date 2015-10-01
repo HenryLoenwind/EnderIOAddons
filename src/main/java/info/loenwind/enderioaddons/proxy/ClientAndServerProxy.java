@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.proxy;
 import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.fluid.Fluids;
+import info.loenwind.enderioaddons.gui.PacketAdvancedRedstoneMode;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 import info.loenwind.enderioaddons.machine.drain.InfiniteWaterSourceStopper;
@@ -13,6 +14,8 @@ import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import crazypants.enderio.network.PacketHandler;
 
 public class ClientAndServerProxy implements InitAware {
 
@@ -31,6 +34,7 @@ public class ClientAndServerProxy implements InitAware {
   @Override
   public void init(FMLInitializationEvent event) {
     InfiniteWaterSourceStopper.register();
+    PacketHandler.INSTANCE.registerMessage(PacketAdvancedRedstoneMode.class, PacketAdvancedRedstoneMode.class, PacketHandler.nextID(), Side.SERVER);
   }
 
   @Override

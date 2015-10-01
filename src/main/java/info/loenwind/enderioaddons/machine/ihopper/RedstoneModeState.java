@@ -6,6 +6,7 @@ import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store.StoreFor;
 import info.loenwind.autosave.exceptions.NoHandlerFoundException;
 import info.loenwind.enderioaddons.common.NullHelper;
+import info.loenwind.enderioaddons.gui.AdvancedRedstoneMode;
 
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import com.enderio.core.common.util.BlockCoord;
 @Storable(handler = RedstoneModeState.class)
 public class RedstoneModeState implements IHandler<RedstoneModeState> {
 
-  private RedstoneMode mode = RedstoneMode.values()[0];
+  private AdvancedRedstoneMode mode = AdvancedRedstoneMode.values()[0];
   private PrevStates prevState = PrevStates.NONE;
 
   private static enum PrevStates {
@@ -27,15 +28,19 @@ public class RedstoneModeState implements IHandler<RedstoneModeState> {
   public RedstoneModeState() {
   }
 
-  public RedstoneModeState(RedstoneMode mode) {
+  public RedstoneModeState(AdvancedRedstoneMode mode) {
     this.mode = mode;
   }
 
-  public void setMode(RedstoneMode mode) {
+  public void setMode(AdvancedRedstoneMode mode) {
     if (this.mode != mode) {
       this.mode = mode;
       prevState = PrevStates.NONE;
     }
+  }
+
+  public AdvancedRedstoneMode getMode() {
+    return mode;
   }
 
   public boolean isConditionMet(World world, BlockCoord bc) {
@@ -65,7 +70,7 @@ public class RedstoneModeState implements IHandler<RedstoneModeState> {
         return powerLevel > 0;
       } else {
         prevState = powerLevel == 0 ? PrevStates.OFF : PrevStates.ON;
-        return !(powerLevel > 0);
+        return false;
       }
     case FALLING_EDGE:
       if (prevState == PrevStates.NONE) {
@@ -73,10 +78,10 @@ public class RedstoneModeState implements IHandler<RedstoneModeState> {
         return false;
       } else if (prevState == PrevStates.ON) {
         prevState = powerLevel == 0 ? PrevStates.OFF : PrevStates.ON;
-        return powerLevel > 0;
+        return powerLevel == 0;
       } else {
         prevState = powerLevel == 0 ? PrevStates.OFF : PrevStates.ON;
-        return !(powerLevel > 0);
+        return false;
       }
     case HIGH_PULSE:
       if (prevState == PrevStates.NONE) {
@@ -137,7 +142,7 @@ public class RedstoneModeState implements IHandler<RedstoneModeState> {
     RedstoneModeState result = object != null ? object : new RedstoneModeState();
     if (nbt.hasKey(name)) {
       NBTTagCompound tag = NullHelper.notnullM(nbt.getCompoundTag(name), "NBTTagCompound.getCompoundTag()");
-      result.mode = RedstoneMode.values()[tag.hasKey("mode") ? tag.getInteger("mode") : 0];
+      result.mode = AdvancedRedstoneMode.values()[tag.hasKey("mode") ? tag.getInteger("mode") : 0];
       result.prevState = PrevStates.values()[tag.hasKey("prevState") ? tag.getInteger("prevState") : 0];
     }
     return result;
