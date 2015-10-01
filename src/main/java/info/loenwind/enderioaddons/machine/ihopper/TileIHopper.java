@@ -109,7 +109,6 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
           hasBeenTriggered = hasBeenTriggered || redstoneCheckPassed;
           redstoneStateDirty.set(this, Boolean.FALSE);
           requiresResyncForChangedRSMode = prevRedCheck != redstoneCheckPassed;
-          Log.info("redstoneCheckPassed=" + redstoneCheckPassed + " requiresResyncForChangedRSMode=" + requiresResyncForChangedRSMode);
         }
       } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
         Log.error(e.getMessage());
