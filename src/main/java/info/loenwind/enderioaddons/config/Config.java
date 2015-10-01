@@ -61,7 +61,7 @@ public enum Config {
   impulseHopperWorkEveryTick2(Section.IHOPPER, 10, "How many ticks does it take to execute one operation (machine with first capacitor upgrades)"), //
   impulseHopperWorkEveryTick3(Section.IHOPPER, 4, "How many ticks does it take to execute one operation (machine with second capacitor upgrades)"), //
 
-  impulseHopperEnabled(Section.RECIPES, false, "Enable the crafting recipe for the Impulse Hopper"), //
+  impulseHopperEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Impulse Hopper"), //
 
   ;
 
