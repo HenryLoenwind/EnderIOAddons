@@ -80,10 +80,6 @@ public class TaskWaterworks implements IPoweredTask {
 
   @Nullable
   public static IPoweredTask readFromNBT(NBTTagCompound nbtRoot) {
-    if (!nbtRoot.hasKey(KEY_REQUIRED_ENERGY)) { // TODO: remove after EIO#2802 is live
-      return null; // TODO: remove after EIO#2802 is live
-    } // TODO: remove after EIO#2802 is live
-
     return new TaskWaterworks(nbtRoot.getFloat(KEY_REQUIRED_ENERGY), nbtRoot.getFloat(KEY_USED_ENERGY), nbtRoot.getFloat(KEY_LIQUID_IN_FACTOR));
   }
 

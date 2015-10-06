@@ -9,7 +9,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -182,20 +181,9 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
     return EnderIOAddons.DOMAIN + ":blockDrain";
   }
 
-  @SuppressWarnings("static-method")
-  // TODO: @Override after EIO#2827
-  protected String getBottomIconKey(@SuppressWarnings("unused") boolean active) {
-    return "enderio:machineTemplate";
-  }
-
   @Override
-  @SideOnly(Side.CLIENT)
-  public void registerBlockIcons(IIconRegister iIconRegister) { // TODO: remove after EIO#2827
-    super.registerBlockIcons(iIconRegister);
-
-    iconBuffer[0][0] = iIconRegister.registerIcon(getBottomIconKey(false));
-
-    iconBuffer[0][6] = iIconRegister.registerIcon(getBottomIconKey(true));
+  protected String getBottomIconKey(boolean active) {
+    return "enderio:machineTemplate";
   }
 
   @Override
