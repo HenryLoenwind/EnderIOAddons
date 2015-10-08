@@ -22,7 +22,7 @@ else {
     logger.lifecycle "No build number detected, setting to ${ext.buildnumber}"
 }
 
-group = "com.enderioaddons"
+group = "info.loenwind"
 archivesBaseName = "EnderIOAddons"
 version = "${minecraft_version}-${mod_version}.${buildnumber}"
 
@@ -52,6 +52,7 @@ repositories {
     maven { url = "http://dl.tsr.me/artifactory/libs-release-local" }
     maven { url = "http://maven.tterrag.com" }
     maven { url = "http://maven.ic2.player.to" }
+    mavenLocal()
 }
 
 dependencies {
@@ -120,6 +121,11 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
+artifacts {
+    archives sourceJar
+    archives deobfJar
+}
+
 if (JavaVersion.current().isJava8Compatible()) {
     allprojects {
         tasks.withType(Javadoc) {
@@ -129,6 +135,8 @@ if (JavaVersion.current().isJava8Compatible()) {
 }
 
 build.dependsOn sourceJar, deobfJar
+
+install.dependsOn build
 
 publishing {
     tasks.publish.dependsOn 'build'
