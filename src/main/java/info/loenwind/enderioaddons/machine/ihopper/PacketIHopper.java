@@ -22,11 +22,10 @@ public class PacketIHopper extends MessageTileEntity<TileIHopper> implements IMe
     super(tile);
   }
 
-  public static PacketIHopper setSlot(TileIHopper te, int slot, ItemStack stack) {
+  public static PacketIHopper setGhostSlotContents(TileIHopper te, int slot, ItemStack stack) {
     PacketIHopper msg = new PacketIHopper(te);
     msg.slot = slot;
     msg.stack = stack;
-    //    msg.execute(te);
     return msg;
   }
 
@@ -48,15 +47,9 @@ public class PacketIHopper extends MessageTileEntity<TileIHopper> implements IMe
   public IMessage onMessage(PacketIHopper msg, MessageContext ctx) {
     TileIHopper te = msg.getTileEntity(ctx.getServerHandler().playerEntity.worldObj);
     if (te != null) {
-      msg.execute(te);
+      te.setGhostSlotContents(msg.slot, msg.stack);
     }
     return null;
-  }
-
-  private void execute(TileIHopper te) {
-    if (((GhostlySlotDefinition) te.getSlotDefinition()).isGhostSlot(slot)) {
-      te.setInventorySlotContentsAndRefresh(slot, stack);
-    }
   }
 
 }

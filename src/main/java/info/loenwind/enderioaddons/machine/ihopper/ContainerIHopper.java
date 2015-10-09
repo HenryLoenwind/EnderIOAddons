@@ -85,7 +85,7 @@ public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
 
     @Override
     public void putStack(ItemStack newstack) {
-      PacketHandler.INSTANCE.sendToServer(PacketIHopper.setSlot(getInv(), slotIndex, newstack));
+      PacketHandler.INSTANCE.sendToServer(PacketIHopper.setGhostSlotContents(getInv(), slotIndex, newstack));
     }
   }
 

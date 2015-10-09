@@ -303,9 +303,11 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
     return 0;
   }
 
-  public void setInventorySlotContentsAndRefresh(int slot, ItemStack contents) {
-    super.setInventorySlotContents(slot, contents);
-    forceClientUpdate = true;
+  public void setGhostSlotContents(int slot, ItemStack contents) {
+    if (((GhostlySlotDefinition) getSlotDefinition()).isGhostSlot(slot)) {
+      super.setInventorySlotContents(slot, contents);
+      forceClientUpdate = true;
+    }
   }
 
   @Override
