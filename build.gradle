@@ -24,7 +24,7 @@ else {
 
 group = "info.loenwind"
 archivesBaseName = "EnderIOAddons"
-version = "${minecraft_version}-${mod_version}.${buildnumber}"
+version = "${enderio_version}-${mod_version}.${buildnumber}"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
