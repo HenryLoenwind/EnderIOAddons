@@ -12,6 +12,7 @@ public class GuiIds {
   public static int GUI_ID_COBBLEWORKS = 0;
   public static int GUI_ID_WATERWORKS = 0;
   public static int GUI_ID_IHOPPER = 0;
+  public static int GUI_ID_NIARD = 0;
 
   private GuiIds() {
   }
@@ -21,6 +22,7 @@ public class GuiIds {
     GUI_ID_COBBLEWORKS = nextID();
     GUI_ID_WATERWORKS = nextID();
     GUI_ID_IHOPPER = nextID();
+    GUI_ID_NIARD = nextID();
   }
 
   private static int lastId = crazypants.enderio.GuiHandler.GUI_ID_CAP_BANK;
