@@ -46,14 +46,15 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
   @Nonnull
   @Store
   protected SmartTank tank = new SmartTank(2 * ONE_BLOCK_OF_LIQUID);
+
   protected int lastUpdateLevel = -1;
-  
-  private boolean tankDirty = false;
-  private final Engine engine;
+  protected boolean tankDirty = false;
+  protected final EngineNiard engine;
+  protected int sleep = 0;
 
   public TileNiard() {
     super(new SlotDefinition(1, 1, 1));
-    engine = new Engine(this);
+    engine = new EngineNiard(this);
   }
 
   @Override
@@ -118,7 +119,7 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
     return fillInternal(resource, doFill);
   }
 
-  private boolean canFill(ForgeDirection from) {
+  protected boolean canFill(ForgeDirection from) {
     IoMode mode = getIoMode(from);
     return mode != IoMode.PUSH && mode != IoMode.DISABLED;
   }
@@ -173,7 +174,7 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
     return new FluidTankInfo[] { new FluidTankInfo(tank) };
   }
 
-  private int getFilledLevel() {
+  protected int getFilledLevel() {
     int level = (int) Math.floor(16 * tank.getFilledRatio());
     if(level == 0 && tank.getFluidAmount() > 0) {
       level = 1;
@@ -207,11 +208,12 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
     return false;
   }
 
-  private static boolean isValidFluid(Fluid fluid) {
+  @SuppressWarnings("static-method")
+  protected boolean isValidFluid(Fluid fluid) {
     return fluid != null && (fluid.canBePlacedInWorld() || fluid == EnderIO.fluidXpJuice);
   }
 
-  private static boolean isValidFluid(FluidStack fluid) {
+  protected boolean isValidFluid(FluidStack fluid) {
     return fluid != null && isValidFluid(fluid.getFluid());
   }
 
@@ -228,18 +230,13 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
     if(redstoneChecksPassed) {
       if(getEnergyStored() < getPowerUsePerTick()) {
         return false;
+      } else if (tank.getFluidAmount() > 0) {
+        usePower();
+        return true;
       }
-      usePower();
     }
-    int curScaled = getProgressScaled(16);
-    if(curScaled != lastProgressScaled) {
-      sendTaskProgressPacket();
-      lastProgressScaled = curScaled;
-    }
-    return true;
+    return false;
   }
-
-  private int sleep = 0;
 
   protected boolean doTick() {
     if(shouldDoWorkThisTick(20)) {
@@ -371,7 +368,7 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
 
   @Override
   public FluidTank getInputTank(FluidStack forFluidType) {
-    return tank;
+    return isValidFluid(forFluidType) ? tank : null;
   }
 
   @Override

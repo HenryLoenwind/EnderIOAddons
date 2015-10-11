@@ -13,6 +13,11 @@ import info.loenwind.enderioaddons.machine.framework.TESRFrameworkMachine;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.ihopper.RendererIHopper;
 import info.loenwind.enderioaddons.machine.ihopper.TileIHopper;
+import info.loenwind.enderioaddons.machine.niard.BlockNiard;
+import info.loenwind.enderioaddons.machine.niard.BlockRendererNiard;
+import info.loenwind.enderioaddons.machine.niard.FluidRendererNiard;
+import info.loenwind.enderioaddons.machine.niard.ItemRendererNiard;
+import info.loenwind.enderioaddons.machine.niard.TileNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePartRenderer;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
@@ -41,6 +46,11 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     RenderingRegistry.registerBlockHandler(new DrainBlockRenderer());
     ClientRegistry.bindTileEntitySpecialRenderer(TileDrain.class, new DrainFluidRenderer());
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockDrain.blockDrain), new DrainItemRenderer());
+
+    BlockNiard.blockNiard.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new BlockRendererNiard());
+    ClientRegistry.bindTileEntitySpecialRenderer(TileNiard.class, new FluidRendererNiard());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockNiard.blockNiard), new ItemRendererNiard());
 
     RendererFrameworkMachine rendererFrameworkMachine = new RendererFrameworkMachine();
 

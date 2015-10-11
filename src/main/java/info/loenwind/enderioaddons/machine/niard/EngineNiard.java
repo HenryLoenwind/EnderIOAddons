@@ -20,7 +20,7 @@ import com.enderio.core.common.util.BlockCoord;
 
 import crazypants.enderio.xp.XpUtil;
 
-public class Engine {
+public class EngineNiard {
 
   private final TileNiard owner;
   private Fluid fluid = null;
@@ -30,11 +30,11 @@ public class Engine {
   private int radius = -1;
   private RadiusIterator radiusItr;
 
-  public Engine(TileNiard owner) {
+  public EngineNiard(TileNiard owner) {
     this.owner = owner;
   }
 
-  public Engine setFluid(Fluid fluid) {
+  public EngineNiard setFluid(Fluid fluid) {
     if (fluid.canBePlacedInWorld()) {
       this.radiusItr = radius >= 0 ? new RadiusIterator(owner.getLocation(), radius) : null;
       this.fluid = fluid;
@@ -55,7 +55,7 @@ public class Engine {
     return this;
   }
 
-  public Engine setRadius(int radius) {
+  public EngineNiard setRadius(int radius) {
     if (radius != this.radius) {
       this.radius = radius;
       this.radiusItr = new RadiusIterator(owner.getLocation(), radius);
