@@ -138,7 +138,7 @@ public class BlockNiard extends AbstractMachineBlock<TileNiard> implements IAdva
 
   @Override
   protected String getMachineFrontIconKey(boolean active) {
-    return EnderIOAddons.DOMAIN + ":blockNiardSide";
+    return active ? "enderio:blockTankAdvanced" : EnderIOAddons.DOMAIN + ":blockNiardSide";
   }
 
   @Override
@@ -153,12 +153,12 @@ public class BlockNiard extends AbstractMachineBlock<TileNiard> implements IAdva
 
   @Override
   protected String getTopIconKey(boolean active) {
-    return EnderIOAddons.DOMAIN + ":blockNiard";
+    return "enderio:machineTop";
   }
 
   @Override
   protected String getBottomIconKey(boolean active) {
-    return "enderio:machineTemplate";
+    return active ? "enderio:blockTankAdvanced" : EnderIOAddons.DOMAIN + ":blockDrain";
   }
 
   @Override
