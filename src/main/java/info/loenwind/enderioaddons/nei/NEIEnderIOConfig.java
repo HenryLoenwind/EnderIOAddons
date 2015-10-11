@@ -7,6 +7,7 @@ import info.loenwind.enderioaddons.fluid.Fluids;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
+import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
@@ -37,6 +38,9 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     if (!Config.impulseHopperEnabled.getBoolean()) {
       API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IHOPPER_CONTROLLER.ordinal()));
       API.hideItem(new ItemStack(BlockIHopper.blockIHopper, 1, OreDictionary.WILDCARD_VALUE));
+    }
+    if (!Config.niardEnabled.getBoolean()) {
+      API.hideItem(new ItemStack(BlockNiard.blockNiard, 1, OreDictionary.WILDCARD_VALUE));
     }
   }
 

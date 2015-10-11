@@ -5,12 +5,14 @@ import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
+import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -72,11 +74,18 @@ public class Recipes implements InitAware {
 
   @Override
   public void init(FMLInitializationEvent event) {
-    //Drain
+    // Drain
     if (Config.drainEnabled.getBoolean()) {
       ItemStack drain = new ItemStack(BlockDrain.blockDrain, 1, 0);
       GameRegistry.addRecipe(new ShapedOreRecipe(drain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
           electricSteel, 'v', Items.cauldron));
+    }
+
+    // Niard
+    if (Config.niardEnabled.getBoolean()) {
+      ItemStack niard = new ItemStack(BlockNiard.blockNiard, 1, OreDictionary.WILDCARD_VALUE);
+      GameRegistry.addRecipe(new ShapedOreRecipe(niard, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
+          electricSteel, 'v', darkSteelBars));
     }
 
     ItemStack zombieBit;

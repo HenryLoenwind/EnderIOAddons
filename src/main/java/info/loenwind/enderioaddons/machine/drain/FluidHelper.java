@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.drain;
 
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
+import info.loenwind.enderioaddons.fluid.FluidType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +38,7 @@ public final class FluidHelper {
   @Nonnull
   private final ForgeDirection upflowDirection;
   @Nonnull
-  private final FType type;
+  private final FluidType type;
   @Nullable
   private final BlockCoord startbc;
   private IDrainingCallback hook;
@@ -58,11 +59,11 @@ public final class FluidHelper {
     this.downflowDirection = fluid.getDensity() > 0 ? ForgeDirection.DOWN : ForgeDirection.UP;
     this.upflowDirection = downflowDirection == ForgeDirection.UP ? ForgeDirection.DOWN : ForgeDirection.UP;
     if (this.block instanceof BlockFluidClassic) {
-      this.type = FType.CLASSIC;
+      this.type = FluidType.CLASSIC;
     } else if (this.block instanceof BlockFluidFinite) {
-      this.type = FType.FINITE;
+      this.type = FluidType.FINITE;
     } else if (this.block instanceof BlockLiquid) {
-      this.type = FType.VANILLA;
+      this.type = FluidType.VANILLA;
     } else {
       throw new Exception();
     }
@@ -146,12 +147,6 @@ public final class FluidHelper {
     return getInstance(world, stack, null);
   }
 
-  private enum FType {
-    VANILLA,
-    CLASSIC,
-    FINITE
-  }
-  
   private static boolean isInWorld(@Nonnull BlockCoord bc) {
     return bc.y > 0 && bc.y <= 255;
   }

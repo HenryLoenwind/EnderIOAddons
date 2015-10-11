@@ -9,6 +9,7 @@ import info.loenwind.enderioaddons.machine.drain.BlockDrain;
 import info.loenwind.enderioaddons.machine.drain.InfiniteWaterSourceStopper;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
+import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -29,6 +30,7 @@ public class ClientAndServerProxy implements InitAware {
     BlockWaterworks.create();
     BlockIHopper.create();
     ItemMachinePart.create();
+    BlockNiard.create();
   }
 
   @Override
