@@ -568,4 +568,9 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
     return null;
   }
 
+  @Override
+  public String getSoundName() {
+    return "machine.cobbleworks";
+  }
+
 }

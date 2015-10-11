@@ -11,6 +11,7 @@ import static info.loenwind.enderioaddons.config.Config.impulseHopperWorkEveryTi
 import static info.loenwind.enderioaddons.config.Config.impulseHopperWorkEveryTick3;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
+import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.Log;
 import info.loenwind.enderioaddons.gui.AdvancedRedstoneMode;
 import info.loenwind.enderioaddons.gui.IAdvancedRedstoneModeControlable;
@@ -132,6 +133,12 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
     }
   }
 
+  private void playSound() {
+    if (crazypants.enderio.config.Config.machineSoundsEnabled) {
+      getWorldObj().playSoundEffect(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, EnderIOAddons.DOMAIN + ":machine.ihopper", getVolume(), getPitch());
+    }
+  }
+
   /**
    * Check if the an input slot satisfies its ghost slot.
    * 
@@ -220,6 +227,7 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
           }
         }
       }
+      playSound();
       return true;
     } else {
       return false;

@@ -28,7 +28,6 @@ import com.enderio.core.client.render.BoundingBox;
 import com.enderio.core.client.render.RenderUtil;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import crazypants.enderio.Log;
 import crazypants.enderio.machine.AbstractMachineEntity;
 
 public class RendererIHopper implements ISimpleBlockRenderingHandler {
@@ -94,7 +93,6 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
     int[] pos = frameRenderer.translateToSlotPosition(notnull(te.getFacingDir(), "Internal state error: Block is not facing any direction"), tankSlot);
 
     // top box
-    Log.info("BB1");
     BoundingBox bb1 = makePartialBBofSlot(0, 10, 0, 16, 16, 16, pos, x, y, z);
     renderSingleFace(bb1, ForgeDirection.UP, icon_top, 0, 16, 0, 16, null, brightnessPerSide, false);
     for (ForgeDirection dir : AROUND) {

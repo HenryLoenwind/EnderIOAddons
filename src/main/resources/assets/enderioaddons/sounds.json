@@ -1,0 +1,14 @@
+{
+  "machine.cobbleworks": {
+    "category": "block",
+    "sounds": [
+      "machine/cobbleworks/bubble"
+    ]
+  },
+  "machine.ihopper": {
+    "category": "block",
+	"sounds": [
+	  "machine/ihopper/clack"
+	]
+  }
+}

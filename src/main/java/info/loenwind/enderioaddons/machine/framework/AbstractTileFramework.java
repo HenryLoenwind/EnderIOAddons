@@ -6,18 +6,36 @@ import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import info.loenwind.autosave.Reader;
 import info.loenwind.autosave.Writer;
 import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.common.Log;
+
+import java.lang.reflect.Field;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.util.ResourceLocation;
+import crazypants.enderio.machine.AbstractMachineEntity;
 import crazypants.enderio.machine.AbstractPowerConsumerEntity;
 import crazypants.enderio.machine.SlotDefinition;
 
 @Storable
 public abstract class AbstractTileFramework extends AbstractPowerConsumerEntity {
 
+  public static ResourceLocation getSoundFor(String sound) {
+    return sound == null ? null : new ResourceLocation(EnderIOAddons.DOMAIN + ":" + sound);
+  }
+
   public AbstractTileFramework(SlotDefinition slotDefinition) {
     super(slotDefinition);
+    try {
+      Field field = AbstractMachineEntity.class.getDeclaredField("soundRes");
+      field.setAccessible(true);
+      field.set(this, getSoundFor(getSoundName()));
+    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+      Log.warn("Failed to access sound filed inherited from Ender IO: " + e);
+    }
   }
 
   @Override
