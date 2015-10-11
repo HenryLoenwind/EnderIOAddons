@@ -63,6 +63,11 @@ public enum Config {
 
   impulseHopperEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Impulse Hopper"), //
 
+  niardContinuousEnergyUseRF(Section.NIARD, 10, "The amount of power used by a niard per tick."), // 
+  niardPerBucketEnergyUseRF(Section.NIARD, 400, "The amount of power used by a niard per 1000mB of liquid placed into the world."), //
+
+  niardEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Niard"), //
+
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

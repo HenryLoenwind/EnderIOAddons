@@ -42,6 +42,12 @@ enderio.waterworks.stashprogress=Internal Buffer
 
 tile.blockIHopper.name=Impulse Hopper
 
+tile.blockNiard.name=Niard
+tile.blockNiard.tooltip.detailed.line1="Niard ythgim eht" places liquids into the world.
+tile.blockNiard.tooltip.detailed.line2=Liquids are placed below it, as low as possible.
+tile.blockNiard.tooltip.detailed.line3=Range can be upgraded with capacitors (1x1, 3x3, 7x7).
+tile.blockNiard.tooltip.detailed.line4=Can also convert Liquid XP into XP orbs.
+
 enderioaddons.gui.tooltip.redstoneControlMode=Redstone Mode
 enderioaddons.gui.tooltip.redstoneControlMode.rising_edge=Rising edge
 enderioaddons.gui.tooltip.redstoneControlMode.falling_edge=Falling edge

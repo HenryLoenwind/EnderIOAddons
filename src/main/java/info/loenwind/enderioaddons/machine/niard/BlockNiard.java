@@ -2,13 +2,11 @@ package info.loenwind.enderioaddons.machine.niard;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
-import info.loenwind.enderioaddons.config.Config;
 
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -26,7 +24,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.enderio.core.api.client.gui.IAdvancedTooltipProvider;
 import com.enderio.core.client.handlers.SpecialTooltipHandler;
-import com.enderio.core.common.util.FluidUtil;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -37,6 +34,7 @@ import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
 import crazypants.enderio.machine.AbstractMachineEntity;
 import crazypants.enderio.machine.power.PowerDisplayUtil;
+import crazypants.enderio.network.PacketHandler;
 
 public class BlockNiard extends AbstractMachineBlock<TileNiard> implements IAdvancedTooltipProvider {
 
@@ -45,7 +43,7 @@ public class BlockNiard extends AbstractMachineBlock<TileNiard> implements IAdva
   public int localRenderId;
 
   public static BlockNiard create() {
-    // TODO    PacketHandler.INSTANCE.registerMessage(PacketNiard.class, PacketNiard.class, PacketHandler.nextID(), Side.CLIENT);
+    PacketHandler.INSTANCE.registerMessage(PacketNiard.class, PacketNiard.class, PacketHandler.nextID(), Side.CLIENT);
     blockNiard = new BlockNiard();
     blockNiard.init();
     return blockNiard;
@@ -80,28 +78,6 @@ public class BlockNiard extends AbstractMachineBlock<TileNiard> implements IAdva
   @Override
   public TileEntity createTileEntity(World world, int metadata) {
     return new TileNiard();
-  }
-
-  @Override
-  public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9) {
-
-    TileEntity te = world.getTileEntity(x, y, z);
-    if (!(te instanceof TileNiard)) {
-      return super.onBlockActivated(world, x, y, z, entityPlayer, par6, par7, par8, par9);
-    }
-
-    TileNiard drain = (TileNiard) te;
-    ItemStack item = entityPlayer.inventory.getCurrentItem();
-    if (item == null) {
-      return super.onBlockActivated(world, x, y, z, entityPlayer, par6, par7, par8, par9);
-    }
-
-    //now check for empty fluid containers to fill
-    if (FluidUtil.fillPlayerHandItemFromInternalTank(world, x, y, z, entityPlayer, drain)) {
-      return true; // TODO: Need reverse check here instead
-    }
-
-    return super.onBlockActivated(world, x, y, z, entityPlayer, par6, par7, par8, par9);
   }
 
   @Override
@@ -188,9 +164,6 @@ public class BlockNiard extends AbstractMachineBlock<TileNiard> implements IAdva
   @Override
   @SideOnly(Side.CLIENT)
   public void addCommonEntries(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
-    if (!Config.drainAllowOnDedicatedServer.getBoolean() && !Minecraft.getMinecraft().isSingleplayer()) {
-      list.add(EnderIO.lang.localize("blockDrain.tooltip.disabledMessage"));
-    } // TODO adapt or remove
   }
 
   @Override
