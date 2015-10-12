@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
@@ -47,10 +46,7 @@ public class ItemRendererVoidTank implements IItemRenderer {
     IIcon[] icons = RenderUtil.getBlockTextures(block, meta);
     BoundingBox bb = BoundingBox.UNIT_CUBE.translate(0, -0.1f, 0);
     Tessellator.instance.startDrawingQuads();
-    //    CubeRenderer.render(bb, icons, null, RenderUtil.getDefaultPerSideBrightness());
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      FaceRenderer.renderSingleFace(bb, dir, icons[dir.ordinal()], 0, 16, 0, 16, null, RenderUtil.getDefaultPerSideBrightness(), false);
-    }
+    FaceRenderer.renderCube(bb, icons, null, RenderUtil.getDefaultPerSideBrightness(), false);
     Tessellator.instance.draw();
 
     FluidRendererVoidTank.renderBlockContents(null, 0f, -0.1f, 0f);
