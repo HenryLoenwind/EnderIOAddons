@@ -8,6 +8,7 @@ import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
+import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -32,6 +33,8 @@ public class Recipes implements InitAware {
 
   @ItemStackHolder(value = "EnderIO:blockTank", meta = 0)
   public static final ItemStack basicTank = null;
+  @ItemStackHolder(value = "EnderIO:blockTank", meta = 1)
+  public static final ItemStack advancedTank = null;
 
   @ItemStackHolder(value = "EnderIO:blockDarkIronBars", meta = 0)
   public static final ItemStack darkSteelBars = null;
@@ -86,6 +89,13 @@ public class Recipes implements InitAware {
       ItemStack niard = new ItemStack(BlockNiard.blockNiard, 1, OreDictionary.WILDCARD_VALUE);
       GameRegistry.addRecipe(new ShapedOreRecipe(niard, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
           electricSteel, 'v', darkSteelBars));
+    }
+
+    // Void Tank
+    if (Config.voidTankEnabled.getBoolean()) {
+      ItemStack voidTank = new ItemStack(BlockVoidTank.blockVoidTank, 1, OreDictionary.WILDCARD_VALUE);
+      GameRegistry.addRecipe(new ShapedOreRecipe(voidTank, "omo", "sfs", "oto", 'm', machineChassi, 't', advancedTank, 'o', "blockObsidian", 'f',
+          Items.flint_and_steel, 's', darkSteel));
     }
 
     ItemStack zombieBit;

@@ -1,14 +1,30 @@
 package info.loenwind.enderioaddons.render;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.api.client.render.VertexTransform;
 import com.enderio.core.client.render.BoundingBox;
+import com.enderio.core.client.render.VertexRotationFacing;
+import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.vecmath.Vector3d;
 
 public class FaceRenderer {
+
+  // @formatter:off
+  public static int[][] sideAndFacingToSpriteOffset = new int[][] {
+  //  D  U  N  S  W  E <- te.facing; v- physical side => logical side
+    { 3, 2, 0, 0, 0, 0 }, // D
+    { 2, 3, 1, 1, 1, 1 }, // U
+    { 1, 1, 3, 2, 4, 5 }, // N
+    { 0, 0, 2, 3, 5, 4 }, // S
+    { 4, 5, 5, 4, 3, 2 }, // W
+    { 5, 4, 4, 5, 2, 3 }  // E
+  };
+  // @formatter:on
 
   private FaceRenderer() {
   }
@@ -41,6 +57,63 @@ public class FaceRenderer {
     Tessellator.instance.addVertexWithUV(vec.x, vec.y, vec.z, u, v);
   }
 
+  public static void renderCube(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    setupVertices(bb, xForm);
+    for (ForgeDirection face : ForgeDirection.VALID_DIRECTIONS) {
+      IIcon tex = icons[face.ordinal()];
+      if (tex != null) {
+        float minU = tex.getMinU();
+        float maxU = tex.getMaxU();
+        float minV = tex.getMinV();
+        float maxV = tex.getMaxV();
+
+        renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
+  private final static ForgeDirection[] AROUND = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
+
+  public static void renderSkirt(BoundingBox bb, IIcon[] icons, int texMinU, int texMaxU, int texMinV, int texMaxV, VertexTransform xForm,
+      float[] brightnessPerSide, boolean inside) {
+    for (ForgeDirection face : AROUND) {
+      IIcon tex = icons[face.ordinal()];
+      if (tex != null) {
+        renderSingleFace(bb, face, tex, texMinU, texMaxU, texMinV, texMaxV, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
+  public static void renderSkirt(BoundingBox bb, IIcon tex, int texMinU, int texMaxU, int texMinV, int texMaxV, VertexTransform xForm,
+      float[] brightnessPerSide, boolean inside) {
+    if (tex != null) {
+      for (ForgeDirection face : AROUND) {
+        renderSingleFace(bb, face, tex, texMinU, texMaxU, texMinV, texMaxV, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
+  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    setupVertices(bb, xForm);
+    IIcon tex = icons[face.ordinal()];
+    if (tex != null) {
+      float minU = tex.getMinU();
+      float maxU = tex.getMaxU();
+      float minV = tex.getMinV();
+      float maxV = tex.getMaxV();
+
+      renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+    }
+  }
+
+  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon[] icons, int texMinU, int texMaxU, int texMinV, int texMaxV,
+      VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    IIcon tex = icons[face.ordinal()];
+    if (tex != null) {
+      renderSingleFace(bb, face, tex, texMinU, texMaxU, texMinV, texMaxV, xForm, brightnessPerSide, inside);
+    }
+  }
+
   public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon tex, int texMinU, int texMaxU, int texMinV, int texMaxV,
       VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
     setupVertices(bb, xForm);
@@ -55,54 +128,86 @@ public class FaceRenderer {
     minV += (16.0f - texMaxV) / 16.0f * sizeV;
     maxV -= texMinV / 16.0f * sizeV;
 
+    renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+  }
+
+  private static Block block;
+  private static IBlockAccess world;
+  private static BlockCoord bc;
+
+  public static void setLightingReference(IBlockAccess world, Block block, BlockCoord bc) {
+    FaceRenderer.world = world;
+    FaceRenderer.block = block;
+    FaceRenderer.bc = bc;
+  }
+
+  public static void setLightingReference(IBlockAccess world, Block block, int x, int y, int z) {
+    FaceRenderer.world = world;
+    FaceRenderer.block = block;
+    FaceRenderer.bc = new BlockCoord(x, y, z);
+  }
+
+  public static void clearLightingReference() {
+    FaceRenderer.world = null;
+    FaceRenderer.block = null;
+    FaceRenderer.bc = null;
+  }
+
+  private static void renderSingleFace(ForgeDirection face, float minU, float maxU, float minV, float maxV, VertexTransform xForm, float[] brightnessPerSide,
+      boolean inside) {
+    ForgeDirection normal = inside ? face.getOpposite() : face;
+    if (xForm instanceof VertexRotationFacing) {
+      normal = ((VertexRotationFacing) xForm).rotate(normal);
+    }
+    Tessellator.instance.setNormal(normal.offsetX, normal.offsetY, normal.offsetZ);
+
+    if (block != null && world != null && bc != null) {
+      BlockCoord to = bc.getLocation(normal);
+      Tessellator.instance.setBrightness(block.getMixedBrightnessForBlock(world, to.x, to.y, to.z));
+    }
+
     if (brightnessPerSide != null) {
-      float cm = brightnessPerSide[inside ? face.getOpposite().ordinal() : face.ordinal()];
+      float cm = brightnessPerSide[normal.ordinal()];
       Tessellator.instance.setColorOpaque_F(cm, cm, cm);
     }
 
     if (inside) {
       switch (face) {
       case NORTH:
-        Tessellator.instance.setNormal(0, 0, 1);
-        addVecWithUV(verts[0], minU, maxV);
-        addVecWithUV(verts[1], maxU, maxV);
-        addVecWithUV(verts[2], maxU, minV);
-        addVecWithUV(verts[3], minU, minV);
+        addVecWithUV(verts[0], maxU, maxV);
+        addVecWithUV(verts[1], minU, maxV);
+        addVecWithUV(verts[2], minU, minV);
+        addVecWithUV(verts[3], maxU, minV);
         break;
       case SOUTH:
-        Tessellator.instance.setNormal(0, 0, -1);
-        addVecWithUV(verts[5], minU, maxV);
-        addVecWithUV(verts[4], maxU, maxV);
-        addVecWithUV(verts[7], maxU, minV);
-        addVecWithUV(verts[6], minU, minV);
+        addVecWithUV(verts[5], maxU, maxV);
+        addVecWithUV(verts[4], minU, maxV);
+        addVecWithUV(verts[7], minU, minV);
+        addVecWithUV(verts[6], maxU, minV);
         break;
       case UP:
-        Tessellator.instance.setNormal(0, -1, 0);
-        addVecWithUV(verts[2], maxU, maxV);
-        addVecWithUV(verts[6], maxU, minV);
-        addVecWithUV(verts[7], minU, minV);
-        addVecWithUV(verts[3], minU, maxV);
+        addVecWithUV(verts[2], maxU, minV);
+        addVecWithUV(verts[6], maxU, maxV);
+        addVecWithUV(verts[7], minU, maxV);
+        addVecWithUV(verts[3], minU, minV);
         break;
       case DOWN:
-        Tessellator.instance.setNormal(0, 1, 0);
         addVecWithUV(verts[1], maxU, minV);
         addVecWithUV(verts[0], minU, minV);
         addVecWithUV(verts[4], minU, maxV);
         addVecWithUV(verts[5], maxU, maxV);
         break;
       case EAST:
-        Tessellator.instance.setNormal(-1, 0, 0);
-        addVecWithUV(verts[6], maxU, minV);
-        addVecWithUV(verts[2], minU, minV);
-        addVecWithUV(verts[1], minU, maxV);
-        addVecWithUV(verts[5], maxU, maxV);
+        addVecWithUV(verts[6], minU, minV);
+        addVecWithUV(verts[2], maxU, minV);
+        addVecWithUV(verts[1], maxU, maxV);
+        addVecWithUV(verts[5], minU, maxV);
         break;
       case WEST:
-        Tessellator.instance.setNormal(1, 0, 0);
-        addVecWithUV(verts[4], minU, maxV);
-        addVecWithUV(verts[0], maxU, maxV);
-        addVecWithUV(verts[3], maxU, minV);
-        addVecWithUV(verts[7], minU, minV);
+        addVecWithUV(verts[4], maxU, maxV);
+        addVecWithUV(verts[0], minU, maxV);
+        addVecWithUV(verts[3], minU, minV);
+        addVecWithUV(verts[7], maxU, minV);
         break;
       default:
         break;
@@ -110,42 +215,36 @@ public class FaceRenderer {
     } else {
       switch (face) {
       case NORTH:
-        Tessellator.instance.setNormal(0, 0, -1);
         addVecWithUV(verts[1], minU, maxV);
         addVecWithUV(verts[0], maxU, maxV);
         addVecWithUV(verts[3], maxU, minV);
         addVecWithUV(verts[2], minU, minV);
         break;
       case SOUTH:
-        Tessellator.instance.setNormal(0, 0, 1);
         addVecWithUV(verts[4], minU, maxV);
         addVecWithUV(verts[5], maxU, maxV);
         addVecWithUV(verts[6], maxU, minV);
         addVecWithUV(verts[7], minU, minV);
         break;
       case UP:
-        Tessellator.instance.setNormal(0, 1, 0);
         addVecWithUV(verts[6], maxU, maxV);
         addVecWithUV(verts[2], maxU, minV);
         addVecWithUV(verts[3], minU, minV);
         addVecWithUV(verts[7], minU, maxV);
         break;
       case DOWN:
-        Tessellator.instance.setNormal(0, -1, 0);
         addVecWithUV(verts[0], minU, minV);
         addVecWithUV(verts[1], maxU, minV);
         addVecWithUV(verts[5], maxU, maxV);
         addVecWithUV(verts[4], minU, maxV);
         break;
       case EAST:
-        Tessellator.instance.setNormal(1, 0, 0);
         addVecWithUV(verts[2], maxU, minV);
         addVecWithUV(verts[6], minU, minV);
         addVecWithUV(verts[5], minU, maxV);
         addVecWithUV(verts[1], maxU, maxV);
         break;
       case WEST:
-        Tessellator.instance.setNormal(-1, 0, 0);
         addVecWithUV(verts[0], minU, maxV);
         addVecWithUV(verts[4], maxU, maxV);
         addVecWithUV(verts[7], maxU, minV);

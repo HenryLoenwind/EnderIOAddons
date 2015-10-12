@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.machine.ihopper;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullJ;
 import static info.loenwind.enderioaddons.render.FaceRenderer.renderSingleFace;
+import static info.loenwind.enderioaddons.render.FaceRenderer.renderSkirt;
 import static net.minecraftforge.common.util.ForgeDirection.EAST;
 import static net.minecraftforge.common.util.ForgeDirection.NORTH;
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
@@ -11,6 +12,7 @@ import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+import info.loenwind.enderioaddons.render.FaceRenderer;
 
 import javax.annotation.Nonnull;
 
@@ -61,12 +63,14 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
         brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
       }
 
+      FaceRenderer.setLightingReference(world, BlockIHopper.blockIHopper, x, y, z);
       for (TankSlot tankSlot : TankSlot.values()) {
         tankSlot = notnullJ(tankSlot, "enum.values()[i]");
         if (tankSlot != TankSlot.FRONT_LEFT) {
           renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
         }
       }
+      FaceRenderer.clearLightingReference();
     }
 
     return frameRenderer.renderWorldBlock(world, x, y, z, block, modelId, renderer);
@@ -82,8 +86,6 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
     return BlockIHopper.blockIHopper.getRenderType();
   }
 
-  private final static ForgeDirection[] AROUND = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
-
   private void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, float[] brightnessPerSide, @Nonnull TankSlot tankSlot) {
 
     IIcon icon_outside = BlockHopper.getHopperIcon("hopper_outside");
@@ -95,23 +97,17 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
     // top box
     BoundingBox bb1 = makePartialBBofSlot(0, 10, 0, 16, 16, 16, pos, x, y, z);
     renderSingleFace(bb1, ForgeDirection.UP, icon_top, 0, 16, 0, 16, null, brightnessPerSide, false);
-    for (ForgeDirection dir : AROUND) {
-      renderSingleFace(bb1, dir, icon_outside, 0, 16, 10, 16, null, brightnessPerSide, false);
-    }
+    renderSkirt(bb1, icon_outside, 0, 16, 10, 16, null, brightnessPerSide, false);
     renderSingleFace(bb1, ForgeDirection.DOWN, icon_outside, 0, 16, 0, 16, null, brightnessPerSide, false);
 
     // inside
     BoundingBox bb2 = makePartialBBofSlot(2, 10, 2, 14, 16, 14, pos, x, y, z);
-    for (ForgeDirection dir : AROUND) {
-      renderSingleFace(bb2, dir, icon_outside, 2, 14, 10, 16, null, brightnessPerSide, true);
-    }
+    renderSkirt(bb2, icon_outside, 2, 14, 10, 16, null, brightnessPerSide, true);
     renderSingleFace(bb2, ForgeDirection.DOWN, icon_inside, 2, 14, 2, 14, null, brightnessPerSide, true);
 
     // center box
     BoundingBox bb3 = makePartialBBofSlot(4, 4, 4, 12, 10, 12, pos, x, y, z);
-    for (ForgeDirection dir : AROUND) {
-      renderSingleFace(bb3, dir, icon_outside, 4, 12, 4, 10, null, brightnessPerSide, false);
-    }
+    renderSkirt(bb3, icon_outside, 4, 12, 4, 10, null, brightnessPerSide, false);
     renderSingleFace(bb3, ForgeDirection.DOWN, icon_outside, 4, 12, 4, 12, null, brightnessPerSide, false);
 
     // connector

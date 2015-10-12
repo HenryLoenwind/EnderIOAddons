@@ -34,23 +34,23 @@ public enum Config {
   waterWorksWaterReductionPercentage(Section.WATERWORKS, 10, "Amount of liquid produced when processing in percent (0-100) of the input liquid"), //
 
   waterWorksRFperTask1(Section.WATERWORKS, 5 * 20 * 20 * 1.0d, "RF per task (machine with no capacitor upgrades)"), //
-  waterWorksRFperTask2(Section.WATERWORKS, 5 * 20 * 20 * 1.75f * 0.9d, "RF per task (machine with first capacitor upgrades)"), //
-  waterWorksRFperTask3(Section.WATERWORKS, 5 * 20 * 20 * 3 * 0.8d, "RF per task (machine with second capacitor upgrades)"), //
+  waterWorksRFperTask2(Section.WATERWORKS, 5 * 20 * 20 * 1.75f * 0.9d, "RF per task (machine with first capacitor upgrade)"), //
+  waterWorksRFperTask3(Section.WATERWORKS, 5 * 20 * 20 * 3 * 0.8d, "RF per task (machine with second capacitor upgrade)"), //
 
   waterWorksLiquidFactorperTask1(Section.WATERWORKS, 1.0d,
       "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with no capacitor upgrades)"), //
   waterWorksLiquidFactorperTask2(Section.WATERWORKS, 1.75d,
-      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with first capacitor upgrades)"), //
+      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with first capacitor upgrade)"), //
   waterWorksLiquidFactorperTask3(Section.WATERWORKS, 3.0d,
-      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with second capacitor upgrades)"), //
+      "Amount of input liquid consumed per task as factor on the base value of 1000mB (machine with second capacitor upgrade)"), //
 
   waterWorksRFusePerTick1(Section.WATERWORKS, 20, "RF a machine can use per tick (machine with no capacitor upgrades)"), //
-  waterWorksRFusePerTick2(Section.WATERWORKS, 40, "RF a machine can use per tick (machine with first capacitor upgrades)"), //
-  waterWorksRFusePerTick3(Section.WATERWORKS, 60, "RF a machine can use per tick (machine with second capacitor upgrades)"), //
+  waterWorksRFusePerTick2(Section.WATERWORKS, 40, "RF a machine can use per tick (machine with first capacitor upgrade)"), //
+  waterWorksRFusePerTick3(Section.WATERWORKS, 60, "RF a machine can use per tick (machine with second capacitor upgrade)"), //
 
   waterWorksRFinPerTick1(Section.WATERWORKS, 100, "RF a machine can accept per tick (machine with no capacitor upgrades)"), //
-  waterWorksRFinPerTick2(Section.WATERWORKS, 200, "RF a machine can accept per tick (machine with first capacitor upgrades)"), //
-  waterWorksRFinPerTick3(Section.WATERWORKS, 800, "RF a machine can accept per tick (machine with second capacitor upgrades)"), //
+  waterWorksRFinPerTick2(Section.WATERWORKS, 200, "RF a machine can accept per tick (machine with first capacitor upgrade)"), //
+  waterWorksRFinPerTick3(Section.WATERWORKS, 800, "RF a machine can accept per tick (machine with second capacitor upgrade)"), //
 
   waterWorksEnabled(Section.RECIPES, false, "Enable the crafting recipe for the Waterworks"), //
 
@@ -58,8 +58,8 @@ public enum Config {
   impulseHopperRFusePerItem(Section.IHOPPER, 1.0d, "RF use per transfered item"), //
 
   impulseHopperWorkEveryTick1(Section.IHOPPER, 20, "How many ticks does it take to execute one operation (machine with no capacitor upgrades)"), //
-  impulseHopperWorkEveryTick2(Section.IHOPPER, 10, "How many ticks does it take to execute one operation (machine with first capacitor upgrades)"), //
-  impulseHopperWorkEveryTick3(Section.IHOPPER, 4, "How many ticks does it take to execute one operation (machine with second capacitor upgrades)"), //
+  impulseHopperWorkEveryTick2(Section.IHOPPER, 10, "How many ticks does it take to execute one operation (machine with first capacitor upgrade)"), //
+  impulseHopperWorkEveryTick3(Section.IHOPPER, 4, "How many ticks does it take to execute one operation (machine with second capacitor upgrade)"), //
 
   impulseHopperEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Impulse Hopper"), //
 
@@ -67,6 +67,12 @@ public enum Config {
   niardPerBucketEnergyUseRF(Section.NIARD, 400, "The amount of power used by a niard per 1000mB of liquid placed into the world."), //
 
   niardEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Niard"), //
+
+  voidTankContinuousEnergyUseRF1(Section.VOIDTANK, 10, "The amount of power used by a Portal Tank per tick (machine with no capacitor upgrades)"), // 
+  voidTankContinuousEnergyUseRF2(Section.VOIDTANK, 100, "The amount of power used by a Portal Tank per tick (machine with first capacitor upgrade)"), // 
+  voidTankContinuousEnergyUseRF3(Section.VOIDTANK, 10000, "The amount of power used by a Portal Tank per tick (machine with second capacitor upgrade)"), // 
+
+  voidTankEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Portal Tank"), //
 
   ;
 

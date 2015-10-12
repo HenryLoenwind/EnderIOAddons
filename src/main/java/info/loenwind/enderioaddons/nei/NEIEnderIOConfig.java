@@ -10,6 +10,7 @@ import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
+import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -41,6 +42,9 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     }
     if (!Config.niardEnabled.getBoolean()) {
       API.hideItem(new ItemStack(BlockNiard.blockNiard, 1, OreDictionary.WILDCARD_VALUE));
+    }
+    if (!Config.voidTankEnabled.getBoolean()) {
+      API.hideItem(new ItemStack(BlockVoidTank.blockVoidTank, 1, OreDictionary.WILDCARD_VALUE));
     }
   }
 

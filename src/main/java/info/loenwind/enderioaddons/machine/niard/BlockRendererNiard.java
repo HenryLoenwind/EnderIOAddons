@@ -1,8 +1,9 @@
 package info.loenwind.enderioaddons.machine.niard;
 
-import static info.loenwind.enderioaddons.render.FaceRenderer.renderSingleFace;
+import info.loenwind.enderioaddons.render.FaceRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -25,13 +26,18 @@ public class BlockRendererNiard implements ISimpleBlockRenderingHandler {
       brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir) * .75f;
     }
 
+    FaceRenderer.setLightingReference(world, BlockNiard.blockNiard, x, y, z);
+
     BoundingBox bb = BoundingBox.UNIT_CUBE.scale(.99, .99, .99).translate(x, y, z);
+    IIcon[] icons = RenderUtil.getBlockTextures(BlockNiard.blockNiard, 0);
+    FaceRenderer.renderCube(bb, icons, null, brightnessPerSide, true);
+
     BoundingBox bb2 = BoundingBox.UNIT_CUBE.scale(13 / 16f, 13 / 16f, 13 / 16f).translate(x, y, z);
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      renderSingleFace(bb, dir, BlockNiard.blockNiard.getIcon(dir.ordinal(), 0), 0, 16, 0, 16, null, brightnessPerSide, true);
-      renderSingleFace(bb2, dir, BlockNiard.blockNiard.getIcon(dir.ordinal(), 1), 0, 16, 0, 16, null, brightnessPerSide, false);
-      renderSingleFace(bb2, dir, BlockNiard.blockNiard.getIcon(dir.ordinal(), 1), 0, 16, 0, 16, null, brightnessPerSide, true);
-    }
+    icons = RenderUtil.getBlockTextures(BlockNiard.blockNiard, 1);
+    FaceRenderer.renderCube(bb2, icons, null, brightnessPerSide, false);
+    FaceRenderer.renderCube(bb2, icons, null, brightnessPerSide, true);
+
+    FaceRenderer.clearLightingReference();
 
     renderer.renderStandardBlock(BlockNiard.blockNiard, x, y, z);
 
