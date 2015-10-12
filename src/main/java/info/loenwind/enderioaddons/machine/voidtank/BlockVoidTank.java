@@ -18,7 +18,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
@@ -62,11 +61,6 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
     GameRegistry.registerBlock(this, BlockItemVoidTank.class, modObject.unlocalisedName);
     GameRegistry.registerTileEntity(teClass, modObject.unlocalisedName + "TileEntity");
     EnderIO.guiHandler.registerGuiHandler(getGuiId(), this);
-  }
-
-  @Override
-  public int damageDropped(int par1) {
-    return par1;
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -113,7 +107,6 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
   @Override
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(IBlockAccess world, int x, int y, int z, int blockSide) {
-
     // used to render the block in the world
     TileEntity te = world.getTileEntity(x, y, z);
     int facing = 0;
@@ -121,13 +114,7 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
       AbstractMachineEntity me = (AbstractMachineEntity) te;
       facing = me.facing;
     }
-    int meta = world.getBlockMetadata(x, y, z);
-    meta = MathHelper.clamp_int(meta, 0, 1);
-    if (meta == 1) {
-      return iconBuffer[0][sideAndFacingToSpriteOffset[blockSide][facing] + 6];
-    } else {
-      return iconBuffer[0][sideAndFacingToSpriteOffset[blockSide][facing]];
-    }
+    return iconBuffer[0][sideAndFacingToSpriteOffset[blockSide][facing]];
   }
 
   @Override
@@ -140,46 +127,38 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister iIconRegister) {
 
-    iconBuffer = new IIcon[2][30];
-    // first outer hull, then the other layers, then the reverse
-    // top, bottom, back, front, WEST, EAST
-    iconBuffer[0][0] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/uno"); // TODO
-    iconBuffer[0][1] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/uno"); // TODO
+    iconBuffer = new IIcon[2][24];
+    // first outer hull, then the other layers
+    // DOWN, UP, back, front, WEST, EAST
+    iconBuffer[0][0] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_di");
+    iconBuffer[0][1] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_ti");
     iconBuffer[0][2] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_ri");
     iconBuffer[0][3] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_li");
     iconBuffer[0][4] = iIconRegister.registerIcon("enderio:blockTankAdvanced");
     iconBuffer[0][5] = iIconRegister.registerIcon("enderio:blank");
 
-    iconBuffer[0][6] = iIconRegister.registerIcon(getBottomIconKey(true)); // TODO
-    iconBuffer[0][7] = iIconRegister.registerIcon(getTopIconKey(true)); // TODO
-    iconBuffer[0][8] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_r");
-    iconBuffer[0][9] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_l");
+    iconBuffer[0][6] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_d1");
+    iconBuffer[0][7] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_t1");
+    iconBuffer[0][8] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_r1");
+    iconBuffer[0][9] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_l1");
     iconBuffer[0][10] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_b1");
     iconBuffer[0][11] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_f1");
 
-    iconBuffer[0][12] = iIconRegister.registerIcon(getBottomIconKey(true)); // TODO
-    iconBuffer[0][13] = null;
+    iconBuffer[0][12] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_d2");
+    iconBuffer[0][13] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_t2");
     iconBuffer[0][14] = null;
     iconBuffer[0][15] = null;
     iconBuffer[0][16] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_b2");
     iconBuffer[0][17] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_f2");
 
-    iconBuffer[0][18] = null;
+    iconBuffer[0][18] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_d3");
     iconBuffer[0][19] = null;
     iconBuffer[0][20] = null;
     iconBuffer[0][21] = null;
     iconBuffer[0][22] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_b3");
     iconBuffer[0][23] = null;
 
-    iconBuffer[0][24] = iIconRegister.registerIcon(getBottomIconKey(false)); // TODO
-    iconBuffer[0][25] = iIconRegister.registerIcon(getTopIconKey(false)); // TODO
-    iconBuffer[0][26] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_ri");
-    iconBuffer[0][27] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":void/void_li");
-    iconBuffer[0][28] = iIconRegister.registerIcon("enderio:blockTankAdvanced");
-    iconBuffer[0][29] = null;
-
     registerOverlayIcons(iIconRegister);
-
   }
 
   @Override
@@ -212,11 +191,6 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
   }
 
   @Override
-  public String getUnlocalizedNameForTooltip(ItemStack stack) {
-    return stack.getUnlocalizedName();
-  }
-
-  @Override
   public void getWailaInfo(List<String> tooltip, EntityPlayer player, World world, int x, int y, int z) {
     TileEntity te = world.getTileEntity(x, y, z);
     if (te instanceof TileVoidTank) {
@@ -238,6 +212,22 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
   @SideOnly(Side.CLIENT)
   @Override
   public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
-    // TODO particles
+    if (rand.nextInt(200) == 0) {
+      world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, "portal.portal", 0.25F, rand.nextFloat() * 0.4F + 0.4F, false);
+    }
+
+    for (int l = 0; l < 2; ++l) {
+      int i1 = rand.nextInt(2) * 2 - 1; // -1 or 1
+      double d0 = x + 0.5D + 0.25D * i1;
+      double d3 = rand.nextFloat() * 1.0F * i1;
+      i1 = rand.nextInt(2) * 2 - 1; // -1 or 1
+      double d1 = y + 0.5D + 0.25D * i1;
+      double d4 = rand.nextFloat() * 1.0F * i1;
+      i1 = rand.nextInt(2) * 2 - 1; // -1 or 1
+      double d2 = z + 0.5D + 0.25D * i1;
+      double d5 = rand.nextFloat() * 1.0F * i1;
+
+      world.spawnParticle("portal", d0, d1, d2, d3, d4, d5);
+    }
   }
 }

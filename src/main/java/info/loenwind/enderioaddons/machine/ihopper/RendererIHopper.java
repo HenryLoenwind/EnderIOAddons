@@ -12,6 +12,7 @@ import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+import info.loenwind.enderioaddons.render.FaceRenderer;
 
 import javax.annotation.Nonnull;
 
@@ -62,12 +63,14 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
         brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
       }
 
+      FaceRenderer.setLightingReference(world, BlockIHopper.blockIHopper, x, y, z);
       for (TankSlot tankSlot : TankSlot.values()) {
         tankSlot = notnullJ(tankSlot, "enum.values()[i]");
         if (tankSlot != TankSlot.FRONT_LEFT) {
           renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
         }
       }
+      FaceRenderer.clearLightingReference();
     }
 
     return frameRenderer.renderWorldBlock(world, x, y, z, block, modelId, renderer);
@@ -82,8 +85,6 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
   public int getRenderId() {
     return BlockIHopper.blockIHopper.getRenderType();
   }
-
-  private final static ForgeDirection[] AROUND = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
 
   private void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, float[] brightnessPerSide, @Nonnull TankSlot tankSlot) {
 

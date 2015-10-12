@@ -1,7 +1,7 @@
 package info.loenwind.enderioaddons.machine.voidtank;
 
+import static info.loenwind.enderioaddons.machine.voidtank.RendererVoidTank.makeBlockTextureList;
 import info.loenwind.enderioaddons.render.FaceRenderer;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -11,6 +11,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.client.render.BoundingBox;
 import com.enderio.core.client.render.RenderUtil;
+
+import crazypants.enderio.EnderIO;
 
 public class ItemRendererVoidTank implements IItemRenderer {
 
@@ -32,24 +34,26 @@ public class ItemRendererVoidTank implements IItemRenderer {
   }
 
   public static void renderToInventory(ItemStack item) {
+    boolean isBroken = false;
     if(item.stackTagCompound != null) {
       TileVoidTank tt = new TileVoidTank();
       tt.readCommon(item.stackTagCompound);
+      isBroken = tt.isBroken();
       FluidRendererVoidTank.renderTankFluid(tt, 0f, -0.1f, 0f);
     }
 
     GL11.glEnable(GL11.GL_ALPHA_TEST);
-    Block block = BlockVoidTank.blockVoidTank;
-    int meta = item.getItemDamage();
-    
-    // TODO need custom rendering, I think. or render unbroken tank?
-    IIcon[] icons = RenderUtil.getBlockTextures(block, meta);
+    IIcon[] icons = isBroken ? RenderUtil.getBlockTextures(BlockVoidTank.blockVoidTank, 0) : makeBlockTextureList(EnderIO.blockTank.getIcon(3, 1));
     BoundingBox bb = BoundingBox.UNIT_CUBE.translate(0, -0.1f, 0);
     Tessellator.instance.startDrawingQuads();
     FaceRenderer.renderCube(bb, icons, null, RenderUtil.getDefaultPerSideBrightness(), false);
     Tessellator.instance.draw();
 
-    FluidRendererVoidTank.renderBlockContents(null, 0f, -0.1f, 0f);
+    if (isBroken) {
+      FluidRendererVoidTank.renderBlockContents(null, 0f, -0.1f, 0f);
+    } else {
+      FluidRendererVoidTank.renderBlockContentsUnbroken(0f, -0.1f, 0f);
+    }
   }
 
 }

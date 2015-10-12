@@ -47,15 +47,17 @@ public class PacketVoidTank extends MessageTileEntity<TileVoidTank> implements I
   @Override
   public IMessage onMessage(PacketVoidTank message, MessageContext ctx) {
     EntityPlayer player = EnderIO.proxy.getClientPlayer();
-    TileVoidTank tile = message.getTileEntity(player.worldObj);
-    if(tile == null) {
-      return null;
-    }
-    if(message.nbtRoot.hasKey("tank")) {
-      NBTTagCompound tankRoot = message.nbtRoot.getCompoundTag("tank");
-      tile.tank.readFromNBT(tankRoot);
-    } else {
-      tile.tank.setFluid(null);
+    if (player != null) {
+      TileVoidTank tile = message.getTileEntity(player.worldObj);
+      if (tile == null) {
+        return null;
+      }
+      if (message.nbtRoot.hasKey("tank")) {
+        NBTTagCompound tankRoot = message.nbtRoot.getCompoundTag("tank");
+        tile.tank.readFromNBT(tankRoot);
+      } else {
+        tile.tank.setFluid(null);
+      }
     }
     return null;
   }

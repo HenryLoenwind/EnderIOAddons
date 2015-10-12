@@ -48,6 +48,12 @@ tile.blockNiard.tooltip.detailed.line2=Liquids are placed below it, as low as po
 tile.blockNiard.tooltip.detailed.line3=Range can be upgraded with capacitors (1x1, 3x3, 7x7).
 tile.blockNiard.tooltip.detailed.line4=Can also convert Liquid XP into XP orbs.
 
+tile.blockVoidTank.name=Portal Tank
+tile.blockVoidTank.tooltip.detailed.line1=Lighting a Nether Portal inside a reinforced
+tile.blockVoidTank.tooltip.detailed.line2=tank should yield a tank that can transfer
+tile.blockVoidTank.tooltip.detailed.line3=water into the Nether, shouldn't it?
+tile.blockVoidTank.tooltip.detailed.line4=What could go wrong?
+
 enderioaddons.gui.tooltip.redstoneControlMode=Redstone Mode
 enderioaddons.gui.tooltip.redstoneControlMode.rising_edge=Rising edge
 enderioaddons.gui.tooltip.redstoneControlMode.falling_edge=Falling edge

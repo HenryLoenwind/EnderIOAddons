@@ -1,12 +1,15 @@
 package info.loenwind.enderioaddons.render;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.api.client.render.VertexTransform;
 import com.enderio.core.client.render.BoundingBox;
 import com.enderio.core.client.render.VertexRotationFacing;
+import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.vecmath.Vector3d;
 
 public class FaceRenderer {
@@ -128,6 +131,28 @@ public class FaceRenderer {
     renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
   }
 
+  private static Block block;
+  private static IBlockAccess world;
+  private static BlockCoord bc;
+
+  public static void setLightingReference(IBlockAccess world, Block block, BlockCoord bc) {
+    FaceRenderer.world = world;
+    FaceRenderer.block = block;
+    FaceRenderer.bc = bc;
+  }
+
+  public static void setLightingReference(IBlockAccess world, Block block, int x, int y, int z) {
+    FaceRenderer.world = world;
+    FaceRenderer.block = block;
+    FaceRenderer.bc = new BlockCoord(x, y, z);
+  }
+
+  public static void clearLightingReference() {
+    FaceRenderer.world = null;
+    FaceRenderer.block = null;
+    FaceRenderer.bc = null;
+  }
+
   private static void renderSingleFace(ForgeDirection face, float minU, float maxU, float minV, float maxV, VertexTransform xForm, float[] brightnessPerSide,
       boolean inside) {
     ForgeDirection normal = inside ? face.getOpposite() : face;
@@ -135,6 +160,11 @@ public class FaceRenderer {
       normal = ((VertexRotationFacing) xForm).rotate(normal);
     }
     Tessellator.instance.setNormal(normal.offsetX, normal.offsetY, normal.offsetZ);
+
+    if (block != null && world != null && bc != null) {
+      BlockCoord to = bc.getLocation(normal);
+      Tessellator.instance.setBrightness(block.getMixedBrightnessForBlock(world, to.x, to.y, to.z));
+    }
 
     if (brightnessPerSide != null) {
       float cm = brightnessPerSide[normal.ordinal()];

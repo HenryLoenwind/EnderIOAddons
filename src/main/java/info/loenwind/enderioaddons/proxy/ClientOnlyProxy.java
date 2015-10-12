@@ -20,7 +20,7 @@ import info.loenwind.enderioaddons.machine.niard.ItemRendererNiard;
 import info.loenwind.enderioaddons.machine.niard.TileNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePartRenderer;
-import info.loenwind.enderioaddons.machine.voidtank.BlockRendererVoidTank;
+import info.loenwind.enderioaddons.machine.voidtank.RendererVoidTank;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.voidtank.FluidRendererVoidTank;
 import info.loenwind.enderioaddons.machine.voidtank.ItemRendererVoidTank;
@@ -58,7 +58,7 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockNiard.blockNiard), new ItemRendererNiard());
 
     BlockVoidTank.blockVoidTank.localRenderId = RenderingRegistry.getNextAvailableRenderId();
-    RenderingRegistry.registerBlockHandler(new BlockRendererVoidTank());
+    RenderingRegistry.registerBlockHandler(new RendererVoidTank());
     ClientRegistry.bindTileEntitySpecialRenderer(TileVoidTank.class, new FluidRendererVoidTank());
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockVoidTank.blockVoidTank), new ItemRendererVoidTank());
 

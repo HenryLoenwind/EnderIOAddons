@@ -46,6 +46,9 @@ public class TileVoidTank extends TileEnderIOAddons implements IFluidHandler, IT
   @Store
   protected SmartTank tank = new SmartTank(16 * ONE_BLOCK_OF_LIQUID * 32 / 48);
 
+  @Store
+  protected boolean isBroken = false;
+
   protected int lastUpdateLevel = -1;
   protected boolean tankDirty = false;
 
@@ -217,61 +220,49 @@ public class TileVoidTank extends TileEnderIOAddons implements IFluidHandler, IT
   // tick goes in here
   @Override
   protected boolean checkProgress(boolean redstoneChecksPassed) {
-    if(canTick(redstoneChecksPassed) && redstoneChecksPassed) {
-      return doTick();
-    }
-    return false;
+    return doTick(redstoneChecksPassed);
   }
 
-  protected boolean canTick(boolean redstoneChecksPassed) {
-    if(redstoneChecksPassed) {
-      if(getEnergyStored() < getPowerUsePerTick()) {
-        return false;
-      } else if (tank.getFluidAmount() > 0) {
-        usePower();
-        return true;
-      }
-    }
-    return false;
-  }
-
-  protected boolean doTick() {
-    if(shouldDoWorkThisTick(20)) {
+  protected boolean doTick(boolean redstoneChecksPassed) {
+    if (redstoneChecksPassed && shouldDoWorkThisTick(20)) {
       drainFullContainer();
     }
-
-    // scale by cap
-    int modulo = 10;
-    switch (getCapacitorType()) {
-    case BASIC_CAPACITOR:
-      modulo = 20;
-      break;
-    case ACTIVATED_CAPACITOR:
-      modulo = 10;
-      break;
-    case ENDER_CAPACITOR:
-      modulo = 2;
-      break;
+    if (isBroken) {
+      usePower();
     }
 
-    if (shouldDoWorkThisTick(modulo) && tank.getFluidAmount() > 0) {
-      int amount = tank.getFluidAmount() - 100;
+    if (tank.getFluidAmount() > 0) {
+      // scale by cap
+      int drainPerTick = 10;
+      switch (getCapacitorType()) {
+      case BASIC_CAPACITOR:
+        drainPerTick = 100 / 20;
+        break;
+      case ACTIVATED_CAPACITOR:
+        drainPerTick = 100 / 10;
+        break;
+      case ENDER_CAPACITOR:
+        drainPerTick = 100 / 2;
+        break;
+      }
+      int amount = tank.getFluidAmount() - getWorldObj().rand.nextInt(drainPerTick * 2);
       if (amount < 0) {
         amount = 0;
       }
       tank.setFluidAmount(amount);
+      if (!isBroken) {
+        isBroken = true;
+        getWorldObj().createExplosion(null, xCoord, yCoord, zCoord, 1, true);
+        return true;
+      }
     }
 
-    int filledLevel = getFilledLevel();
-    if (lastUpdateLevel != filledLevel) {
-      lastUpdateLevel = filledLevel;
-      tankDirty = true;
-    }
-
-    if (tankDirty && shouldDoWorkThisTick(10)) {
-      PacketHandler.sendToAllAround(new PacketVoidTank(this), this);
-      worldObj.func_147453_f(xCoord, yCoord, zCoord, getBlockType());
-      tankDirty = false;
+    if (shouldDoWorkThisTick(10)) {
+      if (tankDirty || lastUpdateLevel != tank.getFluidAmount()) {
+        PacketHandler.sendToAllAround(new PacketVoidTank(this), this);
+        lastUpdateLevel = tank.getFluidAmount();
+        tankDirty = false;
+      }
     }
 
     return false;
@@ -318,14 +309,14 @@ public class TileVoidTank extends TileEnderIOAddons implements IFluidHandler, IT
   @Override
   public void onCapacitorTypeChange() {
     switch (getCapacitorType()) {
-    case BASIC_CAPACITOR: // TODO cfg
-      setCapacitor(new BasicCapacitor(Config.niardContinuousEnergyUseRF.getInt() * 40, 250000, Config.niardContinuousEnergyUseRF.getInt()));
+    case BASIC_CAPACITOR:
+      setCapacitor(new BasicCapacitor(Config.voidTankContinuousEnergyUseRF1.getInt() * 10, 100000, Config.voidTankContinuousEnergyUseRF1.getInt()));
       break;
     case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.niardContinuousEnergyUseRF.getInt() * 40, 500000, Config.niardContinuousEnergyUseRF.getInt()));
+      setCapacitor(new BasicCapacitor(Config.voidTankContinuousEnergyUseRF2.getInt() * 5, 500000, Config.voidTankContinuousEnergyUseRF2.getInt()));
       break;
     case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(Config.niardContinuousEnergyUseRF.getInt() * 40, 1000000, Config.niardContinuousEnergyUseRF.getInt()));
+      setCapacitor(new BasicCapacitor(Config.voidTankContinuousEnergyUseRF3.getInt() * 2, 1000000, Config.voidTankContinuousEnergyUseRF3.getInt()));
       break;
     }
     currentTask = createTask(null);
@@ -344,6 +335,10 @@ public class TileVoidTank extends TileEnderIOAddons implements IFluidHandler, IT
   @Override
   public void setTanksDirty() {
     tankDirty = true;
+  }
+
+  public boolean isBroken() {
+    return isBroken;
   }
 
 }

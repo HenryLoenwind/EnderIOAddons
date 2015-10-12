@@ -26,6 +26,8 @@ public class BlockRendererNiard implements ISimpleBlockRenderingHandler {
       brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir) * .75f;
     }
 
+    FaceRenderer.setLightingReference(world, BlockNiard.blockNiard, x, y, z);
+
     BoundingBox bb = BoundingBox.UNIT_CUBE.scale(.99, .99, .99).translate(x, y, z);
     IIcon[] icons = RenderUtil.getBlockTextures(BlockNiard.blockNiard, 0);
     FaceRenderer.renderCube(bb, icons, null, brightnessPerSide, true);
@@ -34,6 +36,8 @@ public class BlockRendererNiard implements ISimpleBlockRenderingHandler {
     icons = RenderUtil.getBlockTextures(BlockNiard.blockNiard, 1);
     FaceRenderer.renderCube(bb2, icons, null, brightnessPerSide, false);
     FaceRenderer.renderCube(bb2, icons, null, brightnessPerSide, true);
+
+    FaceRenderer.clearLightingReference();
 
     renderer.renderStandardBlock(BlockNiard.blockNiard, x, y, z);
 
