@@ -6,9 +6,22 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.api.client.render.VertexTransform;
 import com.enderio.core.client.render.BoundingBox;
+import com.enderio.core.client.render.VertexRotationFacing;
 import com.enderio.core.common.vecmath.Vector3d;
 
 public class FaceRenderer {
+
+  // @formatter:off
+  public static int[][] sideAndFacingToSpriteOffset = new int[][] {
+  //  D  U  N  S  W  E <- te.facing; v- physical side => logical side
+    { 3, 2, 0, 0, 0, 0 }, // D
+    { 2, 3, 1, 1, 1, 1 }, // U
+    { 1, 1, 3, 2, 4, 5 }, // N
+    { 0, 0, 2, 3, 5, 4 }, // S
+    { 4, 5, 5, 4, 3, 2 }, // W
+    { 5, 4, 4, 5, 2, 3 }  // E
+  };
+  // @formatter:on
 
   private FaceRenderer() {
   }
@@ -61,91 +74,101 @@ public class FaceRenderer {
     }
 
     if (inside) {
+      ForgeDirection normal = face.getOpposite();
+      if (xForm instanceof VertexRotationFacing) {
+        normal = ((VertexRotationFacing) xForm).rotate(normal);
+      }
+      Tessellator.instance.setNormal(normal.offsetX, normal.offsetY, normal.offsetZ);
       switch (face) {
       case NORTH:
-        Tessellator.instance.setNormal(0, 0, 1);
-        addVecWithUV(verts[0], minU, maxV);
-        addVecWithUV(verts[1], maxU, maxV);
-        addVecWithUV(verts[2], maxU, minV);
-        addVecWithUV(verts[3], minU, minV);
+        //        Tessellator.instance.setNormal(0, 0, 1);
+        addVecWithUV(verts[0], maxU, maxV);
+        addVecWithUV(verts[1], minU, maxV);
+        addVecWithUV(verts[2], minU, minV);
+        addVecWithUV(verts[3], maxU, minV);
         break;
       case SOUTH:
-        Tessellator.instance.setNormal(0, 0, -1);
-        addVecWithUV(verts[5], minU, maxV);
-        addVecWithUV(verts[4], maxU, maxV);
-        addVecWithUV(verts[7], maxU, minV);
-        addVecWithUV(verts[6], minU, minV);
+        //        Tessellator.instance.setNormal(0, 0, -1);
+        addVecWithUV(verts[5], maxU, maxV);
+        addVecWithUV(verts[4], minU, maxV);
+        addVecWithUV(verts[7], minU, minV);
+        addVecWithUV(verts[6], maxU, minV);
         break;
       case UP:
-        Tessellator.instance.setNormal(0, -1, 0);
-        addVecWithUV(verts[2], maxU, maxV);
-        addVecWithUV(verts[6], maxU, minV);
-        addVecWithUV(verts[7], minU, minV);
-        addVecWithUV(verts[3], minU, maxV);
+        //        Tessellator.instance.setNormal(0, -1, 0);
+        addVecWithUV(verts[2], maxU, minV);
+        addVecWithUV(verts[6], maxU, maxV);
+        addVecWithUV(verts[7], minU, maxV);
+        addVecWithUV(verts[3], minU, minV);
         break;
       case DOWN:
-        Tessellator.instance.setNormal(0, 1, 0);
+        //        Tessellator.instance.setNormal(0, 1, 0);
         addVecWithUV(verts[1], maxU, minV);
         addVecWithUV(verts[0], minU, minV);
         addVecWithUV(verts[4], minU, maxV);
         addVecWithUV(verts[5], maxU, maxV);
         break;
       case EAST:
-        Tessellator.instance.setNormal(-1, 0, 0);
-        addVecWithUV(verts[6], maxU, minV);
-        addVecWithUV(verts[2], minU, minV);
-        addVecWithUV(verts[1], minU, maxV);
-        addVecWithUV(verts[5], maxU, maxV);
+        //        Tessellator.instance.setNormal(-1, 0, 0);
+        addVecWithUV(verts[6], minU, minV);
+        addVecWithUV(verts[2], maxU, minV);
+        addVecWithUV(verts[1], maxU, maxV);
+        addVecWithUV(verts[5], minU, maxV);
         break;
       case WEST:
-        Tessellator.instance.setNormal(1, 0, 0);
-        addVecWithUV(verts[4], minU, maxV);
-        addVecWithUV(verts[0], maxU, maxV);
-        addVecWithUV(verts[3], maxU, minV);
-        addVecWithUV(verts[7], minU, minV);
+        //        Tessellator.instance.setNormal(1, 0, 0);
+        addVecWithUV(verts[4], maxU, maxV);
+        addVecWithUV(verts[0], minU, maxV);
+        addVecWithUV(verts[3], minU, minV);
+        addVecWithUV(verts[7], maxU, minV);
         break;
       default:
         break;
       }
     } else {
+      ForgeDirection normal = face;
+      if (xForm instanceof VertexRotationFacing) {
+        normal = ((VertexRotationFacing) xForm).rotate(normal);
+      }
+      Tessellator.instance.setNormal(normal.offsetX, normal.offsetY, normal.offsetZ);
       switch (face) {
       case NORTH:
-        Tessellator.instance.setNormal(0, 0, -1);
+        //        Tessellator.instance.setNormal(0, 0, -1);
         addVecWithUV(verts[1], minU, maxV);
         addVecWithUV(verts[0], maxU, maxV);
         addVecWithUV(verts[3], maxU, minV);
         addVecWithUV(verts[2], minU, minV);
         break;
       case SOUTH:
-        Tessellator.instance.setNormal(0, 0, 1);
+        //        Tessellator.instance.setNormal(0, 0, 1);
         addVecWithUV(verts[4], minU, maxV);
         addVecWithUV(verts[5], maxU, maxV);
         addVecWithUV(verts[6], maxU, minV);
         addVecWithUV(verts[7], minU, minV);
         break;
       case UP:
-        Tessellator.instance.setNormal(0, 1, 0);
+        //        Tessellator.instance.setNormal(0, 1, 0);
         addVecWithUV(verts[6], maxU, maxV);
         addVecWithUV(verts[2], maxU, minV);
         addVecWithUV(verts[3], minU, minV);
         addVecWithUV(verts[7], minU, maxV);
         break;
       case DOWN:
-        Tessellator.instance.setNormal(0, -1, 0);
+        //        Tessellator.instance.setNormal(0, -1, 0);
         addVecWithUV(verts[0], minU, minV);
         addVecWithUV(verts[1], maxU, minV);
         addVecWithUV(verts[5], maxU, maxV);
         addVecWithUV(verts[4], minU, maxV);
         break;
       case EAST:
-        Tessellator.instance.setNormal(1, 0, 0);
+        //        Tessellator.instance.setNormal(1, 0, 0);
         addVecWithUV(verts[2], maxU, minV);
         addVecWithUV(verts[6], minU, minV);
         addVecWithUV(verts[5], minU, maxV);
         addVecWithUV(verts[1], maxU, maxV);
         break;
       case WEST:
-        Tessellator.instance.setNormal(-1, 0, 0);
+        //        Tessellator.instance.setNormal(-1, 0, 0);
         addVecWithUV(verts[0], minU, maxV);
         addVecWithUV(verts[4], maxU, maxV);
         addVecWithUV(verts[7], maxU, minV);
