@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons;
 
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.config.ConfigHandler;
+import info.loenwind.enderioaddons.network.Manager;
 import info.loenwind.enderioaddons.recipe.Recipes;
 
 import java.util.Locale;
@@ -30,9 +31,11 @@ public class EnderIOAddons implements InitAware {
   @SidedProxy(clientSide = "info.loenwind.enderioaddons.proxy.ClientOnlyProxy", serverSide = "info.loenwind.enderioaddons.proxy.ClientAndServerProxy")
   public static InitAware proxy;
   @Nonnull
-  public static final ConfigHandler config = new ConfigHandler();
+  public static final InitAware config = new ConfigHandler();
   @Nonnull
-  public static final Recipes recipes = new Recipes();
+  public static final InitAware recipes = new Recipes();
+  @Nonnull
+  public static final InitAware network = new Manager();
 
   @Override
   @EventHandler
@@ -40,6 +43,7 @@ public class EnderIOAddons implements InitAware {
     config.init(event);
     proxy.init(event);
     recipes.init(event);
+    network.init(event);
   }
 
   @Override
@@ -48,6 +52,7 @@ public class EnderIOAddons implements InitAware {
     config.init(event);
     proxy.init(event);
     recipes.init(event);
+    network.init(event);
   }
 
   @Override
@@ -56,6 +61,7 @@ public class EnderIOAddons implements InitAware {
     config.init(event);
     proxy.init(event);
     recipes.init(event);
+    network.init(event);
     // info.loenwind.enderioaddons.machine.waterworks.engine.BootstrapHelper.dumpConfig();
   }
 

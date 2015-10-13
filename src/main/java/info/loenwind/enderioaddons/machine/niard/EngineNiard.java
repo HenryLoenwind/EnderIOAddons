@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.niard;
 
+import static info.loenwind.enderioaddons.network.PacketParticles.spawnParticle;
 import info.loenwind.enderioaddons.fluid.FluidType;
 
 import java.util.ArrayList;
@@ -11,10 +12,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import com.enderio.core.common.util.BlockCoord;
 
@@ -81,8 +84,8 @@ public class EngineNiard {
           for (BlockCoord bc : seen) {
             setVerticalBlock(bc, false);
           }
-          owner.getWorldObj().notifyBlockChange(base.x, base.y, base.z, base.getBlock(owner.getWorldObj()));
         }
+        owner.getWorldObj().notifyBlockChange(base.x, base.y, base.z, base.getBlock(owner.getWorldObj()));
         return true;
       }
     }
@@ -137,6 +140,7 @@ public class EngineNiard {
   private void setSourceBlock(BlockCoord bc) {
     Block blockToSet = block;
     int metaToSet = 0;
+    final World world = owner.getWorldObj();
     switch (type) {
     case CLASSIC:
       metaToSet = ((BlockFluidClassic) block).getMaxRenderHeightMeta();
@@ -145,10 +149,18 @@ public class EngineNiard {
       metaToSet = ((BlockFluidFinite) block).getMaxRenderHeightMeta();
       break;
     case VANILLA:
+      if (world.provider.isHellWorld && fluid == FluidRegistry.WATER) {
+        world.playSoundEffect(bc.x + 0.5F, bc.y + 0.1F, bc.z + 0.5F, "random.fizz", 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
+        for (int l = 0; l < 8; ++l) {
+          spawnParticle(world, "largesmoke", bc.x - 1 + 3 * Math.random(), bc.y + Math.random(), bc.z - 1 + 3 * Math.random(), 0.0D, 0.0D, 0.0D);
+        }
+        setVerticalBlock(bc, false);
+        return;
+      }
       metaToSet = 0;
       break;
     }
-    owner.getWorldObj().setBlock(bc.x, bc.y, bc.z, blockToSet, metaToSet, 3);
+    world.setBlock(bc.x, bc.y, bc.z, blockToSet, metaToSet, 3);
   }
 
   private void setVerticalBlock(BlockCoord bc, boolean blockUpdate) {
