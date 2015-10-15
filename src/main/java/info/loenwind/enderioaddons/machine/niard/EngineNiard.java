@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.niard;
 
+import static info.loenwind.enderioaddons.config.Config.niardAllowWaterInHell;
 import static info.loenwind.enderioaddons.network.PacketParticles.spawnParticle;
 import info.loenwind.enderioaddons.fluid.FluidType;
 
@@ -149,7 +150,7 @@ public class EngineNiard {
       metaToSet = ((BlockFluidFinite) block).getMaxRenderHeightMeta();
       break;
     case VANILLA:
-      if (world.provider.isHellWorld && fluid == FluidRegistry.WATER) {
+      if (world.provider.isHellWorld && fluid == FluidRegistry.WATER && !niardAllowWaterInHell.getBoolean()) {
         world.playSoundEffect(bc.x + 0.5F, bc.y + 0.1F, bc.z + 0.5F, "random.fizz", 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
         for (int l = 0; l < 8; ++l) {
           spawnParticle(world, "largesmoke", bc.x - 1 + 3 * Math.random(), bc.y + Math.random(), bc.z - 1 + 3 * Math.random(), 0.0D, 0.0D, 0.0D);
