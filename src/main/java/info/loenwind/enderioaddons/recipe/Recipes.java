@@ -8,6 +8,7 @@ import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
+import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import net.minecraft.init.Blocks;
@@ -67,6 +68,9 @@ public class Recipes implements InitAware {
   @ItemStackHolder(value = "EnderIO:itemFrankenSkull", meta = 2)
   public static final ItemStack frankenZombie = null;
 
+  @ItemStackHolder(value = "EnderIO:blockPowerMonitor", meta = 0)
+  public static final ItemStack blockPowerMonitor = null;
+
   public Recipes() {
   }
 
@@ -95,6 +99,13 @@ public class Recipes implements InitAware {
       ItemStack voidTank = new ItemStack(BlockVoidTank.blockVoidTank, 1, 0);
       GameRegistry.addRecipe(new ShapedOreRecipe(voidTank, "omo", "sfs", "oto", 'm', machineChassi, 't', advancedTank, 'o', "blockObsidian", 'f',
           Items.flint_and_steel, 's', darkSteel));
+    }
+
+    // Power Monitor
+    if (Config.pMonEnabled.getBoolean()) {
+      ItemStack pmon = new ItemStack(BlockPMon.blockPMon, 1, 0);
+      GameRegistry.addRecipe(new ShapedOreRecipe(pmon, "xxx", "xpx", "123", 'p', blockPowerMonitor, '1', "dyeRed", '2', "dyeYellow", '3', "dyeGreen", 'x',
+          new ItemStack(Blocks.wool, 1, 15)));
     }
 
     ItemStack zombieBit;

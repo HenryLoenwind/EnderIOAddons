@@ -54,6 +54,10 @@ tile.blockVoidTank.tooltip.detailed.line2=tank should yield a tank that can tran
 tile.blockVoidTank.tooltip.detailed.line3=water into the Nether, shouldn't it?
 tile.blockVoidTank.tooltip.detailed.line4=What could go wrong?
 
+tile.blockPMon.name=Graphical Power Monitor
+tile.blockPMon.tooltip.detailed.line1=Allows you to view a history of
+tile.blockPMon.tooltip.detailed.line2=your Capacitor Bank contents.
+
 enderioaddons.gui.tooltip.redstoneControlMode=Redstone Mode
 enderioaddons.gui.tooltip.redstoneControlMode.rising_edge=Rising edge
 enderioaddons.gui.tooltip.redstoneControlMode.falling_edge=Falling edge

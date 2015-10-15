@@ -4,7 +4,7 @@ import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
-import info.loenwind.autosave.handlers.HandleSetBlockCoord;
+import info.loenwind.autosave.handlers.enderioaddons.HandleSetBlockCoord;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
