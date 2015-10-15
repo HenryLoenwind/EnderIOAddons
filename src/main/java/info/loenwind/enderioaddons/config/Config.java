@@ -74,6 +74,8 @@ public enum Config {
 
   voidTankEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Portal Tank"), //
 
+  pMonEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Graphical Power Monitor"), //
+
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
