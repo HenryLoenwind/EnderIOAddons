@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.pmon;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.config.Config.pMonEnableDynamicTextures;
 import static info.loenwind.enderioaddons.machine.pmon.PacketPMon.requestUpdate;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
@@ -72,7 +73,7 @@ public class TilePMon extends TileEnderIOAddons {
         statCollector.addValue(capPower);
       }
     }
-    if (shouldDoWorkThisTick(iconUpdateRate / 10)) {
+    if (shouldDoWorkThisTick(iconUpdateRate / 10) && pMonEnableDynamicTextures.getBoolean()) {
       PacketHandler.sendToAllAround(PacketPMon.sendUpdate(this, stats.length - 1), this);
     }
     return false;

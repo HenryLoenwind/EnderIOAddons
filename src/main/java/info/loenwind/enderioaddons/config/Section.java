@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 public enum Section {
   DRAIN("drain"), COBBLEWORKS("cobbleworks"), WATERWORKS("waterworks"), RECIPES("recipes"), DEV("development"), IHOPPER("impulsehopper"), NIARD("niard"), VOIDTANK(
-      "void tank");
+      "void tank"), PMON("graphical power monitor");
 
   @Nonnull
   public final String name;

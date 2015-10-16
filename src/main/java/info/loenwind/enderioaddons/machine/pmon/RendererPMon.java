@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.pmon;
 
+import static info.loenwind.enderioaddons.config.Config.pMonEnableDynamicTextures;
 import info.loenwind.enderioaddons.render.FaceRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -27,7 +28,6 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
   private static BoundingBox bb0 = BoundingBox.UNIT_CUBE; // outer shell
   private static BoundingBox bb1 = BoundingBox.UNIT_CUBE.translate(0f, 0f, -.1f); // screen
   private static BoundingBox bbi = BoundingBox.UNIT_CUBE.scale(.99, .99, .99); // inner shell
-  private static BoundingBox bb2 = BoundingBox.UNIT_CUBE.translate(0, -0.1f, 0); // inventory block
 
   private static float[] brightnessPerSide = new float[6];
   static {
@@ -70,7 +70,7 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
     Tessellator.instance.addTranslation(x, y, z);
 
     IIcon[] icons = RenderUtil.getBlockTextures(BlockPMon.blockPMon, 0);
-    if (me != null) {
+    if (me != null && pMonEnableDynamicTextures.getBoolean()) {
       icons[ForgeDirection.SOUTH.ordinal()] = BlockPMon.blockPMon.getIcon(ForgeDirection.SOUTH.ordinal() + 6, 0);
     }
     FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
