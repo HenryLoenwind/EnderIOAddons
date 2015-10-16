@@ -3,26 +3,35 @@ package info.loenwind.enderioaddons.machine.pmon;
 public class StatCollector {
 
   public static final int MAX_VALUES = StatArray.MAX_VALUES;
+  private final int max_values;
   private final StatArray mins = new StatArray();
   private final StatArray maxs = new StatArray();
   private final int collectTarget;
   private int collectCount;
   private int pos;
 
+  public StatCollector(int collectTarget, int max_values) {
+    this.collectTarget = collectTarget;
+    this.collectCount = collectTarget;
+    this.pos = -1;
+    this.max_values = max_values;
+  }
+
   public StatCollector(int collectTarget) {
     this.collectTarget = collectTarget;
     this.collectCount = collectTarget;
     this.pos = -1;
+    this.max_values = MAX_VALUES;
   }
 
   public void addValue(int value) {
     assert collectCount <= collectTarget;
     assert collectCount > 0;
-    assert pos < MAX_VALUES;
+    assert pos < max_values;
     if (collectCount == collectTarget) {
       pos++;
       assert pos >= 0;
-      if (pos >= MAX_VALUES) {
+      if (pos >= max_values) {
         pos = 0;
       }
       mins.setValue(pos, value);
@@ -41,14 +50,14 @@ public class StatCollector {
   }
 
   public int[][] getValues() {
-    int[][] result = { new int[MAX_VALUES], new int[MAX_VALUES] };
-    for (int i = 0; i < MAX_VALUES; i++) {
+    int[][] result = { new int[MAX_VALUES], new int[MAX_VALUES] }; // sic
+    for (int i = 0; i < max_values; i++) {
       int j = i + pos + 1;
-      if (j >= MAX_VALUES) {
-        j -= MAX_VALUES;
+      if (j >= max_values) {
+        j -= max_values;
       }
       assert j >= 0;
-      assert j < MAX_VALUES;
+      assert j < max_values;
       result[0][i] = mins.getValue(j);
       result[1][i] = maxs.getValue(j);
     }

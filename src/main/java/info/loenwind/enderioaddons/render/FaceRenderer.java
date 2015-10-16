@@ -153,7 +153,7 @@ public class FaceRenderer {
     FaceRenderer.bc = null;
   }
 
-  private static void renderSingleFace(ForgeDirection face, float minU, float maxU, float minV, float maxV, VertexTransform xForm, float[] brightnessPerSide,
+  public static void renderSingleFace(ForgeDirection face, float minU, float maxU, float minV, float maxV, VertexTransform xForm, float[] brightnessPerSide,
       boolean inside) {
     ForgeDirection normal = inside ? face.getOpposite() : face;
     if (xForm instanceof VertexRotationFacing) {

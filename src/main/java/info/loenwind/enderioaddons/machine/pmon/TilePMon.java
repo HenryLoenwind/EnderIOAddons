@@ -37,8 +37,9 @@ public class TilePMon extends TileEnderIOAddons {
   protected @Store({ SAVE, ITEM }) StatCollector stats06h = new StatCollector(7200);
   protected @Store({ SAVE, ITEM }) StatCollector stats24h = new StatCollector(17280);
   protected @Store({ SAVE, ITEM }) StatCollector stats07d = new StatCollector(120960);
+  protected @Store({ SAVE, ITEM }) StatCollector statsIcn = new StatCollector(360, 28);
 
-  protected StatCollector[] stats = { stats10s, stats01m, stats10m, stats01h, stats06h, stats24h, stats07d };
+  protected StatCollector[] stats = { stats10s, stats01m, stats10m, stats01h, stats06h, stats24h, stats07d, statsIcn };
 
   public TilePMon() {
     super(new SlotDefinition(0, 0, 1));
@@ -68,6 +69,9 @@ public class TilePMon extends TileEnderIOAddons {
       for (StatCollector statCollector : stats) {
         statCollector.addValue(capPower);
       }
+    }
+    if (shouldDoWorkThisTick(60 * 20)) {
+      PacketHandler.sendToAllAround(PacketPMon.sendUpdate(this, stats.length - 1), this);
     }
     return false;
   }
@@ -153,6 +157,37 @@ public class TilePMon extends TileEnderIOAddons {
       PacketHandler.INSTANCE.sendToServer(requestUpdate(this, id));
     }
     return stats[id];
+  }
+
+  @SideOnly(Side.CLIENT)
+  protected DynaTextureProvider dynaTextureProvider = null;
+
+  @SideOnly(Side.CLIENT)
+  public void bindTexture() {
+    if (dynaTextureProvider == null) {
+      dynaTextureProvider = new DynaTextureProvider(this);
+    }
+    dynaTextureProvider.bindTexture();
+  }
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public void invalidate() {
+    super.invalidate();
+    if (dynaTextureProvider != null) {
+      dynaTextureProvider.free();
+      dynaTextureProvider = null;
+    }
+  }
+
+  @SideOnly(Side.CLIENT)
+  protected int[] iconMins = new int[DynaTextureProvider.TEXSIZE];
+  @SideOnly(Side.CLIENT)
+  protected int[] iconMaxs = new int[DynaTextureProvider.TEXSIZE];
+
+  @SideOnly(Side.CLIENT)
+  public int[][] getIconValues() {
+    return statsIcn.getValues();
   }
 
 }

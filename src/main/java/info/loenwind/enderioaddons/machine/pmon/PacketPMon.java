@@ -8,6 +8,8 @@ import com.enderio.core.common.network.MessageTileEntity;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.network.PacketHandler;
 
@@ -82,14 +84,18 @@ public class PacketPMon extends MessageTileEntity<TilePMon> {
   public static class ClientHandler implements IMessageHandler<PacketPMon, IMessage> {
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IMessage onMessage(PacketPMon msg, MessageContext ctx) {
       EntityPlayer player = EnderIO.proxy.getClientPlayer();
       if (player != null) {
         TilePMon te = msg.getTileEntity(player.worldObj);
-        if (te != null) {
+        if (te != null && msg.no >= 0 && msg.no < te.stats.length) {
           te.stats[msg.no].setCollectCount(msg.collectCount);
           te.stats[msg.no].setPos(msg.pos);
           te.stats[msg.no].setData(msg.data);
+          if (msg.no == te.stats.length - 1 && te.dynaTextureProvider != null) {
+            te.dynaTextureProvider.updateTexture();
+          }
         }
       }
       return null;
