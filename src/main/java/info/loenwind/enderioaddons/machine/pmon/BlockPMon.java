@@ -85,7 +85,7 @@ public class BlockPMon extends AbstractMachineBlock<TilePMon> implements IAdvanc
 
   @Override
   public boolean isOpaqueCube() {
-    return true;
+    return false;
   }
 
   @Override
@@ -95,7 +95,12 @@ public class BlockPMon extends AbstractMachineBlock<TilePMon> implements IAdvanc
 
   @Override
   protected String getMachineFrontIconKey(boolean active) {
-    return EnderIOAddons.DOMAIN + ":blockPMon";
+    return active ? EnderIOAddons.DOMAIN + ":blockPMonFrame" : EnderIOAddons.DOMAIN + ":blockPMon";
+  }
+
+  @Override
+  protected String getTopIconKey(boolean active) {
+    return active ? EnderIOAddons.DOMAIN + ":blockPMonScreen" : super.getTopIconKey(active);
   }
 
   @Override

@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.pmon;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.config.Config.pMonEnableDynamicTextures;
 import static info.loenwind.enderioaddons.machine.pmon.PacketPMon.requestUpdate;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
@@ -30,6 +31,8 @@ import crazypants.enderio.power.BasicCapacitor;
 @Storable
 public class TilePMon extends TileEnderIOAddons {
 
+  private static final int iconUpdateRate = 30 * 60 * 20 / 24; // ticks per pixel
+
   protected @Store({ SAVE, ITEM }) StatCollector stats10s = new StatCollector(2);
   protected @Store({ SAVE, ITEM }) StatCollector stats01m = new StatCollector(12);
   protected @Store({ SAVE, ITEM }) StatCollector stats10m = new StatCollector(120);
@@ -37,8 +40,9 @@ public class TilePMon extends TileEnderIOAddons {
   protected @Store({ SAVE, ITEM }) StatCollector stats06h = new StatCollector(7200);
   protected @Store({ SAVE, ITEM }) StatCollector stats24h = new StatCollector(17280);
   protected @Store({ SAVE, ITEM }) StatCollector stats07d = new StatCollector(120960);
+  protected @Store({ SAVE, ITEM }) StatCollector statsIcn = new StatCollector(iconUpdateRate, 28);
 
-  protected StatCollector[] stats = { stats10s, stats01m, stats10m, stats01h, stats06h, stats24h, stats07d };
+  protected StatCollector[] stats = { stats10s, stats01m, stats10m, stats01h, stats06h, stats24h, stats07d, statsIcn };
 
   public TilePMon() {
     super(new SlotDefinition(0, 0, 1));
@@ -68,6 +72,9 @@ public class TilePMon extends TileEnderIOAddons {
       for (StatCollector statCollector : stats) {
         statCollector.addValue(capPower);
       }
+    }
+    if (shouldDoWorkThisTick(iconUpdateRate / 10) && pMonEnableDynamicTextures.getBoolean()) {
+      PacketHandler.sendToAllAround(PacketPMon.sendUpdate(this, stats.length - 1), this);
     }
     return false;
   }
@@ -153,6 +160,37 @@ public class TilePMon extends TileEnderIOAddons {
       PacketHandler.INSTANCE.sendToServer(requestUpdate(this, id));
     }
     return stats[id];
+  }
+
+  @SideOnly(Side.CLIENT)
+  protected DynaTextureProvider dynaTextureProvider = null;
+
+  @SideOnly(Side.CLIENT)
+  public void bindTexture() {
+    if (dynaTextureProvider == null) {
+      dynaTextureProvider = new DynaTextureProvider(this);
+    }
+    dynaTextureProvider.bindTexture();
+  }
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public void invalidate() {
+    super.invalidate();
+    if (dynaTextureProvider != null) {
+      dynaTextureProvider.free();
+      dynaTextureProvider = null;
+    }
+  }
+
+  @SideOnly(Side.CLIENT)
+  protected int[] iconMins = new int[DynaTextureProvider.TEXSIZE];
+  @SideOnly(Side.CLIENT)
+  protected int[] iconMaxs = new int[DynaTextureProvider.TEXSIZE];
+
+  @SideOnly(Side.CLIENT)
+  public int[][] getIconValues() {
+    return statsIcn.getValues();
   }
 
 }

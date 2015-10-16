@@ -76,9 +76,9 @@ public class GuiPMon extends GuiPoweredMachineBase<TilePMon> {
     if (lastTick != EnderIO.proxy.getTickCount()) {
       lastTick = EnderIO.proxy.getTickCount();
       if (timebaseOffset < 0) {
-        timebaseOffset++;
+        timebaseOffset += 1 - timebaseOffset / 8;
       } else if (timebaseOffset > 0) {
-        timebaseOffset--;
+        timebaseOffset -= 1 + timebaseOffset / 8;
       }
     }
   }

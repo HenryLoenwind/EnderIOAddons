@@ -76,6 +76,8 @@ public enum Config {
 
   voidTankEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Portal Tank"), //
 
+  pMonEnableDynamicTextures(Section.PMON, true, "Enable dynamic texture updating for the Graphical Power Monitor. Disabling this also reduces network trafic"), //
+
   pMonEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Graphical Power Monitor"), //
 
   ;
