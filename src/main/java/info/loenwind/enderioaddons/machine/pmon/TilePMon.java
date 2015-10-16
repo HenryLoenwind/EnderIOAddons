@@ -30,6 +30,8 @@ import crazypants.enderio.power.BasicCapacitor;
 @Storable
 public class TilePMon extends TileEnderIOAddons {
 
+  private static final int iconUpdateRate = 30 * 60 * 20 / 24; // ticks per pixel
+
   protected @Store({ SAVE, ITEM }) StatCollector stats10s = new StatCollector(2);
   protected @Store({ SAVE, ITEM }) StatCollector stats01m = new StatCollector(12);
   protected @Store({ SAVE, ITEM }) StatCollector stats10m = new StatCollector(120);
@@ -37,7 +39,7 @@ public class TilePMon extends TileEnderIOAddons {
   protected @Store({ SAVE, ITEM }) StatCollector stats06h = new StatCollector(7200);
   protected @Store({ SAVE, ITEM }) StatCollector stats24h = new StatCollector(17280);
   protected @Store({ SAVE, ITEM }) StatCollector stats07d = new StatCollector(120960);
-  protected @Store({ SAVE, ITEM }) StatCollector statsIcn = new StatCollector(360, 28);
+  protected @Store({ SAVE, ITEM }) StatCollector statsIcn = new StatCollector(iconUpdateRate, 28);
 
   protected StatCollector[] stats = { stats10s, stats01m, stats10m, stats01h, stats06h, stats24h, stats07d, statsIcn };
 
@@ -70,7 +72,7 @@ public class TilePMon extends TileEnderIOAddons {
         statCollector.addValue(capPower);
       }
     }
-    if (shouldDoWorkThisTick(60 * 20)) {
+    if (shouldDoWorkThisTick(iconUpdateRate / 10)) {
       PacketHandler.sendToAllAround(PacketPMon.sendUpdate(this, stats.length - 1), this);
     }
     return false;

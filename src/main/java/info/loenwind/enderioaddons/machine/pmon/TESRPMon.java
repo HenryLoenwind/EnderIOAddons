@@ -26,7 +26,7 @@ public class TESRPMon extends TileEntitySpecialRenderer {
 
     Tessellator.instance.startDrawingQuads();
     Tessellator.instance.addTranslation(x, y, z);
-    RendererPMon.renderTileEntityAt(te, te.getWorldObj(), (int) x, (int) y, (int) z);
+    RendererPMon.renderTileEntityAt(te);
     Tessellator.instance.addTranslation(-x, -y, -z);
     Tessellator.instance.draw();
 

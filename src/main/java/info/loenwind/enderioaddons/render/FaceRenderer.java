@@ -72,6 +72,20 @@ public class FaceRenderer {
     }
   }
 
+  public static void renderCube(BoundingBox bb, IIcon tex, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    setupVertices(bb, xForm);
+    if (tex != null) {
+      float minU = tex.getMinU();
+      float maxU = tex.getMaxU();
+      float minV = tex.getMinV();
+      float maxV = tex.getMaxV();
+
+      for (ForgeDirection face : ForgeDirection.VALID_DIRECTIONS) {
+        renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
   private final static ForgeDirection[] AROUND = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
 
   public static void renderSkirt(BoundingBox bb, IIcon[] icons, int texMinU, int texMaxU, int texMinV, int texMaxV, VertexTransform xForm,

@@ -21,6 +21,7 @@ import info.loenwind.enderioaddons.machine.niard.TileNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePartRenderer;
 import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
+import info.loenwind.enderioaddons.machine.pmon.ItemRendererPMon;
 import info.loenwind.enderioaddons.machine.pmon.RendererPMon;
 import info.loenwind.enderioaddons.machine.pmon.TESRPMon;
 import info.loenwind.enderioaddons.machine.pmon.TilePMon;
@@ -69,6 +70,7 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     BlockPMon.blockPMon.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererPMon());
     ClientRegistry.bindTileEntitySpecialRenderer(TilePMon.class, new TESRPMon());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockPMon.blockPMon), new ItemRendererPMon());
 
     RendererFrameworkMachine rendererFrameworkMachine = new RendererFrameworkMachine();
 

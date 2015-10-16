@@ -12,7 +12,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.client.render.BoundingBox;
-import com.enderio.core.client.render.IconUtil;
 import com.enderio.core.client.render.RenderUtil;
 import com.enderio.core.client.render.VertexRotationFacing;
 import com.enderio.core.common.vecmath.Vector3d;
@@ -26,6 +25,9 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
   }
 
   private static BoundingBox bb0 = BoundingBox.UNIT_CUBE; // outer shell
+  private static BoundingBox bb1 = BoundingBox.UNIT_CUBE.translate(0f, 0f, -.1f); // screen
+  private static BoundingBox bbi = BoundingBox.UNIT_CUBE.scale(.99, .99, .99); // inner shell
+  private static BoundingBox bb2 = BoundingBox.UNIT_CUBE.translate(0, -0.1f, 0); // inventory block
 
   private static float[] brightnessPerSide = new float[6];
   static {
@@ -39,22 +41,19 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
     xform.setCenter(new Vector3d(0.5, 0.5, 0.5));
   }
 
-  public static void renderTileEntityAt(TilePMon te, IBlockAccess world, int x, int y, int z) {
-    //    FaceRenderer.setLightingReference(world, BlockPMon.blockPMon, x, y, z);
-    if (te == null) {
+  public static void renderTileEntityAt(TilePMon te) {
+    if (te != null) {
       xform.setRotation(te.getFacingDir());
       te.bindTexture();
-      FaceRenderer.setupVertices(bb0, xform);
+      FaceRenderer.setupVertices(bb1, xform);
       GL11.glColor4f(1F, 1F, 1F, 1F);
       FaceRenderer.renderSingleFace(ForgeDirection.SOUTH, 0f, 1f, 0f, 1f, xform, brightnessPerSide, false);
     } else {
-      xform.setRotation(te.getFacingDir());
-      //      xform.setRotation(ForgeDirection.SOUTH);
+      xform.setRotation(ForgeDirection.SOUTH);
       RenderUtil.bindBlockTexture();
       IIcon[] icons = RenderUtil.getBlockTextures(BlockPMon.blockPMon, 0);
-      FaceRenderer.renderSingleFace(bb0, ForgeDirection.SOUTH, icons, xform, brightnessPerSide, false);
+      FaceRenderer.renderSingleFace(bb1, ForgeDirection.SOUTH, icons, xform, brightnessPerSide, false);
     }
-    //    FaceRenderer.clearLightingReference();
   }
 
   @Override
@@ -72,9 +71,11 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
 
     IIcon[] icons = RenderUtil.getBlockTextures(BlockPMon.blockPMon, 0);
     if (me != null) {
-      icons[ForgeDirection.SOUTH.ordinal()] = IconUtil.blankTexture;
+      icons[ForgeDirection.SOUTH.ordinal()] = BlockPMon.blockPMon.getIcon(ForgeDirection.SOUTH.ordinal() + 6, 0);
     }
-    //FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+    FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+
+    FaceRenderer.renderCube(bbi, BlockPMon.blockPMon.getIcon(ForgeDirection.UP.ordinal() + 6, 0), xform, brightnessPerSide, true);
 
     Tessellator.instance.addTranslation(-x, -y, -z);
 

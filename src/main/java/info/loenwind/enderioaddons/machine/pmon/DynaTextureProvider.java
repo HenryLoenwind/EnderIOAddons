@@ -34,8 +34,8 @@ public class DynaTextureProvider {
   protected static final Queue<ResourceLocation> toFree = new ConcurrentLinkedQueue<>();
   protected static final List<DynaTextureProvider> instances = new ArrayList<>();
 
-  protected static final ResourceLocation pmon_frame = new ResourceLocation(EnderIOAddons.DOMAIN, "textures/blocks/blockPMonFrame.png");
-  protected static final int[] pmon_frame_data = new int[TEXSIZE * TEXSIZE];
+  protected static final ResourceLocation pmon_screen = new ResourceLocation(EnderIOAddons.DOMAIN, "textures/blocks/blockPMonScreen.png");
+  protected static final int[] pmon_screen_data = new int[TEXSIZE * TEXSIZE];
   protected static final ResourceLocation pmon_color = new ResourceLocation(EnderIOAddons.DOMAIN, "textures/blocks/blockPMonColor.png");
   protected static final int[] pmon_color_data = new int[TEXSIZE * TEXSIZE];
 
@@ -71,33 +71,21 @@ public class DynaTextureProvider {
 
   protected void loadTextures() {
     if (!texturesLoaded) {
-      BufferedImage pmon_frame_image = getTexture(pmon_frame);
-      if (pmon_frame_image != null) {
-        pmon_frame_image = resize(pmon_frame_image, TEXSIZE);//GL_BGRA TYPE_INT_ARGB
-        pmon_frame_image.getRGB(0, 0, TEXSIZE, TEXSIZE, pmon_frame_data, 0, TEXSIZE);
-        //        convertImageData(pmon_frame_data);
+      BufferedImage pmon_screen_image = getTexture(pmon_screen);
+      if (pmon_screen_image != null) {
+        pmon_screen_image = resize(pmon_screen_image, TEXSIZE);
+        pmon_screen_image.getRGB(0, 0, TEXSIZE, TEXSIZE, pmon_screen_data, 0, TEXSIZE);
       }
       BufferedImage pmon_color_image = getTexture(pmon_color);
       if (pmon_color_image != null) {
         pmon_color_image = resize(pmon_color_image, TEXSIZE);
         pmon_color_image.getRGB(0, 0, TEXSIZE, TEXSIZE, pmon_color_data, 0, TEXSIZE);
-        //        convertImageData(pmon_color_data);
       }
       texturesLoaded = true;
       MinecraftForge.EVENT_BUS.register(new Unloader());
     }
   }
 
-  protected static void convertImageData(int[] data) {
-    for (int i = 0; i < data.length; i++) {
-      data[i] = //
-      ((data[i] & 0xFF000000) >>> 3 * 8) | //
-          ((data[i] & 0x00FF0000) >> 1 * 8) | //
-          ((data[i] & 0x0000FF00) << 1 * 8) | //
-          ((data[i] & 0x000000FF) << 3 * 8); //
-    }
-  }
-  
   protected static BufferedImage resize(BufferedImage image, int size) {
     if (image.getWidth() != size) {
       BufferedImage resized = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
@@ -131,7 +119,7 @@ public class DynaTextureProvider {
 
       for (int x = 0; x < TEXSIZE; x++) {
         for (int y = 0; y < TEXSIZE; y++) {
-          imageData[y * TEXSIZE + x] = (TEXSIZE - y > minmax[1][x] * 23 / 63 + 4 || TEXSIZE - y < minmax[0][x] * 23 / 63 + 4 ? pmon_frame_data
+          imageData[y * TEXSIZE + x] = (x > 27 || TEXSIZE - y > minmax[1][x] * 23 / 63 + 5 || TEXSIZE - y < minmax[0][x] * 23 / 63 + 5 ? pmon_screen_data
               : pmon_color_data)[y * TEXSIZE + x];
         }
       }
