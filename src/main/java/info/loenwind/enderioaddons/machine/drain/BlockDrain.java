@@ -33,6 +33,7 @@ import com.enderio.core.client.handlers.SpecialTooltipHandler;
 import com.enderio.core.common.TileEntityEnder;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.FluidUtil;
+import com.enderio.core.common.util.Scheduler;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -264,7 +265,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   }
 
   @Override
-  public boolean isFireSource(World world, int x, int y, int z, ForgeDirection side) {
+  public boolean isFireSource(final World world, final int x, final int y, final int z, ForgeDirection side) {
     if (side == ForgeDirection.UP) {
       TileEntityEnder te = getTileEntityEio(world, x, y, z);
       if (te instanceof TileDrain) {
@@ -281,12 +282,25 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
               ((TileDrain) te).setTanksDirty();
               return true;
             } else if (fluidStack.getFluid() == EnderIO.fluidRocketFuel) {
+              int power = tank.getFluidAmount();
               tank.setFluid(null);
               world.setBlockToAir(x, y, z);
               world.newExplosion(null, x + .5f, y + 1.5f, z + .5f, 3, true, true);
-              world.newExplosion(null, x + .5f, y + 3f, z + .5f, 2, true, true);
-              world.newExplosion(null, x + .5f, y + 4.5f, z + .5f, 1, true, true);
-              world.newExplosion(null, x + .5f, y + 6f, z + .5f, 1, true, true);
+              float range = 1.5f;
+              int delay = 0;
+              while (power > 0) {
+                range += 1.5f * power / 500;
+                final float range2 = range;
+                final float kaboom = power / (2000f / 666f);
+                delay += 5;
+                Scheduler.instance().schedule(delay, new Runnable() {
+                  @Override
+                  public void run() {
+                    world.newExplosion(null, x + .5f, y + range2, z + .5f, kaboom, true, true);
+                  }
+                });
+                power -= 333;
+              }
               return true;
             } else if (fluidStack.getFluid() == FluidRegistry.WATER) {
               for (BlockCoord bc1 : getAround(te.getLocation())) {
