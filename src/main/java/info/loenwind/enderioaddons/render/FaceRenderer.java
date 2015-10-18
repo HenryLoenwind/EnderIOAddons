@@ -177,7 +177,13 @@ public class FaceRenderer {
 
     if (block != null && world != null && bc != null) {
       BlockCoord to = bc.getLocation(normal);
-      Tessellator.instance.setBrightness(block.getMixedBrightnessForBlock(world, to.x, to.y, to.z));
+      final int mixedBrightnessForBlock = block.getMixedBrightnessForBlock(world, to.x, to.y, to.z);
+      if (mixedBrightnessForBlock == 0) {
+        // avoid totally black inner faces when there's a solid block
+        Tessellator.instance.setBrightness(block.getMixedBrightnessForBlock(world, bc.x, bc.y, bc.z));
+      } else {
+        Tessellator.instance.setBrightness(mixedBrightnessForBlock);
+      }
     }
 
     if (brightnessPerSide != null) {

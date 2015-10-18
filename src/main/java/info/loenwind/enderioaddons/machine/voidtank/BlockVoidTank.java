@@ -230,4 +230,11 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
       world.spawnParticle("portal", d0, d1, d2, d3, d4, d5);
     }
   }
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public int getRenderBlockPass() {
+    return 1;
+  }
+
 }

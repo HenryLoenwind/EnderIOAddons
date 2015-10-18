@@ -1,12 +1,9 @@
 package info.loenwind.enderioaddons.machine.voidtank;
 
-import info.loenwind.enderioaddons.render.FaceRenderer;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 
@@ -25,14 +22,9 @@ public class FluidRendererVoidTank extends TileEntitySpecialRenderer {
   @Override
   public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTick) {
     renderTankFluid((TileVoidTank) te, (float) x, (float) y, (float) z);
-    if (((TileVoidTank) te).isBroken()) {
-      renderBlockContents((TileVoidTank) te, (float) x, (float) y, (float) z);
-    } else {
-      renderBlockContentsUnbroken((float) x, (float) y, (float) z);
-    }
   }
 
-  public static void renderBlockContents(TileVoidTank te, float x, float y, float z) {
+  public static void renderBlockContents(TileEntity te, float x, float y, float z) {
     GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
     GL11.glEnable(GL11.GL_CULL_FACE);
     GL11.glDisable(GL11.GL_LIGHTING);
@@ -43,29 +35,7 @@ public class FluidRendererVoidTank extends TileEntitySpecialRenderer {
 
     Tessellator.instance.startDrawingQuads();
     Tessellator.instance.addTranslation(x, y, z);
-    info.loenwind.enderioaddons.machine.voidtank.RendererVoidTank.renderTileEntityAt(te);
-    Tessellator.instance.addTranslation(-x, -y, -z);
-    Tessellator.instance.draw();
-
-    GL11.glPopAttrib();
-  }
-
-  public static void renderBlockContentsUnbroken(float x, float y, float z) {
-    GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-    GL11.glEnable(GL11.GL_CULL_FACE);
-    GL11.glDisable(GL11.GL_LIGHTING);
-    GL11.glEnable(GL11.GL_BLEND);
-    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-    RenderUtil.bindBlockTexture();
-
-    Tessellator.instance.startDrawingQuads();
-    Tessellator.instance.addTranslation(x, y, z);
-
-    IIcon[] icons = RenderUtil.getBlockTextures(Blocks.portal, 0);
-    BoundingBox bb = BoundingBox.UNIT_CUBE.scale(.5, .5, .5);
-    FaceRenderer.renderCube(bb, icons, null, RenderUtil.getDefaultPerSideBrightness(), false);
-
+    info.loenwind.enderioaddons.machine.voidtank.RendererVoidTank.renderBlockFromTileEntityAt(te);
     Tessellator.instance.addTranslation(-x, -y, -z);
     Tessellator.instance.draw();
 
