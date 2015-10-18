@@ -1,6 +1,5 @@
 package info.loenwind.enderioaddons.machine.tcom.engine;
 
-import static info.loenwind.enderioaddons.machine.tcom.engine.ItemTypes.NONE;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 
@@ -26,8 +25,6 @@ public class EngineTcom {
   private final float[] enchantAmounts = new float[Enchantment.enchantmentsList.length];
   @Store
   private final float[] materialAmounts = new float[Mats.values().length];
-  @Store
-  private ItemTypes itemType = NONE;
 
   private final float loss;
 
@@ -35,28 +32,16 @@ public class EngineTcom {
     this.loss = loss;
   }
 
+  @SuppressWarnings("static-method")
   public boolean addable(ItemStack itemStack) {
     if (itemStack == null || itemStack.getItem() == null || itemStack.stackSize != 1) {
       return false;
     }
-    if (itemType == NONE) {
-      return Item2Mats.isValid(itemStack);
-    } else {
-      return Item2Mats.isValid(itemType, itemStack);
-    }
+    return Item2Mats.isValid(itemStack);
   }
 
   public boolean add(ItemStack itemStack) {
-    if (itemType == NONE) {
-      itemType = Item2Mats.getItemType(itemStack);
-      if (itemType == NONE) {
-        return false;
-      }
-    } else if (itemType != Item2Mats.getItemType(itemStack)) {
-      return false;
-    }
-
-    List<Mats> mats = Item2Mats.getMats(itemType, itemStack);
+    List<Mats> mats = Item2Mats.getMats(Item2Mats.getItemType(itemStack), itemStack);
     int itemDamage = itemStack.getItemDamage();
     int maxDamage = itemStack.getMaxDamage();
     int stackSize = itemStack.stackSize;

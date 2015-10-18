@@ -109,7 +109,7 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
   private long lastTick = 0;
 
   private void updateScrollPositionPre() {
-    if (scrollPosition >= maxScrollItems - SCROLL_ITEMS) {
+    if (scrollPosition > maxScrollItems - SCROLL_ITEMS) {
       scrollPosition = maxScrollItems - SCROLL_ITEMS;
       scrollPositionOffset = 0;
     }
@@ -146,12 +146,14 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     }
     int from = 0, to = SCROLL_ITEMS;
     if (scrollPositionOffset < 0) {
-      to++;
-    } else if (scrollPositionOffset > 0) {
       from--;
+    } else if (scrollPositionOffset > 0) {
+      to++;
     }
     for (int i = from; i < to; i++) {
-      int y0 = y + 15 + i * SCROLL_STEP + scrollPositionOffset;
+      int y0 = y + 15 + i * SCROLL_STEP - scrollPositionOffset;
+      assert (scrollPosition + i) >= 0 : "scrollPosition" + scrollPosition + " scrollPositionOffset" + scrollPositionOffset + " i" + i + " from" + from + " to"
+          + to;
       if (keyList.size() > (scrollPosition + i) && y0 >= 0) {
         final ItemStack itemStack = keyList.get(scrollPosition + i);
         final Float amount = materials.get(itemStack);
@@ -167,29 +169,26 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
 
   public void drawMaterialLine(ItemStack itemStack, int amount, int x, int y0) {
     drawFakeItemsStart();
+    itemRender.zLevel = 0.0F;
+    zLevel = 0.0F;
     drawFakeItemStack(x, y0, itemStack);
 
-    if (amount > 1) {
-      String s1 = String.valueOf(amount);
-      GL11.glDisable(GL11.GL_LIGHTING);
-      GL11.glDisable(GL11.GL_DEPTH_TEST);
-      GL11.glDisable(GL11.GL_BLEND);
-      fontRendererObj.drawStringWithShadow(s1, x + 19 - 2 - fontRendererObj.getStringWidth(s1), y0 + 6 + 3, 16777215);
-      GL11.glEnable(GL11.GL_LIGHTING);
-      GL11.glEnable(GL11.GL_DEPTH_TEST);
-    }
-
-    drawFakeItemsEnd();
-    String displayName = itemStack.getDisplayName();
-    while (fontRendererObj.getStringWidth(displayName) > 43) {
-      displayName.substring(0, displayName.length() - 1);
-    }
     GL11.glDisable(GL11.GL_LIGHTING);
     GL11.glDisable(GL11.GL_DEPTH_TEST);
     GL11.glDisable(GL11.GL_BLEND);
+    if (amount > 1) {
+      String s1 = String.valueOf(amount);
+      fontRendererObj.drawStringWithShadow(s1, x + 19 - 2 - fontRendererObj.getStringWidth(s1), y0 + 6 + 3, 16777215);
+    }
+
+    String displayName = itemStack.getDisplayName();
+    while (fontRendererObj.getStringWidth(displayName) > 43) {
+      displayName = displayName.substring(0, displayName.length() - 1);
+    }
     fontRendererObj.drawStringWithShadow(displayName, x + 22, y0 + 1, 16777215);
     GL11.glEnable(GL11.GL_LIGHTING);
     GL11.glEnable(GL11.GL_DEPTH_TEST);
+    drawFakeItemsEnd();
     RenderUtil.bindTexture(EnderIOAddons.DOMAIN + texture);
   }
 
