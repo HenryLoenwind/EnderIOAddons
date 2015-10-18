@@ -4,18 +4,18 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public final class StdSlot extends Slot {
+public class StdOutputSlot extends Slot {
 
   private int realx;
 
-  public StdSlot(IInventory inventory, int slotIndex, int x, int y) {
+  public StdOutputSlot(IInventory inventory, int slotIndex, int x, int y) {
     super(inventory, slotIndex, x, y);
     realx = x;
   }
 
   @Override
   public boolean isItemValid(ItemStack itemStack) {
-    return inventory.isItemValidForSlot(getSlotIndex(), itemStack);
+    return false;
   }
 
   public void enable(boolean enable) {

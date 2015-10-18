@@ -1,9 +1,11 @@
 package info.loenwind.enderioaddons.machine.pmon;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.InvisibleButton;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
@@ -17,15 +19,15 @@ public class GuiPMon extends GuiPoweredMachineBase<TilePMon> {
 
   protected int timebase = 2;
   protected int timebaseOffset = 0;
-  protected PlusMinusButton plus;
-  protected PlusMinusButton minus;
+  protected InvisibleButton plus;
+  protected InvisibleButton minus;
 
   public GuiPMon(@Nonnull InventoryPlayer par1InventoryPlayer, @Nonnull TilePMon te) {
     super(te, new ContainerPMon(par1InventoryPlayer, te));
 
-    plus = new PlusMinusButton(this, -1, 154, 28, true);
+    plus = new InvisibleButton(this, 1, 154, 28);
     plus.setToolTip("+");
-    minus = new PlusMinusButton(this, -1, 154, 52, false);
+    minus = new InvisibleButton(this, 2, 154, 52);
     minus.setToolTip("-");
   }
 
@@ -36,6 +38,23 @@ public class GuiPMon extends GuiPoweredMachineBase<TilePMon> {
     configB.visible = false;
     plus.onGuiInit();
     minus.onGuiInit();
+  }
+
+  @Override
+  protected void actionPerformed(GuiButton btn) {
+    if (btn.id == 1) {
+      if (timebase >= 6) {
+        return;
+      }
+      timebase++;
+      timebaseOffset -= 16;
+    } else if (btn.id == 2) {
+      if (timebase <= 0) {
+        return;
+      }
+      timebase--;
+      timebaseOffset += 16;
+    }
   }
 
   @Override

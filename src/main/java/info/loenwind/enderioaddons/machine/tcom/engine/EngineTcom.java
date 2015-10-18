@@ -1,20 +1,32 @@
 package info.loenwind.enderioaddons.machine.tcom.engine;
 
 import static info.loenwind.enderioaddons.machine.tcom.engine.ItemTypes.NONE;
+import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.annotations.Store;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+@Storable
 public class EngineTcom {
 
-  private float[] enchantAmounts = new float[Enchantment.enchantmentsList.length];
-  private float[] materialAmounts = new float[Mats.values().length];
+  private static final Random rand = new Random();
+
+  @Store
+  private final float[] enchantAmounts = new float[Enchantment.enchantmentsList.length];
+  @Store
+  private final float[] materialAmounts = new float[Mats.values().length];
+  @Store
   private ItemTypes itemType = NONE;
 
   private final float loss;
@@ -24,6 +36,9 @@ public class EngineTcom {
   }
 
   public boolean addable(ItemStack itemStack) {
+    if (itemStack == null || itemStack.getItem() == null || itemStack.stackSize != 1) {
+      return false;
+    }
     if (itemType == NONE) {
       return Item2Mats.isValid(itemStack);
     } else {
@@ -40,7 +55,7 @@ public class EngineTcom {
     } else if (itemType != Item2Mats.getItemType(itemStack)) {
       return false;
     }
-    //
+
     List<Mats> mats = Item2Mats.getMats(itemType, itemStack);
     int itemDamage = itemStack.getItemDamage();
     int maxDamage = itemStack.getMaxDamage();
@@ -76,6 +91,10 @@ public class EngineTcom {
     return result;
   }
 
+  public float getAmount(Mats mat) {
+    return materialAmounts[mat.ordinal()];
+  }
+
   public boolean canGet(Mats mat) {
     return materialAmounts[mat.ordinal()] >= 1;
   }
@@ -86,6 +105,104 @@ public class EngineTcom {
       return true;
     } else {
       return false;
+    }
+  }
+
+  private EnchantmentData getEnchantmentData(int id) {
+    Enchantment enchantment = Enchantment.enchantmentsList[id];
+    final int maxLevel = enchantment.getMaxLevel();
+    int level = LinearRandom.getValue((int) (maxLevel < enchantAmounts[id] ? maxLevel : enchantAmounts[id]), rand);
+    enchantAmounts[id] -= level;
+    return new EnchantmentData(enchantment, level);
+  }
+
+  public boolean isValidTarget(ItemStack itemStack) {
+    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1) {
+      return false;
+    }
+    Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
+    for (int id = 0; id < enchantAmounts.length; id++) {
+      if (enchantAmounts[id] >= 1) {
+        Enchantment enchantment = Enchantment.enchantmentsList[id];
+        if (itemStack.getItem() == Items.book) {
+          if (enchantment.isAllowedOnBooks()) {
+            return true;
+          }
+        } else {
+          for (Integer id2 : enchantments.keySet()) {
+            Enchantment enchantment2 = Enchantment.enchantmentsList[id2];
+            if (enchantment.canApplyTogether(enchantment2) && enchantment2.canApplyTogether(enchantment)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  public Map<Enchantment, Float> getEnchantments(ItemStack itemStack) {
+    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1) {
+      return Collections.EMPTY_MAP;
+    }
+    Map<Enchantment, Float> result = new HashMap<>();
+    Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
+    for (int id = 0; id < enchantAmounts.length; id++) {
+      if (enchantAmounts[id] >= 1) {
+        Enchantment enchantment = Enchantment.enchantmentsList[id];
+        if (itemStack.getItem() == Items.book) {
+          if (enchantment.isAllowedOnBooks()) {
+            result.put(Enchantment.enchantmentsList[id], enchantAmounts[id]);
+          }
+        } else {
+          for (Integer id2 : enchantments.keySet()) {
+            Enchantment enchantment2 = Enchantment.enchantmentsList[id2];
+            if (enchantment.canApplyTogether(enchantment2) && enchantment2.canApplyTogether(enchantment)) {
+              result.put(Enchantment.enchantmentsList[id], enchantAmounts[id]);
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  public float getEnchantmentAmounts() {
+    float result = 0;
+    for (int id = 0; id < enchantAmounts.length; id++) {
+      result += enchantAmounts[id];
+    }
+    return result;
+  }
+
+  public boolean addEnchantment(ItemStack itemStack, int id) {
+    Enchantment enchantment = Enchantment.enchantmentsList[id];
+    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1 || enchantment == null
+        || enchantAmounts[id] < 1) {
+      return false;
+    }
+    if (itemStack.getItem() == Items.book) {
+      if (!enchantment.isAllowedOnBooks()) {
+        return false;
+      }
+      EnchantmentData enchantmentData = getEnchantmentData(id);
+      itemStack.func_150996_a(Items.enchanted_book);
+      Items.enchanted_book.addEnchantment(itemStack, enchantmentData);
+      return true;
+    } else {
+      Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
+      if (!enchantment.canApply(itemStack)) {
+        return false;
+      }
+      for (Integer id2 : enchantments.keySet()) {
+        Enchantment enchantment2 = Enchantment.enchantmentsList[id2];
+        if (!enchantment.canApplyTogether(enchantment2) || !enchantment2.canApplyTogether(enchantment)) {
+          return false;
+        }
+      }
+      EnchantmentData enchantmentData = getEnchantmentData(id);
+      itemStack.addEnchantment(enchantmentData.enchantmentobj, enchantmentData.enchantmentLevel);
+      return true;
     }
   }
 

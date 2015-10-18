@@ -6,7 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-enum Mats {
+public enum Mats {
   STICK(Items.stick), STRING(Items.string), LEATHER(Items.leather), WOOD(Blocks.planks), COBBLE(Blocks.cobblestone), IRON(Items.iron_ingot), GOLD(
       Items.gold_ingot), DIAMOND(Items.diamond);
 
