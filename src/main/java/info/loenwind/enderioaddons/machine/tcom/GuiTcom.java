@@ -40,9 +40,9 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     super(te, new ContainerTcom(par1InventoryPlayer, te));
 
     plus = new InvisibleButton(this, 1, 59, 8);
-    plus.setToolTip("+");
+    //    plus.setToolTip("+");
     minus = new InvisibleButton(this, 2, 59, 70);
-    minus.setToolTip("-");
+    //    minus.setToolTip("-");
   }
 
   private void updateSlots() {
@@ -120,8 +120,8 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
   }
 
   private void updateScrollPositionPost() {
-    if (lastTick != EnderIO.proxy.getTickCount()) {
-      lastTick = EnderIO.proxy.getTickCount();
+    if (lastTick < EnderIO.proxy.getTickCount()) {
+      lastTick = EnderIO.proxy.getTickCount() + 10;
       if (scrollPositionOffset < 0) {
         scrollPositionOffset += 1 - scrollPositionOffset / (SCROLL_STEP / 2);
       } else if (scrollPositionOffset > 0) {
@@ -130,59 +130,53 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     }
   }
 
-  // 55/15-34-69
   private void drawItems(int x, int y) {
     final Map<ItemStack, Float> materials = getTileEntity().engine.getMaterials();
     List<ItemStack> keyList = new ArrayList<>(materials.keySet());
     Collections.sort(keyList, new Comparator<ItemStack>() {
       @Override
       public int compare(ItemStack paramT1, ItemStack paramT2) {
-        return Float.compare(materials.get(paramT1), materials.get(paramT2));
+        return Float.compare(materials.get(paramT2), materials.get(paramT1));
       }
     });
     if (maxScrollItems != materials.size()) {
       maxScrollItems = materials.size();
       updateScrollPositionPre();
     }
-    int from = 0, to = SCROLL_ITEMS;
-    if (scrollPositionOffset < 0) {
-      from--;
-    } else if (scrollPositionOffset > 0) {
-      to++;
-    }
-    for (int i = from; i < to; i++) {
-      int y0 = y + 15 + i * SCROLL_STEP - scrollPositionOffset;
-      assert (scrollPosition + i) >= 0 : "scrollPosition" + scrollPosition + " scrollPositionOffset" + scrollPositionOffset + " i" + i + " from" + from + " to"
-          + to;
-      if (keyList.size() > (scrollPosition + i) && y0 >= 0) {
-        final ItemStack itemStack = keyList.get(scrollPosition + i);
+    for (int i = 0; i < keyList.size(); i++) {
+      int y0 = y + 15 + (i - scrollPosition) * SCROLL_STEP - scrollPositionOffset;
+      if (y0 >= y && y0 < y + 69) {
+        final ItemStack itemStack = keyList.get(i);
         final Float amount = materials.get(itemStack);
-        drawMaterialLine(itemStack, amount.intValue(), x, y0);
+        drawMaterialLine(itemStack, x, y0);
         if (scrollPositionOffset > -2 && scrollPositionOffset < 2) {
           int barAmount = (int) ((amount - amount.intValue()) * 64f);
-          drawTexturedModalRect(x + 23, y0 + 15, 191, 1, barAmount, 2);
+          drawTexturedModalRect(x + 22, y0 + 14, 191, 1, barAmount, 2);
         }
+      }
+    }
+    drawScrollMask1(x - 1, y);
+    for (int i = 0; i < keyList.size(); i++) {
+      int y0 = y + 15 + (i - scrollPosition) * SCROLL_STEP - scrollPositionOffset;
+      if (y0 >= y && y0 < y + 69) {
+        final ItemStack itemStack = keyList.get(i);
+        final Float amount = materials.get(itemStack);
+        drawMaterialLineAmount(amount.intValue(), x, y0);
       }
     }
 
   }
 
-  public void drawMaterialLine(ItemStack itemStack, int amount, int x, int y0) {
+  public void drawMaterialLine(ItemStack itemStack, int x, int y0) {
     drawFakeItemsStart();
-    itemRender.zLevel = 0.0F;
-    zLevel = 0.0F;
     drawFakeItemStack(x, y0, itemStack);
 
     GL11.glDisable(GL11.GL_LIGHTING);
     GL11.glDisable(GL11.GL_DEPTH_TEST);
     GL11.glDisable(GL11.GL_BLEND);
-    if (amount > 1) {
-      String s1 = String.valueOf(amount);
-      fontRendererObj.drawStringWithShadow(s1, x + 19 - 2 - fontRendererObj.getStringWidth(s1), y0 + 6 + 3, 16777215);
-    }
 
     String displayName = itemStack.getDisplayName();
-    while (fontRendererObj.getStringWidth(displayName) > 43) {
+    while (fontRendererObj.getStringWidth(displayName) > 46) {
       displayName = displayName.substring(0, displayName.length() - 1);
     }
     fontRendererObj.drawStringWithShadow(displayName, x + 22, y0 + 1, 16777215);
@@ -190,6 +184,21 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     GL11.glEnable(GL11.GL_DEPTH_TEST);
     drawFakeItemsEnd();
     RenderUtil.bindTexture(EnderIOAddons.DOMAIN + texture);
+  }
+
+  public void drawMaterialLineAmount(int amount, int x, int y0) {
+    if (amount > 1) {
+      drawFakeItemsStart();
+      GL11.glDisable(GL11.GL_LIGHTING);
+      GL11.glDisable(GL11.GL_DEPTH_TEST);
+      GL11.glDisable(GL11.GL_BLEND);
+      String s1 = String.valueOf(amount);
+      fontRendererObj.drawStringWithShadow(s1, x + 19 - 2 - fontRendererObj.getStringWidth(s1), y0 + 6 + 3, 16777215);
+      GL11.glEnable(GL11.GL_LIGHTING);
+      GL11.glEnable(GL11.GL_DEPTH_TEST);
+      drawFakeItemsEnd();
+    }
+
   }
 
   private String texture = null;
@@ -208,12 +217,24 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     drawItems(sx + 55, sy);
 
     if (scrollPositionOffset != 0) {
-      drawTexturedModalRect(sx + 54, sy, 0, 166, 88, 83);
+      drawScrollMask2(sx + 54, sy);
     }
     updateScrollPositionPost();
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
+  }
+
+  public void drawScrollMask1(int sx, int sy) {
+    GL11.glDisable(GL11.GL_DEPTH_TEST);
+    drawTexturedModalRect(sx, sy, 88, 166, 88, 83);
+    GL11.glEnable(GL11.GL_DEPTH_TEST);
+  }
+
+  public void drawScrollMask2(int sx, int sy) {
+    GL11.glDisable(GL11.GL_DEPTH_TEST);
+    drawTexturedModalRect(sx, sy, 0, 166, 88, 83);
+    GL11.glEnable(GL11.GL_DEPTH_TEST);
   }
 
 }
