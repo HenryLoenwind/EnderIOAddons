@@ -15,6 +15,7 @@ public class Manager implements InitAware {
   @Override
   public void init(FMLPreInitializationEvent event) {
     PacketHandler.INSTANCE.registerMessage(PacketParticles.class, PacketParticles.class, PacketHandler.nextID(), Side.CLIENT);
+    PacketHandler.INSTANCE.registerMessage(PacketSlotVisibility.class, PacketSlotVisibility.class, PacketHandler.nextID(), Side.SERVER);
   }
 
   @Override

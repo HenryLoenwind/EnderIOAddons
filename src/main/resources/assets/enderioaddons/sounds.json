@@ -10,5 +10,26 @@
 	"sounds": [
 	  "machine/ihopper/clack"
 	]
+  },
+  "machine.tcom.in": {
+    "category": "block",
+    "sounds": [
+      "machine/tcom/in1",
+      "machine/tcom/in2",
+      "machine/tcom/in3",
+      "machine/tcom/in4"
+    ]
+  },
+  "machine.tcom.enchant": {
+    "category": "block",
+    "sounds": [
+      "machine/tcom/enchant1"
+    ]
+  },
+  "machine.tcom.fail": {
+    "category": "block",
+    "sounds": [
+      "machine/tcom/fail1"
+    ]
   }
 }

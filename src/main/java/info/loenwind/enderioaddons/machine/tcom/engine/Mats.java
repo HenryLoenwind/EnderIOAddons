@@ -23,4 +23,19 @@ public enum Mats {
   public ItemStack getItemStack() {
     return itemStack;
   }
+
+  public static Mats getMat(ItemStack itemStack) {
+    if (itemStack != null && itemStack.getItem() != null) {
+      for (Mats mat : values()) {
+        if (mat.itemStack.getItem() == itemStack.getItem()) {
+          return mat;
+        }
+      }
+    }
+    return null;
+  }
+
+  public boolean isSame(ItemStack itemstack) {
+    return itemstack != null && itemstack.getItem() != null && this.itemStack.getItem() == itemstack.getItem();
+  }
 }

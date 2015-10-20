@@ -5,9 +5,11 @@ import static crazypants.enderio.config.Config.powerConduitTierThreeRF;
 import static crazypants.enderio.config.Config.powerConduitTierTwoRF;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
+import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.machine.framework.AbstractTileFramework;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.tcom.engine.EngineTcom;
+import info.loenwind.enderioaddons.machine.tcom.engine.Mats;
 
 import javax.annotation.Nonnull;
 
@@ -25,7 +27,7 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
   protected EngineTcom engine = new EngineTcom(.1f); // TODO config
 
   public TileTcom() {
-    super(new SlotDefinition(2, 2, 1));
+    super(new SlotDefinition(2, 2, 0));
   }
 
   @Override
@@ -67,18 +69,84 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
       if (inventory[slotDefinition.getMinInputSlot()] != null && canUsePower(100f)) { // TODO cfg
         if (engine.add(inventory[slotDefinition.getMinInputSlot()])) {
           inventory[slotDefinition.getMinInputSlot()] = null;
+          usePower(100f); // TODO cfg
           markDirty();
+          playSound_in();
+          // TODO: notify client
         }
       }
     }
     return false;
   }
 
-  //  private void playSound() {
-  //    if (crazypants.enderio.config.Config.machineSoundsEnabled) {
-  //      // TODO      getWorldObj().playSoundEffect(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, EnderIOAddons.DOMAIN + ":machine.ihopper", getVolume(), getPitch());
-  //    }
-  //  }
+  public void extractItems(Mats mat) {
+    ItemStack target;
+    if (inventory[slotDefinition.getMinOutputSlot()] == null) {
+      target = mat.getItemStack().copy();
+    } else if (mat.isSame(inventory[slotDefinition.getMinOutputSlot()])) {
+      target = inventory[slotDefinition.getMinOutputSlot()];
+    } else {
+      playSound_fail();
+      return;
+    }
+    while (target.stackSize < target.getMaxStackSize()) {
+      if (canUsePower(10f)) { // TODO cfg
+        if (engine.get(mat)) {
+          target.stackSize++;
+          usePower(10f); // TODO cfg
+        } else {
+          break;
+        }
+      } else {
+        playSound_fail();
+        break;
+      }
+    }
+    inventory[slotDefinition.getMinOutputSlot()] = target;
+    markDirty();
+    // TODO: notify client
+  }
+
+  public void extractEnchantment(int id) {
+    if (inventory[slotDefinition.getMinOutputSlot() + 1] != null || inventory[slotDefinition.getMinInputSlot() + 1] == null) {
+      playSound_fail();
+      return;
+    }
+    if (canUsePower(10000f) && engine.addEnchantment(inventory[slotDefinition.getMinInputSlot() + 1], id)) { // TODO cfg
+      inventory[slotDefinition.getMinOutputSlot() + 1] = inventory[slotDefinition.getMinInputSlot() + 1];
+      inventory[slotDefinition.getMinInputSlot() + 1] = null;
+      usePower(10000f); // TODO cfg
+      markDirty();
+      playSound_enchant();
+      // TODO: notify client
+    } else {
+      playSound_fail();
+    }
+  }
+
+  private long[] lastSoundTick = new long[3];
+  private static final String[] soundsIds = { "in", "enchant", "fail" };
+  private static final int[] soundDurations = { 45, 36, 5 }; // 2.226s, 1.777s, 0.239s
+
+  private void playSound(int id) {
+    if (crazypants.enderio.config.Config.machineSoundsEnabled && lastSoundTick[id] < EnderIO.proxy.getTickCount()) {
+      lastSoundTick[id] = EnderIO.proxy.getTickCount() + soundDurations[id];
+      getWorldObj().playSoundEffect(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, EnderIOAddons.DOMAIN + ":machine.tcom." + soundsIds[id], getVolume(),
+          getPitch());
+    }
+  }
+
+  private void playSound_in() {
+    playSound(0);
+  }
+
+  private void playSound_enchant() {
+    playSound(1);
+  }
+
+  private void playSound_fail() {
+    playSound(2);
+  }
 
   public boolean canUsePower(Float wantToUse) {
     int w = wantToUse.intValue();

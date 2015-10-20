@@ -17,6 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
+import crazypants.enderio.network.PacketHandler;
 
 public class BlockTcom extends AbstractMachineBlock<TileTcom> implements IFrameworkBlock, ITextureProvider {
 
@@ -25,7 +26,7 @@ public class BlockTcom extends AbstractMachineBlock<TileTcom> implements IFramew
   public int localRenderId;
 
   public static BlockTcom create() {
-    //    PacketHandler.INSTANCE.registerMessage(PacketWaterworksProgress.class, PacketWaterworksProgress.class, PacketHandler.nextID(), Side.CLIENT);
+    PacketHandler.INSTANCE.registerMessage(PacketTcomAction.class, PacketTcomAction.class, PacketHandler.nextID(), Side.SERVER);
     blockTcom = new BlockTcom();
     blockTcom.init();
     return blockTcom;
