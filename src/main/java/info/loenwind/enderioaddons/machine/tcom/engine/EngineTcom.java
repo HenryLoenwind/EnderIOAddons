@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.tcom.engine;
 
+import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
+import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 
@@ -21,15 +23,28 @@ public class EngineTcom {
 
   private static final Random rand = new Random();
 
-  @Store
+  /*
+   * Note: We are using nbt target ITEM for full updates and CLIENT for small
+   * updates. The field of the TE the engine is stored in is set not to sync to
+   * the client at all. All client sync is done with special packets and nbt
+   * saving of this object directly.
+   * 
+   * The small update has everything that is needed for rendering, the full
+   * update has all the data and is used in the GUI.
+   */
+
+  @Store({ ITEM, SAVE })
   private final float[] enchantmentPool = new float[Enchantment.enchantmentsList.length];
   @Store
   private final float[] materialPool = new float[Mats.values().length];
+  @Store
+  private boolean hasEnchantments = false;
 
-  private final float loss;
+  private final float minloss, randloss;
 
-  public EngineTcom(float loss) {
-    this.loss = loss;
+  public EngineTcom(float minloss, float randloss) {
+    this.minloss = minloss;
+    this.randloss = randloss;
   }
 
   @SuppressWarnings("static-method")
@@ -46,20 +61,21 @@ public class EngineTcom {
     int maxDamage = itemStack.getMaxDamage();
     int stackSize = itemStack.stackSize;
     Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
-    float factor = (maxDamage - itemDamage) / maxDamage * stackSize * (1f - loss);
+    float factor = (maxDamage - itemDamage) / maxDamage * stackSize * (1f - minloss) * (1f - (float) rand.nextDouble() * randloss);
     for (Mats mat : mats) {
       materialPool[mat.ordinal()] += 1f * factor;
     }
     for (Entry<Integer, Integer> enchantment : enchantments.entrySet()) {
       enchantmentPool[enchantment.getKey()] += enchantment.getValue() * factor;
     }
+    computeHasEnchantments();
     return true;
   }
 
   public Map<Enchantment, Float> getEnchantments() {
     Map<Enchantment, Float> result = new HashMap<>();
     for (int i = 0; i < enchantmentPool.length; i++) {
-      if (enchantmentPool[i] > .1f) {
+      if (enchantmentPool[i] > .01f) {
         result.put(Enchantment.enchantmentsList[i], enchantmentPool[i]);
       }
     }
@@ -69,7 +85,7 @@ public class EngineTcom {
   public Map<ItemStack, Float> getMaterials() {
     Map<ItemStack, Float> result = new HashMap<>();
     for (int i = 0; i < materialPool.length; i++) {
-      if (materialPool[i] > .1f) {
+      if (materialPool[i] > .01f) {
         result.put(Mats.values()[i].getItemStack(), materialPool[i]);
       }
     }
@@ -114,15 +130,19 @@ public class EngineTcom {
             return true;
           }
         } else {
-          if (enchantmentsOnItemStack.isEmpty()) {
-            if (enchantmentInPool.canApply(itemStack)) {
+          if (enchantmentInPool.canApply(itemStack)) {
+            if (enchantmentsOnItemStack.isEmpty()) {
               return true;
-            }
-          } else {
-            for (Integer id2 : enchantmentsOnItemStack.keySet()) {
-              Enchantment enchantmentOnItemStack = Enchantment.enchantmentsList[id2];
-              if (enchantmentInPool.canApply(itemStack) && enchantmentInPool.canApplyTogether(enchantmentOnItemStack)
-                  && enchantmentOnItemStack.canApplyTogether(enchantmentInPool)) {
+            } else {
+              boolean canApply = true;
+              for (Integer id2 : enchantmentsOnItemStack.keySet()) {
+                Enchantment enchantmentOnItemStack = Enchantment.enchantmentsList[id2];
+                if (!enchantmentInPool.canApplyTogether(enchantmentOnItemStack) || !enchantmentOnItemStack.canApplyTogether(enchantmentInPool)) {
+                  canApply = false;
+                  break;
+                }
+              }
+              if (canApply) {
                 return true;
               }
             }
@@ -150,15 +170,19 @@ public class EngineTcom {
             result.put(enchantmentInPool, enchantmentPool[id]);
           }
         } else {
-          if (enchantmentsOnItemStack.isEmpty()) {
-            if (enchantmentInPool.canApply(itemStack)) {
+          if (enchantmentInPool.canApply(itemStack)) {
+            if (enchantmentsOnItemStack.isEmpty()) {
               result.put(enchantmentInPool, enchantmentPool[id]);
-            }
-          } else {
-            for (Integer id2 : enchantmentsOnItemStack.keySet()) {
-              Enchantment enchantmentOnItemStack = Enchantment.enchantmentsList[id2];
-              if (enchantmentInPool.canApply(itemStack) && enchantmentInPool.canApplyTogether(enchantmentOnItemStack)
-                  && enchantmentOnItemStack.canApplyTogether(enchantmentInPool)) {
+            } else {
+              boolean canApply = true;
+              for (Integer id2 : enchantmentsOnItemStack.keySet()) {
+                Enchantment enchantmentOnItemStack = Enchantment.enchantmentsList[id2];
+                if (!enchantmentInPool.canApplyTogether(enchantmentOnItemStack) || !enchantmentOnItemStack.canApplyTogether(enchantmentInPool)) {
+                  canApply = false;
+                  break;
+                }
+              }
+              if (canApply) {
                 result.put(enchantmentInPool, enchantmentPool[id]);
               }
             }
@@ -177,6 +201,20 @@ public class EngineTcom {
     return result;
   }
 
+  public boolean hasEnchantments() {
+    return hasEnchantments;
+  }
+
+  private void computeHasEnchantments() {
+    for (int id = 0; id < enchantmentPool.length; id++) {
+      if (enchantmentPool[id] >= 1) {
+        hasEnchantments = true;
+        return;
+      }
+    }
+    hasEnchantments = false;
+  }
+
   public boolean addEnchantment(ItemStack itemStack, int id) {
     Enchantment enchantmentInPool = Enchantment.enchantmentsList[id];
     if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1
@@ -190,6 +228,7 @@ public class EngineTcom {
       EnchantmentData enchantmentData = getEnchantmentData(id);
       itemStack.func_150996_a(Items.enchanted_book);
       Items.enchanted_book.addEnchantment(itemStack, enchantmentData);
+      computeHasEnchantments();
       return true;
     } else {
       if (!enchantmentInPool.canApply(itemStack)) {
@@ -204,6 +243,7 @@ public class EngineTcom {
       }
       EnchantmentData enchantmentData = getEnchantmentData(id);
       itemStack.addEnchantment(enchantmentData.enchantmentobj, enchantmentData.enchantmentLevel);
+      computeHasEnchantments();
       return true;
     }
   }

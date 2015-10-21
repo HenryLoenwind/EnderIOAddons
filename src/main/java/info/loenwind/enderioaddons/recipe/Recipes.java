@@ -41,6 +41,8 @@ public class Recipes implements InitAware {
 
   @ItemStackHolder(value = "EnderIO:blockIngotStorage", meta = 3)
   public static final ItemStack blockRedstoneAlloy = null;
+  @ItemStackHolder(value = "EnderIO:blockIngotStorage", meta = 6)
+  public static final ItemStack darkSteelBlock = null;
 
   @ItemStackHolder(value = "EnderIO:itemAlloy", meta = 0)
   public static final ItemStack electricSteel = null;
@@ -70,6 +72,21 @@ public class Recipes implements InitAware {
 
   @ItemStackHolder(value = "EnderIO:blockPowerMonitor", meta = 0)
   public static final ItemStack blockPowerMonitor = null;
+
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_helmet")
+  public static final ItemStack darkSteel_helmet = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_chestplate")
+  public static final ItemStack darkSteel_chestplate = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_leggings")
+  public static final ItemStack darkSteel_leggings = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_boots")
+  public static final ItemStack darkSteel_boots = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_sword")
+  public static final ItemStack darkSteel_sword = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_pickaxe")
+  public static final ItemStack darkSteel_pickaxe = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_axe")
+  public static final ItemStack darkSteel_axe = null;
 
   public Recipes() {
   }

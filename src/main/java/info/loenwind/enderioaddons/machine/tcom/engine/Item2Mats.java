@@ -12,6 +12,7 @@ import static info.loenwind.enderioaddons.machine.tcom.engine.ItemTypes.PICK;
 import static info.loenwind.enderioaddons.machine.tcom.engine.ItemTypes.SHOVEL;
 import static info.loenwind.enderioaddons.machine.tcom.engine.ItemTypes.SWORD;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.COBBLE;
+import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.DARKSTEEL;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.DIAMOND;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.GOLD;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.IRON;
@@ -19,6 +20,7 @@ import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.LEATHER;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.STICK;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.STRING;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.WOOD;
+import info.loenwind.enderioaddons.recipe.Recipes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +35,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 class Item2Mats {
+
   private static final Map<ItemTypes, Map<Item, List<Mats>>> all = new HashMap<>();
   private static final Set<Item> allItems = new HashSet<>();
   private static final Map<ItemTypes, Set<Item>> items = new HashMap<>();
@@ -65,12 +68,14 @@ class Item2Mats {
     all.get(SWORD).put(Items.iron_sword, matList(STICK, IRON, IRON));
     all.get(SWORD).put(Items.golden_sword, matList(STICK, GOLD, GOLD));
     all.get(SWORD).put(Items.diamond_sword, matList(STICK, DIAMOND, DIAMOND));
+    all.get(SWORD).put(Recipes.darkSteel_sword.getItem(), matList(STICK, DARKSTEEL, DARKSTEEL));
 
     all.get(PICK).put(Items.wooden_pickaxe, matList(STICK, STICK, WOOD, WOOD, WOOD));
     all.get(PICK).put(Items.stone_pickaxe, matList(STICK, STICK, COBBLE, COBBLE, COBBLE));
     all.get(PICK).put(Items.iron_pickaxe, matList(STICK, STICK, IRON, IRON, IRON));
     all.get(PICK).put(Items.golden_pickaxe, matList(STICK, STICK, GOLD, GOLD, GOLD));
     all.get(PICK).put(Items.diamond_pickaxe, matList(STICK, STICK, DIAMOND, DIAMOND, DIAMOND));
+    all.get(PICK).put(Recipes.darkSteel_pickaxe.getItem(), matList(STICK, STICK, DARKSTEEL, DARKSTEEL, DARKSTEEL));
 
     all.get(SHOVEL).put(Items.wooden_shovel, matList(STICK, STICK, WOOD));
     all.get(SHOVEL).put(Items.stone_shovel, matList(STICK, STICK, COBBLE));
@@ -89,26 +94,31 @@ class Item2Mats {
     all.get(AXE).put(Items.iron_axe, matList(STICK, STICK, IRON, IRON, IRON));
     all.get(AXE).put(Items.golden_axe, matList(STICK, STICK, GOLD, GOLD, GOLD));
     all.get(AXE).put(Items.diamond_axe, matList(STICK, STICK, DIAMOND, DIAMOND, DIAMOND));
+    all.get(AXE).put(Recipes.darkSteel_axe.getItem(), matList(STICK, STICK, DARKSTEEL, DARKSTEEL, DARKSTEEL));
 
     all.get(BOOTS).put(Items.leather_boots, matList(4, LEATHER));
     all.get(BOOTS).put(Items.iron_boots, matList(4, IRON));
     all.get(BOOTS).put(Items.golden_boots, matList(4, GOLD));
     all.get(BOOTS).put(Items.diamond_boots, matList(4, DIAMOND));
+    all.get(BOOTS).put(Recipes.darkSteel_boots.getItem(), matList(4, DARKSTEEL));
 
     all.get(PANTS).put(Items.leather_leggings, matList(7, LEATHER));
     all.get(PANTS).put(Items.iron_leggings, matList(7, IRON));
     all.get(PANTS).put(Items.golden_leggings, matList(7, GOLD));
     all.get(PANTS).put(Items.diamond_leggings, matList(7, DIAMOND));
+    all.get(PANTS).put(Recipes.darkSteel_leggings.getItem(), matList(7, DARKSTEEL));
 
     all.get(CHEST).put(Items.leather_chestplate, matList(8, LEATHER));
     all.get(CHEST).put(Items.iron_chestplate, matList(8, IRON));
     all.get(CHEST).put(Items.golden_chestplate, matList(8, GOLD));
     all.get(CHEST).put(Items.diamond_chestplate, matList(8, DIAMOND));
+    all.get(CHEST).put(Recipes.darkSteel_chestplate.getItem(), matList(8, DARKSTEEL));
 
     all.get(HELMET).put(Items.leather_helmet, matList(5, LEATHER));
     all.get(HELMET).put(Items.iron_helmet, matList(5, IRON));
     all.get(HELMET).put(Items.golden_helmet, matList(5, GOLD));
     all.get(HELMET).put(Items.diamond_helmet, matList(5, DIAMOND));
+    all.get(HELMET).put(Recipes.darkSteel_helmet.getItem(), matList(5, DARKSTEEL));
 
     for (ItemTypes itemType : ItemTypes.values()) {
       allItems.addAll(all.get(itemType).keySet());

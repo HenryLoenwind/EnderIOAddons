@@ -13,18 +13,21 @@ import info.loenwind.enderioaddons.machine.tcom.engine.Mats;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.machine.SlotDefinition;
+import crazypants.enderio.network.PacketHandler;
 import crazypants.enderio.power.BasicCapacitor;
 
 @Storable
 public class TileTcom extends AbstractTileFramework implements IFrameworkMachine {
 
   @Store
-  protected EngineTcom engine = new EngineTcom(.1f); // TODO config
+  //({ SAVE, ITEM })
+  protected EngineTcom engine = new EngineTcom(.1f, .5f); // TODO config
 
   public TileTcom() {
     super(new SlotDefinition(2, 2, 0));
@@ -72,19 +75,28 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
           usePower(100f); // TODO cfg
           markDirty();
           playSound_in();
-          // TODO: notify client
+          updateClients();
         }
       }
     }
     return false;
   }
 
-  public void extractItems(Mats mat) {
+  public void extractItems(Mats mat, EntityPlayerMP player) {
     ItemStack target;
+    if (!engine.canGet(mat)) {
+      playSound_fail();
+      return;
+    }
     if (inventory[slotDefinition.getMinOutputSlot()] == null) {
       target = mat.getItemStack().copy();
+      target.stackSize = 0;
     } else if (mat.isSame(inventory[slotDefinition.getMinOutputSlot()])) {
       target = inventory[slotDefinition.getMinOutputSlot()];
+      if (target.stackSize >= target.getMaxStackSize()) {
+        playSound_fail();
+        return;
+      }
     } else {
       playSound_fail();
       return;
@@ -102,12 +114,12 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
         break;
       }
     }
-    inventory[slotDefinition.getMinOutputSlot()] = target;
+    inventory[slotDefinition.getMinOutputSlot()] = target.stackSize > 0 ? target : null;
     markDirty();
-    // TODO: notify client
+    updateClient(player);
   }
 
-  public void extractEnchantment(int id) {
+  public void extractEnchantment(int id, EntityPlayerMP player) {
     if (inventory[slotDefinition.getMinOutputSlot() + 1] != null || inventory[slotDefinition.getMinInputSlot() + 1] == null) {
       playSound_fail();
       return;
@@ -118,10 +130,18 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
       usePower(10000f); // TODO cfg
       markDirty();
       playSound_enchant();
-      // TODO: notify client
+      updateClient(player);
     } else {
       playSound_fail();
     }
+  }
+
+  public void updateClient(EntityPlayerMP player) {
+    PacketHandler.sendTo(new PacketTcomUpdate(this, true), player);
+  }
+
+  public void updateClients() {
+    PacketHandler.sendToAllAround(new PacketTcomUpdate(this, false), this);
   }
 
   private long[] lastSoundTick = new long[3];
@@ -197,7 +217,7 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
     case FRONT_LEFT:
     case BACK_RIGHT:
     case FRONT_RIGHT:
-      return engine.getEnchantmentAmounts() > 1f ? EnderIO.fluidXpJuice : null;
+      return engine.hasEnchantments() ? EnderIO.fluidXpJuice : null;
     case BACK_LEFT:
     }
     return null;

@@ -19,6 +19,10 @@ public class PacketTcomAction extends MessageTileEntity<TileTcom> implements IMe
   public PacketTcomAction() {
   }
 
+  public PacketTcomAction(TileTcom tile) {
+    super(tile);
+  }
+
   public PacketTcomAction(TileTcom tile, Mats mat) {
     super(tile);
     this.mat = mat;
@@ -35,9 +39,11 @@ public class PacketTcomAction extends MessageTileEntity<TileTcom> implements IMe
     if (mat != null) {
       buf.writeByte(0);
       buf.writeByte(mat.ordinal());
-    } else {
+    } else if (enchant >= 0) {
       buf.writeByte(1);
       buf.writeShort(enchant);
+    } else {
+      buf.writeByte(2);
     }
   }
 
@@ -49,6 +55,7 @@ public class PacketTcomAction extends MessageTileEntity<TileTcom> implements IMe
       mat = Mats.values()[buf.readByte()];
     } else if (command == 1) {
       enchant = buf.readShort();
+    } else if (command == 2) {
     } else {
       throw new InvalidParameterException();
     }
@@ -61,9 +68,11 @@ public class PacketTcomAction extends MessageTileEntity<TileTcom> implements IMe
       return null;
     }
     if (message.mat != null) {
-      tile.extractItems(message.mat);
+      tile.extractItems(message.mat, ctx.getServerHandler().playerEntity);
+    } else if (message.enchant >= 0) {
+      tile.extractEnchantment(message.enchant, ctx.getServerHandler().playerEntity);
     } else {
-      tile.extractEnchantment(message.enchant);
+      tile.updateClient(ctx.getServerHandler().playerEntity);
     }
     return null;
   }

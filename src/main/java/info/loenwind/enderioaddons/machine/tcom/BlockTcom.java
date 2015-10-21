@@ -27,6 +27,7 @@ public class BlockTcom extends AbstractMachineBlock<TileTcom> implements IFramew
 
   public static BlockTcom create() {
     PacketHandler.INSTANCE.registerMessage(PacketTcomAction.class, PacketTcomAction.class, PacketHandler.nextID(), Side.SERVER);
+    PacketHandler.INSTANCE.registerMessage(PacketTcomUpdate.class, PacketTcomUpdate.class, PacketHandler.nextID(), Side.CLIENT);
     blockTcom = new BlockTcom();
     blockTcom.init();
     return blockTcom;

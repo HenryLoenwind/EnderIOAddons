@@ -3,10 +3,6 @@ package info.loenwind.enderioaddons.machine.tcom;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullJ;
 import static info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot.FRONT_LEFT;
 import static info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot.FRONT_RIGHT;
-import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.COBBLE;
-import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.DIAMOND;
-import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.GOLD;
-import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.IRON;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.LEATHER;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.STICK;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.STRING;
@@ -26,7 +22,11 @@ import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.tcom.engine.EngineTcom;
 import info.loenwind.enderioaddons.machine.tcom.engine.Mats;
+import info.loenwind.enderioaddons.recipe.Recipes;
 import info.loenwind.enderioaddons.render.FaceRenderer;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +35,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -83,10 +84,24 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
   public void renderTileEntityAt(TileTcom te) {
     if (te != null) {
       xform.setRotation(te.getFacingDir());
-      for (TankSlot tankSlot : TankSlot.values()) {
-        tankSlot = notnullJ(tankSlot, "enum.values()[i]");
-        renderTrayContents(te, tankSlot, true);
-        renderTrayContents(te, tankSlot, false);
+
+      EngineTcom e = te.engine;
+      Map<ItemStack, Float> materials = e.getMaterials();
+      List<ItemStack> list = GuiTcom.sortMaterialsList(materials);
+      int idx = 0;
+      leather_or_string_has_rendered = false;
+      wood_or_sticks_has_rendered = false;
+      for (int lower = 0; lower <= 1; lower++) {
+        for (TankSlot tankSlot : TankSlot.values()) {
+          tankSlot = notnullJ(tankSlot, "enum.values()[i]");
+          if (!(tankSlot == FRONT_LEFT && lower == 0) && !(tankSlot == FRONT_RIGHT && lower == 1)) {
+            while (idx < list.size()) {
+              if (renderTrayContents(te, tankSlot, lower == 1, Mats.getMat(list.get(idx++)))) {
+                break;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -144,7 +159,7 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     BoundingBox bb2 = makePartialBBofSlot(1, 0, 0, 15, 16, 16, pos);
     BoundingBox bb3 = makePartialBBofSlot(0, 0, 1, 16, 16, 15, pos);
     BoundingBox bb4 = makePartialBBofSlot(0, 0, 0, 16, 7, 16, pos);
-    BoundingBox bb5 = bb1.translate(0, 0.05f, 0);
+    BoundingBox bb5 = makePartialBBofSlot(0, 1, 0, 16, 16, 16, pos);
 
     if (lower) {
       bb1 = bb1.translate(0, -8f / 16f, 0);
@@ -166,14 +181,21 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, xform, brightnessPerSide, true);
   }
 
-  private void renderTrayItems(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot) {
+  private boolean renderTrayItems(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot, boolean lower) {
+    if (te.engine.getAmount(LEATHER) < 0.01f && te.engine.getAmount(STRING) < 0.01f) {
+      return false;
+    }
+
     int[] pos = frameRenderer.translateToSlotPosition(SOUTH, tankSlot);
+
+    Tessellator.instance.draw();
+    Tessellator.instance.startDrawingQuads();
 
     RenderUtil.bindItemTexture();
     for (Mats mat : new Mats[] { LEATHER, STRING }) {
       IIcon icon = mat == LEATHER ? Items.leather.getIconFromDamage(0) : Items.string.getIconFromDamage(0);
       float rawAmount = te.engine.getAmount(mat) / 100;
-      int renderAmount = (int) rawAmount * 8;
+      int renderAmount = (int) (rawAmount * 8);
       if (rawAmount > 0 && renderAmount < 1) {
         renderAmount = 1;
       } else if (renderAmount > 7) {
@@ -182,63 +204,86 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       for (int i = 0; i < renderAmount; i++) {
         int offsetx = 6 + ((i + mat.ordinal()) & 0b01) * 4;
         int offsetz = 6 + (((i + mat.ordinal()) & 0b10) >> 1) * 4;
-        BoundingBox bbi = makePartialBBofSlot(offsetx - 4, i, offsetz - 4, offsetx + 4, 16, offsetz - 4, pos);
-        renderSingleFace(bbi, DOWN, icon, 0, 16, 0, 16, xform, brightnessPerSide, false);
-        renderSingleFace(bbi, DOWN, icon, 0, 16, 0, 16, xform, brightnessPerSide, true);
+        BoundingBox bbi = makePartialBBofSlot(offsetx - 4, 0, offsetz - 4, offsetx + 4, i + 1, offsetz + 4, pos).translate(0,
+            0.002f * (mat == LEATHER ? 1 : 2), 0);
+        if (lower) {
+          bbi = bbi.translate(0, -8f / 16f, 0);
+        }
+        renderSingleFace(bbi, UP, icon, 0, 16, 0, 16, xform, brightnessPerSide, false);
       }
     }
+    Tessellator.instance.draw();
+    Tessellator.instance.startDrawingQuads();
+    RenderUtil.bindBlockTexture();
+    return true;
   }
 
-  private void renderTrayContents(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot, boolean lower) {
+  private boolean leather_or_string_has_rendered = false;
+  private boolean wood_or_sticks_has_rendered = false;
+
+  private boolean renderTrayContents(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot, boolean lower, Mats mat) {
     Block toRender = null;
-    Mats mat = null;
-    switch (tankSlot) {
-    case BACK_LEFT:
-      toRender = lower ? Blocks.cobblestone : Blocks.iron_block;
-      mat = lower ? COBBLE : IRON;
+    switch (mat) {
+    case COBBLE:
+      toRender = Blocks.cobblestone;
       break;
-    case BACK_RIGHT:
-      toRender = lower ? Blocks.gold_block : Blocks.diamond_block;
-      mat = lower ? GOLD : DIAMOND;
+    case DARKSTEEL:
+      toRender = Block.getBlockFromItem(Recipes.darkSteelBlock.getItem());
       break;
-    case FRONT_LEFT:
-      if (lower) {
-        toRender = Blocks.planks;
-        mat = WOOD;
-      } else {
-        return; // controller here
+    case DIAMOND:
+      toRender = Blocks.diamond_block;
+      break;
+    case GOLD:
+      toRender = Blocks.gold_block;
+      break;
+    case IRON:
+      toRender = Blocks.iron_block;
+      break;
+    case WOOD:
+    case STICK:
+      if (wood_or_sticks_has_rendered) {
+        return false;
       }
+      toRender = Blocks.planks;
+      wood_or_sticks_has_rendered = true;
       break;
-    case FRONT_RIGHT:
-      if (lower) {
-        return; // tank here
-      } else {
-        renderTrayItems(te, tankSlot);
+    case LEATHER:
+    case STRING:
+      if (leather_or_string_has_rendered) {
+        return false;
       }
-      break;
+      leather_or_string_has_rendered = true;
+      return renderTrayItems(te, tankSlot, lower);
     }
 
     int[] pos = frameRenderer.translateToSlotPosition(SOUTH, tankSlot);
 
     EngineTcom e = te.engine;
-    IIcon[] icons = RenderUtil.getBlockTextures(toRender, 0);
-    RenderUtil.bindBlockTexture();
+    IIcon[] icons = RenderUtil.getBlockTextures(toRender, mat.getItemStack().getItemDamage());
     float rawAmount = e.getAmount(mat) / 100;
-    if (mat == Mats.WOOD) {
-      rawAmount += e.getAmount(STICK) / 100;
+    if (mat == WOOD) {
+      rawAmount = rawAmount + e.getAmount(STICK) / 100 / 2;
+    } else if (mat == STICK) {
+      rawAmount = e.getAmount(WOOD) / 100 + rawAmount / 2;
     }
-    int renderAmount = (int) rawAmount * 16;
+    int renderAmount = (int) (rawAmount * 14);
     if (rawAmount > 0 && renderAmount < 1) {
       renderAmount = 1;
-    } else if (renderAmount > 16) {
-      renderAmount = 16;
+    } else if (renderAmount > 14) {
+      renderAmount = 14;
     }
 
-    BoundingBox bb = makePartialBBofSlot(1, 1, 1, 15, 15, 15, pos);
-    if (lower) {
-      bb = bb.translate(0, -8f / 16f, 0);
+    if (renderAmount > 0) {
+      BoundingBox bb = makePartialBBofSlot(1, 1, 1, 15, 1 + renderAmount, 15, pos);
+      if (lower) {
+        bb = bb.translate(0, -8f / 16f, 0);
+      }
+      FaceRenderer.renderSkirt(bb, icons, 0, 16, 0, 2 + renderAmount, xform, brightnessPerSide, false);
+      FaceRenderer.renderSingleFace(bb, UP, icons, 0, 16, 0, 16, xform, brightnessPerSide, false);
+      return true;
+    } else {
+      return false;
     }
-    renderCube(bb, icons, xform, brightnessPerSide, false);
   }
 
   private static final double px = 1D / 16D;

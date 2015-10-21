@@ -53,6 +53,7 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
   protected final GuiToolTip[] enchTooltips = new GuiToolTip[SCROLL_ITEMS];
 
   private String texture = null;
+  private long lastUpdateRequest = 0;
 
   public GuiTcom(InventoryPlayer par1InventoryPlayer, @Nonnull TileTcom te) {
     super(te, new ContainerTcom(par1InventoryPlayer, te));
@@ -71,6 +72,9 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     getButtons[2] = new InvisibleButton(this, 102, 124, 52);
     getButtons[0].width = getButtons[1].width = getButtons[2].width = 18;
     getButtons[0].height = getButtons[1].height = getButtons[2].height = 12;
+
+    lastUpdateRequest = EnderIO.proxy.getTickCount() + 10;
+    PacketHandler.INSTANCE.sendToServer(new PacketTcomAction(getTileEntity()));
   }
 
   private void updateVisibility() {
@@ -281,7 +285,7 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     }
   }
 
-  private static List<ItemStack> sortMaterialsList(final Map<ItemStack, Float> materials) {
+  public static List<ItemStack> sortMaterialsList(final Map<ItemStack, Float> materials) {
     List<ItemStack> keyList = new ArrayList<>(materials.keySet());
     Collections.sort(keyList, new Comparator<ItemStack>() {
       @Override
@@ -321,7 +325,7 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
       GL11.glDisable(GL11.GL_LIGHTING);
       GL11.glDisable(GL11.GL_DEPTH_TEST);
       GL11.glDisable(GL11.GL_BLEND);
-      String s1 = String.valueOf(amount);
+      String s1 = amount >= 1000 ? String.valueOf(amount / 1000) + "k" : String.valueOf(amount);
       fontRendererObj.drawStringWithShadow(s1, x + 20 - 2 - fontRendererObj.getStringWidth(s1), y0 + 6 + 3, 16777215);
       GL11.glEnable(GL11.GL_LIGHTING);
       GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -356,6 +360,10 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
+    if (EnderIO.proxy.getTickCount() > lastUpdateRequest) {
+      lastUpdateRequest = EnderIO.proxy.getTickCount() + 10;
+      PacketHandler.INSTANCE.sendToServer(new PacketTcomAction(getTileEntity()));
+    }
   }
 
   private int blockX0 = 0, blockX1 = 0, blockY0 = 0, blockY1 = 0;

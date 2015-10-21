@@ -31,7 +31,6 @@ public class HandleFloatArray implements IHandler<float[]> {
         break;
       }
     }
-    System.out.println("Saved " + ((object.length - len) * 4) + " bytes"); // TODO remove me!
     int[] tmp = new int[len];
     for (int i = 0; i < len; i++) {
       tmp[i] = Float.floatToIntBits(object[i]);
@@ -52,7 +51,6 @@ public class HandleFloatArray implements IHandler<float[]> {
           object[i] = 0;
         }
       }
-
     }
     return object;
   }

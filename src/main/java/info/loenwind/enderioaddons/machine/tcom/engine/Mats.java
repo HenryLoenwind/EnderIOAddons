@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.tcom.engine;
 
+import info.loenwind.enderioaddons.recipe.Recipes;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -8,9 +9,13 @@ import net.minecraft.item.ItemStack;
 
 public enum Mats {
   STICK(Items.stick), STRING(Items.string), LEATHER(Items.leather), WOOD(Blocks.planks), COBBLE(Blocks.cobblestone), IRON(Items.iron_ingot), GOLD(
-      Items.gold_ingot), DIAMOND(Items.diamond);
+      Items.gold_ingot), DIAMOND(Items.diamond), DARKSTEEL(Recipes.darkSteel);
 
   private final ItemStack itemStack;
+
+  private Mats(ItemStack itemStack) {
+    this.itemStack = itemStack;
+  }
 
   private Mats(Item item) {
     this.itemStack = new ItemStack(item);
@@ -36,6 +41,7 @@ public enum Mats {
   }
 
   public boolean isSame(ItemStack itemstack) {
-    return itemstack != null && itemstack.getItem() != null && this.itemStack.getItem() == itemstack.getItem();
+    return itemstack != null && itemstack.getItem() != null && this.itemStack.getItem() == itemstack.getItem()
+        && this.itemStack.getItemDamage() == itemstack.getItemDamage() && !itemstack.hasTagCompound();
   }
 }
