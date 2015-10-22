@@ -1,13 +1,11 @@
 package info.loenwind.enderioaddons.machine.tcom;
 
-import static crazypants.enderio.config.Config.powerConduitTierOneRF;
-import static crazypants.enderio.config.Config.powerConduitTierThreeRF;
-import static crazypants.enderio.config.Config.powerConduitTierTwoRF;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.AbstractTileFramework;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.tcom.engine.EngineTcom;
@@ -40,8 +38,7 @@ import crazypants.enderio.power.BasicCapacitor;
 public class TileTcom extends AbstractTileFramework implements IFrameworkMachine, IProgressTile {
 
   @Store
-  //({ SAVE, ITEM })
-  protected EngineTcom engine = new EngineTcom(.1f, .5f); // TODO config
+  protected EngineTcom engine = new EngineTcom(Config.tcomRecyclingLossFix.getFloat(), Config.tcomRecyclingLossChanced.getFloat());
 
   protected @Store({ SAVE, ITEM }) int progress_in = 0; // in ticks
   protected @Store({ SAVE, ITEM }) ItemStack buffer_in = null;
@@ -128,9 +125,9 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
   }
 
   private boolean process_in_progress() {
-    if (progress_in > 0 && usePower(10f)) { // TODO cfg
+    if (progress_in > 0 && usePower(Config.tcomRecyclingPowerPerTick.getInt())) {
       progress_in++;
-      if (progress_in > 45) { // TODO cfg
+      if (progress_in > Config.tcomRecyclingTicksPerItem.getInt()) {
         if (buffer_in != null && engine.add(buffer_in)) {
           updateClients();
         } else {
@@ -165,10 +162,10 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
       return;
     }
     while (target.stackSize < target.getMaxStackSize()) {
-      if (canUsePower(10f)) { // TODO cfg
+      if (canUsePower(Config.tcomExtractingPowerPerItem.getInt())) {
         if (engine.get(mat)) {
           target.stackSize++;
-          usePower(10f); // TODO cfg
+          usePower(Config.tcomExtractingPowerPerItem.getInt());
         } else {
           break;
         }
@@ -212,15 +209,15 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
   }
 
   private void process_enchant_progress() {
-    if (progress_enchant > 0 && usePower(125f)) { // TODO cfg
+    if (progress_enchant > 0 && usePower(Config.tcomEnchantingPowerPerTick.getInt())) {
       progress_enchant++;
-      if (progress_enchant > 80) { // TODO cfg
+      if (progress_enchant > Config.tcomEnchantingTicksPerItem.getInt()) {
         if (buffer_enchant_result != null && buffer_enchant_original != null) {
           int levels = countEnchantmentLevels(buffer_enchant_result);
           if (levels > getWorldObj().rand.nextInt(levels + 10 + (int) getEnchantPower()
               + buffer_enchant_result.getItem().getItemEnchantability(buffer_enchant_result))) {
             buffer_enchant_result = buffer_enchant_original;
-            usePower(1250f); // TODO cfg
+            usePower(Config.tcomEnchantingPowerPerFailure.getInt());
             playSound_enchant_fail();
           } else {
             playSound_enchant();
@@ -275,7 +272,9 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
 
   public void updateClient(EntityPlayerMP player) {
     try {
-      PacketHandler.sendTo(new PacketTcomUpdate(this, true), player);
+      if (player != null && player.openContainer instanceof ContainerTcom) {
+        PacketHandler.sendTo(new PacketTcomUpdate(this, true), player);
+      }
     } catch (Throwable t) {
     }
   }
@@ -336,17 +335,8 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
 
   @Override
   public void onCapacitorTypeChange() {
-    switch (getCapacitorType()) {
-    case BASIC_CAPACITOR: // TODO power values
-      setCapacitor(new BasicCapacitor(powerConduitTierOneRF, 100000, powerConduitTierOneRF));
-      break;
-    case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(powerConduitTierTwoRF, 200000, powerConduitTierTwoRF));
-      break;
-    case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(powerConduitTierThreeRF, 500000, powerConduitTierThreeRF));
-      break;
-    }
+    setCapacitor(new BasicCapacitor(Config.tcomPowerIntakePerTick.getInt(), 10000, Config.tcomEnchantingPowerPerTick.getInt()
+        + Config.tcomRecyclingPowerPerTick.getInt()));
   }
 
   @Override
@@ -356,13 +346,6 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
 
   @Override
   public Fluid getTankFluid(@Nonnull TankSlot tankSlot) {
-    switch (tankSlot) {
-    case FRONT_LEFT:
-    case BACK_RIGHT:
-    case FRONT_RIGHT:
-      // TODO return engine.hasEnchantments() ? EnderIO.fluidXpJuice : null;
-    case BACK_LEFT:
-    }
     return null;
   }
 
@@ -393,12 +376,12 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
 
   @SideOnly(Side.CLIENT)
   public float getWorkProgress_in() {
-    return progress_in / 45f; // TODO cfg
+    return progress_in / Config.tcomRecyclingTicksPerItem.getFloat();
   }
 
   @SideOnly(Side.CLIENT)
   public float getWorkProgress_enchant() {
-    return progress_enchant / 80f; // TODO cfg
+    return progress_enchant / Config.tcomEnchantingTicksPerItem.getFloat();
   }
 
   @Override

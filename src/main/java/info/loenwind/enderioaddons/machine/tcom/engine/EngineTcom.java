@@ -56,7 +56,7 @@ public class EngineTcom {
   }
 
   public boolean add(ItemStack itemStack) {
-    List<Mats> mats = Item2Mats.getMats(Item2Mats.getItemType(itemStack), itemStack);
+    List<Mats> mats = Item2Mats.getMats(itemStack);
     int itemDamage = itemStack.getItemDamage();
     int maxDamage = itemStack.getMaxDamage();
     int stackSize = itemStack.stackSize;

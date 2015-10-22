@@ -85,7 +85,7 @@ public class BlockTcom extends AbstractMachineBlock<TileTcom> implements IFramew
 
   @Override
   public @Nonnull String getControllerModelName() {
-    return "waterController";
+    return "tcomController";
   }
 
   @Override

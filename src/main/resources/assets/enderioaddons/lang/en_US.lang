@@ -13,6 +13,10 @@ enderioaddons.heatingElement.name=Heating Element
 enderioaddons.filterElement.name=Filter Element
 enderioaddons.waterController.name=Water Extraction Framework Controller
 enderioaddons.ihopperController.name=Impulse Hopper Framework Controller
+enderioaddons.tcomController.name=Loot Recycler Framework Controller
+enderioaddons.tray.name=Item Tray
+enderioaddons.pylon.name=Enchantment Modulator Core
+enderioaddons.pylontank.name=Enchantment Modulator
 
 tile.blockCobbleworks.name=Cobblestone Framework
 tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.

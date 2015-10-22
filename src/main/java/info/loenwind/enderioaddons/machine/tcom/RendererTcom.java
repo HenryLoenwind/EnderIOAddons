@@ -24,7 +24,6 @@ import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.tcom.engine.EngineTcom;
 import info.loenwind.enderioaddons.machine.tcom.engine.Mats;
-import info.loenwind.enderioaddons.recipe.Recipes;
 import info.loenwind.enderioaddons.render.FaceRenderer;
 
 import java.util.List;
@@ -35,7 +34,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -186,6 +184,89 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, xform, brightnessPerSide, true);
   }
 
+  public static void renderStandaloneTray() {
+
+    IIcon icon_side = BlockTcom.blockTcom.getIcon(SOUTH.ordinal(), 0);
+    IIcon icon_bottom = BlockTcom.blockTcom.getIcon(DOWN.ordinal(), 0);
+    IIcon icon_top = BlockTcom.blockTcom.getIcon(UP.ordinal(), 0);
+
+    IIcon[] icons1 = { icon_bottom, null, icon_side, icon_side, icon_side, icon_side };
+
+    BoundingBox bb1 = makePartialBB(0, 0, 0, 16, 16, 16);
+    BoundingBox bb2 = makePartialBB(1, 0, 0, 15, 16, 16);
+    BoundingBox bb3 = makePartialBB(0, 0, 1, 16, 16, 15);
+    BoundingBox bb4 = makePartialBB(0, 0, 0, 16, 7, 16);
+    BoundingBox bb5 = makePartialBB(0, 1, 0, 16, 16, 16);
+
+    // top box
+    renderCube(bb1, icons1, null, brightnessPerSide, false);
+    renderSingleFace(bb4, UP, icon_top, 0, 16, 0, 16, null, brightnessPerSide, false);
+
+    // inside
+    renderSingleFace(bb5, DOWN, icon_bottom, 0, 16, 0, 16, null, brightnessPerSide, true);
+    renderSingleFace(bb2, EAST, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
+    renderSingleFace(bb2, WEST, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
+    renderSingleFace(bb3, NORTH, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
+    renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
+  }
+
+  public static void renderStandaloneEnchantmentPylon(boolean withTank) {
+    RenderUtil.bindTexture(EnderIOAddons.DOMAIN + ":textures/blocks/enchantmentbase.png");
+
+    BoundingBox bb2 = makePartialBB(2, 0, 2, 14, 16, 14);
+    BoundingBox bb3 = makePartialBB(3, 0, 3, 13, 16, 13).scale(1, 0.96, 1);
+
+    float minU = (EnderIO.proxy.getTickCount() % 24) / 48f;
+    float maxU = minU + 24f / 48f;
+    float minV = .5f;
+    float maxV = 1f;
+
+    setupVertices(bb2, null);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, brightnessPerSide, true);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, brightnessPerSide, true);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, null, brightnessPerSide, true);
+    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, null, brightnessPerSide, true);
+    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+
+    minU = 0f;
+    maxU = 20f / 48f;
+    minV = 0f;
+    maxV = .5f;
+
+    setupVertices(bb3, null);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, null, brightnessPerSide, false);
+
+    minU = 0f;
+    maxU = 10f / 48f;
+    minV = 0f;
+    maxV = 10f / 64f;
+
+    renderSingleFace(ForgeDirection.UP, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.DOWN, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+
+    if (withTank) {
+      Tessellator.instance.draw();
+      Tessellator.instance.startDrawingQuads();
+      RenderUtil.bindTexture(EnderIOAddons.DOMAIN + ":textures/blocks/frameworkModel.png");
+
+      minU = 92f / 128f;
+      maxU = minU + 12f / 128f;
+      minV = 94f / 128f;
+      maxV = minV + 12f / 128f;
+
+      setupVertices(BoundingBox.UNIT_CUBE, null);
+      for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+        renderSingleFace(dir, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+      }
+    }
+  }
+
   private boolean renderTrayItems(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot, boolean lower) {
     if (te.engine.getAmount(LEATHER) < 0.01f && te.engine.getAmount(STRING) < 0.01f) {
       return false;
@@ -228,29 +309,12 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
   private boolean wood_or_sticks_has_rendered = false;
 
   private boolean renderTrayContents(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot, boolean lower, Mats mat) {
-    Block toRender = null;
     switch (mat) {
-    case COBBLE:
-      toRender = Blocks.cobblestone;
-      break;
-    case DARKSTEEL:
-      toRender = Block.getBlockFromItem(Recipes.darkSteelBlock.getItem());
-      break;
-    case DIAMOND:
-      toRender = Blocks.diamond_block;
-      break;
-    case GOLD:
-      toRender = Blocks.gold_block;
-      break;
-    case IRON:
-      toRender = Blocks.iron_block;
-      break;
     case WOOD:
     case STICK:
       if (wood_or_sticks_has_rendered) {
         return false;
       }
-      toRender = Blocks.planks;
       wood_or_sticks_has_rendered = true;
       break;
     case LEATHER:
@@ -260,7 +324,10 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       }
       leather_or_string_has_rendered = true;
       return renderTrayItems(te, tankSlot, lower);
+    default:
+      break;
     }
+    Block toRender = Block.getBlockFromItem(mat.getBlockStack().getItem());
 
     int[] pos = frameRenderer.translateToSlotPosition(SOUTH, tankSlot);
 
@@ -424,6 +491,11 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     BoundingBox bb = new BoundingBox(px * minX, px * minY, px * minZ, px * maxX, px * maxY, px * maxZ);
     bb = centerscale(bb, px * 6D, px * 6D, px * 6D);
     bb = bb.translate(pos[0] * 4f / 16f, 4f / 16f, pos[1] * 4f / 16f);
+    return bb;
+  }
+
+  private static BoundingBox makePartialBB(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    BoundingBox bb = new BoundingBox(px * minX, px * minY, px * minZ, px * maxX, px * maxY, px * maxZ);
     return bb;
   }
 
