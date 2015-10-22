@@ -68,3 +68,13 @@ enderioaddons.gui.tooltip.redstoneControlMode.off=Low signal
 enderioaddons.gui.tooltip.redstoneControlMode.ignore=Always active
 enderioaddons.gui.tooltip.redstoneControlMode.never=Never active
 
+enderioaddons.tcom.ench.tooltip=%1$s levels of "%2$s"
+enderioaddons.tcom.get.ench.tooltip=Enchant an item with some "%1$s"
+enderioaddons.tcom.get.mat.tooltip=Retrieve stored "%1$s"
+enderioaddons.tcom.input.tooltip=§4Items placed here will be §ndestroyed§4!
+
+tile.blockTcom.name=Loot Recycler
+tile.blockTcom.tooltip.detailed.line1=The Loot Recycler can be used to break down common mob
+tile.blockTcom.tooltip.detailed.line2=loot into its components. It will also extract any
+tile.blockTcom.tooltip.detailed.line3=enchantments that are on those items.
+

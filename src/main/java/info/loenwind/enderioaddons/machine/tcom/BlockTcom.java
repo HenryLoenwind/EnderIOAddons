@@ -5,10 +5,13 @@ import info.loenwind.enderioaddons.common.GuiIds;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkBlock;
 import info.loenwind.enderioaddons.machine.framework.ITextureProvider;
 
+import java.util.Random;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -108,6 +111,11 @@ public class BlockTcom extends AbstractMachineBlock<TileTcom> implements IFramew
   @Override
   public IIcon getTexture() {
     return controllerTexture;
+  }
+
+  @Override
+  public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
+    Blocks.enchanting_table.randomDisplayTick(world, x, y, z, rand);
   }
 
 }

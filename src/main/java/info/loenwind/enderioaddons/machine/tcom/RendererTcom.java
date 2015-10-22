@@ -9,12 +9,14 @@ import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.STRING;
 import static info.loenwind.enderioaddons.machine.tcom.engine.Mats.WOOD;
 import static info.loenwind.enderioaddons.render.FaceRenderer.renderCube;
 import static info.loenwind.enderioaddons.render.FaceRenderer.renderSingleFace;
+import static info.loenwind.enderioaddons.render.FaceRenderer.setupVertices;
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 import static net.minecraftforge.common.util.ForgeDirection.EAST;
 import static net.minecraftforge.common.util.ForgeDirection.NORTH;
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.util.ForgeDirection.UP;
 import static net.minecraftforge.common.util.ForgeDirection.WEST;
+import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
@@ -48,6 +50,7 @@ import com.enderio.core.client.render.VertexRotationFacing;
 import com.enderio.core.common.vecmath.Vector3d;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import crazypants.enderio.EnderIO;
 
 public class RendererTcom implements ISimpleBlockRenderingHandler {
 
@@ -94,7 +97,9 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       for (int lower = 0; lower <= 1; lower++) {
         for (TankSlot tankSlot : TankSlot.values()) {
           tankSlot = notnullJ(tankSlot, "enum.values()[i]");
-          if (!(tankSlot == FRONT_LEFT && lower == 0) && !(tankSlot == FRONT_RIGHT && lower == 1)) {
+          if (tankSlot == FRONT_RIGHT && lower == 1) {
+            renderEnchantments(te, tankSlot, lower == 1);
+          } else if (!(tankSlot == FRONT_LEFT && lower == 0)) {
             while (idx < list.size()) {
               if (renderTrayContents(te, tankSlot, lower == 1, Mats.getMat(list.get(idx++)))) {
                 break;
@@ -212,6 +217,7 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
         renderSingleFace(bbi, UP, icon, 0, 16, 0, 16, xform, brightnessPerSide, false);
       }
     }
+
     Tessellator.instance.draw();
     Tessellator.instance.startDrawingQuads();
     RenderUtil.bindBlockTexture();
@@ -284,6 +290,133 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     } else {
       return false;
     }
+  }
+
+  private void renderEnchantments(@Nonnull TileTcom te, @Nonnull TankSlot tankSlot, boolean lower) {
+    int[] pos = frameRenderer.translateToSlotPosition(SOUTH, tankSlot);
+
+    EngineTcom e = te.engine;
+    float rawAmount = e.getEnchantmentAmounts() / 100;
+    int renderAmount = (int) (rawAmount * 16);
+    if (rawAmount > 0 && renderAmount < 1) {
+      renderAmount = 1;
+    } else if (renderAmount > 16) {
+      renderAmount = 16;
+    }
+
+    if (renderAmount > 0) {
+      Tessellator.instance.draw();
+      Tessellator.instance.startDrawingQuads();
+      RenderUtil.bindTexture(EnderIOAddons.DOMAIN + ":textures/blocks/enchantments.png");
+
+      int renderAmount2 = renderAmount / 2;
+      if (renderAmount == 0) {
+        renderAmount = 1;
+      }
+      BoundingBox bb = makePartialBBofSlot(0, 0, 0, 16, renderAmount2, 16, pos).scale(.99, 1, .99);
+      BoundingBox bb1 = makePartialBBofSlot(1, 0, 1, 15, renderAmount, 15, pos);
+      if (lower) {
+        bb = bb.translate(0, -8f / 16f, 0);
+        bb1 = bb1.translate(0, -8f / 16f, 0);
+      }
+
+      if (te.lastRenderTick != EnderIO.proxy.getTickCount()) {
+        te.lastRenderTick = EnderIO.proxy.getTickCount();
+        te.renderData[0] += te.renderData[1];
+        if (te.renderData[0] + 32 >= 320) {
+          te.renderData[0]--;
+          te.renderData[1] = -1;
+        } else if (te.renderData[0] <= -1) {
+          te.renderData[0]++;
+          te.renderData[1] = 1;
+        }
+        te.renderData[2] += te.getWorldObj().rand.nextInt(5) - 2;
+        if (te.renderData[2] + 32 >= 64) {
+          te.renderData[2] = 31;
+        } else if (te.renderData[2] < 0) {
+          te.renderData[2] = 0;
+        }
+        te.renderData[3] += te.renderData[1];
+        if (te.renderData[3] < 0) {
+          te.renderData[3] += 24;
+        } else if (te.renderData[3] >= 24) {
+          te.renderData[3] -= 24;
+        }
+      }
+
+      float minU = te.renderData[2] / 64f;
+      float maxU = (te.renderData[2] + 32) / 64f;
+      float minV = te.renderData[0] / 320f;
+      float maxV = (te.renderData[0] + renderAmount * 2) / 320f;
+      if (te.renderData[1] < 0) {
+        float tmp = minV;
+        minV = maxV;
+        maxV = tmp;
+      }
+
+      setupVertices(bb1, xform);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.UP, 0f, 32f / 64f, 0f, 32f / 320f, xform, brightnessPerSide, false);
+
+      if (te.renderData[1] < 0) {
+        minV = (te.renderData[0] + renderAmount2 * 2) / 320f;
+      } else {
+        maxV = (te.renderData[0] + renderAmount2 * 2) / 320f;
+      }
+
+      setupVertices(bb, xform);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.UP, 0f, 32f / 64f, 0f, 32f / 320f, xform, brightnessPerSide, false);
+    }
+
+    if (renderAmount < 16) {
+      Tessellator.instance.draw();
+      Tessellator.instance.startDrawingQuads();
+      RenderUtil.bindTexture(EnderIOAddons.DOMAIN + ":textures/blocks/enchantmentbase.png");
+
+      BoundingBox bb2 = makePartialBBofSlot(2, 0, 2, 14, 16, 14, pos);
+      BoundingBox bb3 = makePartialBBofSlot(3, 0, 3, 13, 16, 13, pos);
+      if (lower) {
+        bb2 = bb2.translate(0, -8f / 16f, 0);
+        bb3 = bb3.translate(0, -8f / 16f, 0);
+      }
+
+      float minU = te.renderData[3] / 48f;
+      float maxU = minU + 24f / 48f;
+      float minV = .5f;
+      float maxV = 1f;
+
+      setupVertices(bb2, xform);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
+      renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
+      renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+
+      minU = 0f;
+      maxU = 20f / 48f;
+      minV = 0f;
+      maxV = .5f;
+
+      setupVertices(bb3, xform);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+    }
+
+    Tessellator.instance.draw();
+    Tessellator.instance.startDrawingQuads();
+    RenderUtil.bindBlockTexture();
   }
 
   private static final double px = 1D / 16D;

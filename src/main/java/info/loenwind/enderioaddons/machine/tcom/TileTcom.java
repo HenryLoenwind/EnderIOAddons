@@ -3,6 +3,8 @@ package info.loenwind.enderioaddons.machine.tcom;
 import static crazypants.enderio.config.Config.powerConduitTierOneRF;
 import static crazypants.enderio.config.Config.powerConduitTierThreeRF;
 import static crazypants.enderio.config.Config.powerConduitTierTwoRF;
+import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
+import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
@@ -11,23 +13,42 @@ import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.tcom.engine.EngineTcom;
 import info.loenwind.enderioaddons.machine.tcom.engine.Mats;
 
-import javax.annotation.Nonnull;
+import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.Fluid;
+
+import com.enderio.core.api.common.util.IProgressTile;
+import com.enderio.core.common.util.ItemUtil;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.network.PacketHandler;
 import crazypants.enderio.power.BasicCapacitor;
 
 @Storable
-public class TileTcom extends AbstractTileFramework implements IFrameworkMachine {
+public class TileTcom extends AbstractTileFramework implements IFrameworkMachine, IProgressTile {
 
   @Store
   //({ SAVE, ITEM })
   protected EngineTcom engine = new EngineTcom(.1f, .5f); // TODO config
+
+  protected @Store({ SAVE, ITEM }) int progress_in = 0; // in ticks
+  protected @Store({ SAVE, ITEM }) ItemStack buffer_in = null;
+  protected @Store({ SAVE, ITEM }) int progress_enchant = 0; // in ticks
+  protected @Store({ SAVE, ITEM }) ItemStack buffer_enchant_result = null;
+  protected @Store({ SAVE, ITEM }) ItemStack buffer_enchant_original = null;
+  protected EntityPlayerMP buffer_enchant_player = null;
 
   public TileTcom() {
     super(new SlotDefinition(2, 2, 0));
@@ -57,27 +78,69 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
   }
 
   @Override
-  public int getInventoryStackLimit() {
-    return 1;
-  }
-
-  @Override
   public boolean isActive() {
     return false;
   }
 
   @Override
   protected boolean processTasks(boolean rsCheckPassed) {
-    if (rsCheckPassed && shouldDoWorkThisTick(10)) { // TODO cfg
-      if (inventory[slotDefinition.getMinInputSlot()] != null && canUsePower(100f)) { // TODO cfg
-        if (engine.add(inventory[slotDefinition.getMinInputSlot()])) {
+    if (rsCheckPassed) {
+      if (!process_in_progress() && progress_in == 0 && inventory[slotDefinition.getMinInputSlot()] != null) {
+        takeCareOfStrayItem(buffer_in);
+        buffer_in = inventory[slotDefinition.getMinInputSlot()].copy();
+        if (buffer_in.stackSize == 1) {
           inventory[slotDefinition.getMinInputSlot()] = null;
-          usePower(100f); // TODO cfg
-          markDirty();
-          playSound_in();
-          updateClients();
+        } else {
+          inventory[slotDefinition.getMinInputSlot()].stackSize--;
+          buffer_in.stackSize = 1;
         }
+        progress_in = 1;
+        markDirty();
+        playSound_in();
+        updateClients();
       }
+      process_enchant_progress();
+    }
+    return false;
+  }
+
+  /**
+   * Makes sure the given item is moved somewhere. It'll prefer an output slot
+   * if one is free, but will drop the item to the ground if not. It won't try
+   * such things as stacking the item because it is just a way to get rid of
+   * something that shouldn't have existed in the first place. Make sure to
+   * remove the item from wherever it was afterwards.
+   * 
+   * Save to be called with null.
+   */
+  private void takeCareOfStrayItem(@Nullable ItemStack item) {
+    if (item != null) {
+      if (inventory[slotDefinition.getMinOutputSlot()] == null) {
+        inventory[slotDefinition.getMinOutputSlot()] = item;
+        markDirty();
+      } else if (inventory[slotDefinition.getMinOutputSlot() + 1] == null) {
+        inventory[slotDefinition.getMinOutputSlot() + 1] = item;
+        markDirty();
+      } else {
+        ItemUtil.spawnItemInWorldWithRandomMotion(getWorldObj(), buffer_in, xCoord, yCoord, zCoord);
+      }
+    }
+  }
+
+  private boolean process_in_progress() {
+    if (progress_in > 0 && usePower(10f)) { // TODO cfg
+      progress_in++;
+      if (progress_in > 45) { // TODO cfg
+        if (buffer_in != null && engine.add(buffer_in)) {
+          updateClients();
+        } else {
+          takeCareOfStrayItem(buffer_in);
+        }
+        markDirty();
+        buffer_in = null;
+        progress_in = 0;
+      }
+      return true;
     }
     return false;
   }
@@ -120,39 +183,115 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
   }
 
   public void extractEnchantment(int id, EntityPlayerMP player) {
-    if (inventory[slotDefinition.getMinOutputSlot() + 1] != null || inventory[slotDefinition.getMinInputSlot() + 1] == null) {
+    if (progress_enchant > 0 || inventory[slotDefinition.getMinOutputSlot() + 1] != null || inventory[slotDefinition.getMinInputSlot() + 1] == null) {
       playSound_fail();
       return;
     }
-    if (canUsePower(10000f) && engine.addEnchantment(inventory[slotDefinition.getMinInputSlot() + 1], id)) { // TODO cfg
-      inventory[slotDefinition.getMinOutputSlot() + 1] = inventory[slotDefinition.getMinInputSlot() + 1];
-      inventory[slotDefinition.getMinInputSlot() + 1] = null;
-      usePower(10000f); // TODO cfg
-      markDirty();
-      playSound_enchant();
-      updateClient(player);
+    if (engine.canAddEnchantment(inventory[slotDefinition.getMinInputSlot() + 1], id)) {
+      buffer_enchant_original = inventory[slotDefinition.getMinInputSlot() + 1].copy();
+      buffer_enchant_original.stackSize = 1;
+      buffer_enchant_result = buffer_enchant_original.copy();
+      if (engine.addEnchantment(buffer_enchant_result, id,
+          (int) getEnchantPower() + buffer_enchant_result.getItem().getItemEnchantability(buffer_enchant_result) / 2)) {
+        if (inventory[slotDefinition.getMinInputSlot() + 1].stackSize == 1) {
+          inventory[slotDefinition.getMinInputSlot() + 1] = null;
+        } else {
+          inventory[slotDefinition.getMinInputSlot() + 1].stackSize--;
+        }
+        progress_enchant = 1;
+        buffer_enchant_player = player;
+        markDirty();
+        updateClient(player);
+      } else {
+        buffer_enchant_result = buffer_enchant_original = null;
+        playSound_fail();
+      }
     } else {
       playSound_fail();
     }
   }
 
+  private void process_enchant_progress() {
+    if (progress_enchant > 0 && usePower(125f)) { // TODO cfg
+      progress_enchant++;
+      if (progress_enchant > 80) { // TODO cfg
+        if (buffer_enchant_result != null && buffer_enchant_original != null) {
+          int levels = countEnchantmentLevels(buffer_enchant_result);
+          if (levels > getWorldObj().rand.nextInt(levels + 10 + (int) getEnchantPower()
+              + buffer_enchant_result.getItem().getItemEnchantability(buffer_enchant_result))) {
+            buffer_enchant_result = buffer_enchant_original;
+            usePower(1250f); // TODO cfg
+            playSound_enchant_fail();
+          } else {
+            playSound_enchant();
+          }
+          if (inventory[slotDefinition.getMinOutputSlot() + 1] == null) {
+            inventory[slotDefinition.getMinOutputSlot() + 1] = buffer_enchant_result;
+          } else {
+            takeCareOfStrayItem(buffer_enchant_result);
+          }
+          updateClient(buffer_enchant_player);
+        } else {
+          takeCareOfStrayItem(buffer_enchant_original);
+        }
+        markDirty();
+        buffer_enchant_result = buffer_enchant_original = null;
+        buffer_enchant_player = null;
+        progress_enchant = 0;
+      }
+    }
+  }
+
+  private static int countEnchantmentLevels(ItemStack itemStack) {
+    int result = 0;
+    Map<Integer, Integer> enchantmentsOnItemStack = EnchantmentHelper.getEnchantments(itemStack);
+    for (Integer level : enchantmentsOnItemStack.values()) {
+      result += level;
+    }
+    return result;
+  }
+
+  private float getEnchantPower() {
+    float power = 0;
+
+    for (int j = -1; j <= 1; ++j) {
+      for (int k = -1; k <= 1; ++k) {
+        if ((j != 0 || k != 0) && getWorldObj().isAirBlock(xCoord + k, yCoord, zCoord + j) && getWorldObj().isAirBlock(xCoord + k, yCoord + 1, zCoord + j)) {
+          power += ForgeHooks.getEnchantPower(getWorldObj(), xCoord + k * 2, yCoord, zCoord + j * 2);
+          power += ForgeHooks.getEnchantPower(getWorldObj(), xCoord + k * 2, yCoord + 1, zCoord + j * 2);
+
+          if (k != 0 && j != 0) {
+            power += ForgeHooks.getEnchantPower(getWorldObj(), xCoord + k * 2, yCoord, zCoord + j);
+            power += ForgeHooks.getEnchantPower(getWorldObj(), xCoord + k * 2, yCoord + 1, zCoord + j);
+            power += ForgeHooks.getEnchantPower(getWorldObj(), xCoord + k, yCoord, zCoord + j * 2);
+            power += ForgeHooks.getEnchantPower(getWorldObj(), xCoord + k, yCoord + 1, zCoord + j * 2);
+          }
+        }
+      }
+    }
+
+    return power;
+  }
+
   public void updateClient(EntityPlayerMP player) {
-    PacketHandler.sendTo(new PacketTcomUpdate(this, true), player);
+    try {
+      PacketHandler.sendTo(new PacketTcomUpdate(this, true), player);
+    } catch (Throwable t) {
+    }
   }
 
   public void updateClients() {
     PacketHandler.sendToAllAround(new PacketTcomUpdate(this, false), this);
   }
 
-  private long[] lastSoundTick = new long[3];
-  private static final String[] soundsIds = { "in", "enchant", "fail" };
-  private static final int[] soundDurations = { 45, 36, 5 }; // 2.226s, 1.777s, 0.239s
+  private static final String[] soundsIds = { "machine.tcom.in", "machine.tcom.enchant", "machine.tcom.fail", "machine.tcom.enchant.fail" };
+  private static final int[] soundDurations = { 45, 36, 5, 41 }; // 2.226s, 1.777s, 0.239s, 2.039s
+  private final long[] lastSoundTick = new long[soundsIds.length];
 
   private void playSound(int id) {
-    if (crazypants.enderio.config.Config.machineSoundsEnabled && lastSoundTick[id] < EnderIO.proxy.getTickCount()) {
+    if (crazypants.enderio.config.Config.machineSoundsEnabled && lastSoundTick[id] <= EnderIO.proxy.getTickCount()) {
       lastSoundTick[id] = EnderIO.proxy.getTickCount() + soundDurations[id];
-      getWorldObj().playSoundEffect(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, EnderIOAddons.DOMAIN + ":machine.tcom." + soundsIds[id], getVolume(),
-          getPitch());
+      getWorldObj().playSoundEffect(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, EnderIOAddons.DOMAIN + ":" + soundsIds[id], getVolume(), 1.0f);
     }
   }
 
@@ -166,6 +305,10 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
 
   private void playSound_fail() {
     playSound(2);
+  }
+
+  private void playSound_enchant_fail() {
+    playSound(3);
   }
 
   public boolean canUsePower(Float wantToUse) {
@@ -217,7 +360,7 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
     case FRONT_LEFT:
     case BACK_RIGHT:
     case FRONT_RIGHT:
-      return engine.hasEnchantments() ? EnderIO.fluidXpJuice : null;
+      // TODO return engine.hasEnchantments() ? EnderIO.fluidXpJuice : null;
     case BACK_LEFT:
     }
     return null;
@@ -242,5 +385,42 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
   public IIcon getSlotIcon(@Nonnull TankSlot tankSlot, int side) {
     return null;
   }
+
+  @Override
+  public float getProgress() {
+    return progress_in * 1000 + progress_enchant;
+  }
+
+  @SideOnly(Side.CLIENT)
+  public float getWorkProgress_in() {
+    return progress_in / 45f; // TODO cfg
+  }
+
+  @SideOnly(Side.CLIENT)
+  public float getWorkProgress_enchant() {
+    return progress_enchant / 80f; // TODO cfg
+  }
+
+  @Override
+  public void setProgress(float progress) {
+    if (progress > 0) {
+      int p = (int) progress;
+      progress_in = p / 1000;
+      progress_enchant = p - progress_in * 1000;
+    } else {
+      progress_in = 0;
+      progress_enchant = 0;
+    }
+  }
+
+  @Override
+  public TileEntity getTileEntity() {
+    return this;
+  }
+
+  @SideOnly(Side.CLIENT)
+  public final int[] renderData = { 160, 1, 15, 0 };
+  @SideOnly(Side.CLIENT)
+  public long lastRenderTick = 0;
 
 }

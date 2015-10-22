@@ -26,6 +26,12 @@
       "machine/tcom/enchant1"
     ]
   },
+  "machine.tcom.enchant.fail": {
+    "category": "block",
+    "sounds": [
+      "machine/tcom/enchantfail1"
+    ]
+  },
   "machine.tcom.fail": {
     "category": "block",
     "sounds": [

@@ -38,7 +38,7 @@ public class EngineTcom {
   @Store
   private final float[] materialPool = new float[Mats.values().length];
   @Store
-  private boolean hasEnchantments = false;
+  private float enchantmentAmount = 0;
 
   private final float minloss, randloss;
 
@@ -49,7 +49,7 @@ public class EngineTcom {
 
   @SuppressWarnings("static-method")
   public boolean addable(ItemStack itemStack) {
-    if (itemStack == null || itemStack.getItem() == null || itemStack.stackSize != 1) {
+    if (itemStack == null || itemStack.getItem() == null) {
       return false;
     }
     return Item2Mats.isValid(itemStack);
@@ -109,16 +109,22 @@ public class EngineTcom {
     }
   }
 
-  private EnchantmentData getEnchantmentData(int id) {
+  private EnchantmentData getEnchantmentData(int id, int enchantmentPower) {
     Enchantment enchantment = Enchantment.enchantmentsList[id];
-    final int maxLevel = enchantment.getMaxLevel();
-    int level = LinearRandom.getValue((int) (maxLevel < enchantmentPool[id] ? maxLevel : enchantmentPool[id]), rand);
+    final int maxLevel = (int) (enchantment.getMaxLevel() < enchantmentPool[id] ? enchantment.getMaxLevel() : enchantmentPool[id]);
+    int level = 1;
+    for (int i = 0; i <= enchantmentPower / 8 && maxLevel > level; i++) {
+      int tmp = LinearRandom.getValue(maxLevel, rand);
+      if (tmp > level) {
+        level = tmp;
+      }
+    }
     enchantmentPool[id] -= level;
     return new EnchantmentData(enchantment, level);
   }
 
   public boolean isValidTarget(ItemStack itemStack) {
-    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1) {
+    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book) {
       return false;
     }
     Map<Integer, Integer> enchantmentsOnItemStack = EnchantmentHelper.getEnchantments(itemStack);
@@ -157,7 +163,7 @@ public class EngineTcom {
     if (itemStack == null) {
       return getEnchantments();
     }
-    if (itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1) {
+    if (itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book) {
       return Collections.EMPTY_MAP;
     }
     Map<Enchantment, Float> result = new HashMap<>();
@@ -194,28 +200,17 @@ public class EngineTcom {
   }
 
   public float getEnchantmentAmounts() {
-    float result = 0;
-    for (int id = 0; id < enchantmentPool.length; id++) {
-      result += enchantmentPool[id];
-    }
-    return result;
-  }
-
-  public boolean hasEnchantments() {
-    return hasEnchantments;
+    return enchantmentAmount;
   }
 
   private void computeHasEnchantments() {
+    enchantmentAmount = 0;
     for (int id = 0; id < enchantmentPool.length; id++) {
-      if (enchantmentPool[id] >= 1) {
-        hasEnchantments = true;
-        return;
-      }
+      enchantmentAmount += enchantmentPool[id];
     }
-    hasEnchantments = false;
   }
 
-  public boolean addEnchantment(ItemStack itemStack, int id) {
+  public boolean addEnchantment(ItemStack itemStack, int id, int enchantmentPower) {
     Enchantment enchantmentInPool = Enchantment.enchantmentsList[id];
     if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || itemStack.stackSize != 1
         || enchantmentInPool == null || enchantmentPool[id] < 1) {
@@ -225,7 +220,7 @@ public class EngineTcom {
       if (!enchantmentInPool.isAllowedOnBooks()) {
         return false;
       }
-      EnchantmentData enchantmentData = getEnchantmentData(id);
+      EnchantmentData enchantmentData = getEnchantmentData(id, enchantmentPower);
       itemStack.func_150996_a(Items.enchanted_book);
       Items.enchanted_book.addEnchantment(itemStack, enchantmentData);
       computeHasEnchantments();
@@ -241,9 +236,34 @@ public class EngineTcom {
           return false;
         }
       }
-      EnchantmentData enchantmentData = getEnchantmentData(id);
+      EnchantmentData enchantmentData = getEnchantmentData(id, enchantmentPower);
       itemStack.addEnchantment(enchantmentData.enchantmentobj, enchantmentData.enchantmentLevel);
       computeHasEnchantments();
+      return true;
+    }
+  }
+
+  public boolean canAddEnchantment(ItemStack itemStack, int id) {
+    Enchantment enchantmentInPool = Enchantment.enchantmentsList[id];
+    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem() == Items.enchanted_book || enchantmentInPool == null || enchantmentPool[id] < 1) {
+      return false;
+    }
+    if (itemStack.getItem() == Items.book) {
+      if (!enchantmentInPool.isAllowedOnBooks()) {
+        return false;
+      }
+      return true;
+    } else {
+      if (!enchantmentInPool.canApply(itemStack)) {
+        return false;
+      }
+      Map<Integer, Integer> enchantmentsOnItemStack = EnchantmentHelper.getEnchantments(itemStack);
+      for (Integer id2 : enchantmentsOnItemStack.keySet()) {
+        Enchantment enchantmentOnItemStack = Enchantment.enchantmentsList[id2];
+        if (!enchantmentInPool.canApplyTogether(enchantmentOnItemStack) || !enchantmentOnItemStack.canApplyTogether(enchantmentInPool)) {
+          return false;
+        }
+      }
       return true;
     }
   }

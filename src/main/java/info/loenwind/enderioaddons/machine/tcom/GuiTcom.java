@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -26,12 +27,15 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
+import com.enderio.core.api.client.gui.IGuiOverlay;
 import com.enderio.core.client.gui.widget.GuiToolTip;
 import com.enderio.core.client.render.RenderUtil;
 
 import cpw.mods.fml.common.Optional;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.gui.IconEIO;
+import crazypants.enderio.machine.gui.GuiButtonIoConfig;
+import crazypants.enderio.machine.gui.GuiOverlayIoConfig;
 import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 import crazypants.enderio.network.PacketHandler;
 
@@ -51,6 +55,10 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
   protected boolean isEnchantScreen = false;
   protected final InvisibleButton[] getButtons = new InvisibleButton[SCROLL_ITEMS];
   protected final GuiToolTip[] enchTooltips = new GuiToolTip[SCROLL_ITEMS];
+  protected final GuiToolTip inputTooltip;
+
+  protected GuiButtonIoConfig configB2;
+  protected static final int CONFIG_ID2 = 8962349;
 
   private String texture = null;
   private long lastUpdateRequest = 0;
@@ -67,11 +75,16 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     addToolTip(enchTooltips[1] = new GuiToolTip(new Rectangle(54, 33, 88, 18), (List<String>) null));
     addToolTip(enchTooltips[2] = new GuiToolTip(new Rectangle(54, 52, 88, 18), (List<String>) null));
 
-    getButtons[0] = new InvisibleButton(this, 100, 124, 14); // TODO: tooltips
+    addToolTip(inputTooltip = new GuiToolTip(new Rectangle(19, 14, 18, 18), EnderIOAddons.lang.localize("tcom.input.tooltip")));
+
+    getButtons[0] = new InvisibleButton(this, 100, 124, 14);
     getButtons[1] = new InvisibleButton(this, 101, 124, 33);
     getButtons[2] = new InvisibleButton(this, 102, 124, 52);
     getButtons[0].width = getButtons[1].width = getButtons[2].width = 18;
     getButtons[0].height = getButtons[1].height = getButtons[2].height = 12;
+    getButtons[0].setToolTip("");
+    getButtons[1].setToolTip("");
+    getButtons[2].setToolTip("");
 
     lastUpdateRequest = EnderIO.proxy.getTickCount() + 10;
     PacketHandler.INSTANCE.sendToServer(new PacketTcomAction(getTileEntity()));
@@ -82,6 +95,7 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     ((StdSlot) ((ContainerTcom) inventorySlots).in1).enable(isEnchantScreen);
     ((StdOutputSlot) ((ContainerTcom) inventorySlots).out0).enable(!isEnchantScreen);
     ((StdOutputSlot) ((ContainerTcom) inventorySlots).out1).enable(isEnchantScreen);
+    inputTooltip.setVisible(!isEnchantScreen);
     plus.enabled = scrollPosition < maxScrollItems - SCROLL_ITEMS;
     minus.enabled = scrollPosition > 0;
     tab_mats.enabled = isEnchantScreen;
@@ -97,7 +111,17 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
   @Override
   public void initGui() {
     super.initGui();
+    configB.visible = false;
     redstoneButton.visible = false;
+    for (IGuiOverlay overlay : overlays) {
+      if (overlay instanceof GuiOverlayIoConfig) {
+        int x = getXSize() - 5 - BUTTON_SIZE;
+        int y = 5;
+        configB2 = new GuiButtonIoConfig(this, CONFIG_ID2, x, y, getTileEntity(), (GuiOverlayIoConfig) overlay);
+        configB2.onGuiInit();
+        break;
+      }
+    }
     plus.onGuiInit();
     minus.onGuiInit();
     tab_mats.onGuiInit();
@@ -216,11 +240,11 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
       int y0 = y + 15 + (i - scrollPosition) * SCROLL_STEP - scrollPositionOffset;
       if (y0 >= y && y0 < y + 69) {
         final Enchantment enchantment = keyList.get(i);
-        final Float amount = enchantments.get(enchantment);
         drawEnchantmentText(enchantment, x, y0);
+        final Float amount = enchantments.get(enchantment);
         if (scrollPositionOffset > -2 && scrollPositionOffset < 2) {
           int x10 = amount.intValue() / 10;
-          float m10 = amount - x10;
+          float m10 = amount - x10 * 10;
           if (x10 > 10) {
             x10 = 10;
             m10 = 10;
@@ -231,7 +255,9 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
           drawProgressLine(x + 1, y0 + 15, barAmount2, 1);
         }
         if (scrollPositionOffset == 0 && line < enchTooltips.length) {
-          enchTooltips[line++].setToolTipText(amount + " levels"); // TODO localize
+          final String enchantmentName = EnderIOAddons.lang.localizeExact(enchantment.getName());
+          getButtons[line].setToolTip(EnderIOAddons.lang.localize("tcom.get.ench.tooltip", enchantmentName));
+          enchTooltips[line++].setToolTipText(EnderIOAddons.lang.localize("tcom.ench.tooltip", String.format("%.1f", amount), enchantmentName));
         }
       }
     }
@@ -259,6 +285,7 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
   private void drawItems(int x, int y) {
     final Map<ItemStack, Float> materials = getTileEntity().engine.getMaterials();
     List<ItemStack> keyList = sortMaterialsList(materials);
+    int line = 0;
     for (int i = 0; i < keyList.size(); i++) {
       int y0 = y + 15 + (i - scrollPosition) * SCROLL_STEP - scrollPositionOffset;
       if (y0 >= y && y0 < y + 69) {
@@ -268,6 +295,9 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
         if (scrollPositionOffset > -2 && scrollPositionOffset < 2) {
           int barAmount = (int) ((amount - amount.intValue()) * 64f);
           drawProgressLine(x + 23, y0 + 14, barAmount, 2);
+        }
+        if (scrollPositionOffset == 0 && line < getButtons.length) {
+          getButtons[line++].setToolTip(EnderIOAddons.lang.localize("tcom.get.mat.tooltip", itemStack.getDisplayName()));
         }
       }
     }
@@ -334,6 +364,26 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
 
   }
 
+  private void drawArrows(int sx, int sy) {
+    if (isEnchantScreen) {
+      float progress = getTileEntity().getWorkProgress_enchant();
+      if (progress > 0) {
+        int length = (int) (progress * 16);
+        int sidelength = length >= 8 ? 24 : (int) (progress * 16f / 8f * 24f);
+        RenderUtil.bindTexture(texture);
+        drawTexturedModalRect(sx + 23, sy + 33, 200, 0, 8, length);
+        drawTexturedModalRect(sx + 27 + (24 - sidelength), sy + 40, 208, 0, sidelength, 2);
+      }
+    } else {
+      float progress = getTileEntity().getWorkProgress_in();
+      if (progress > 0) {
+        int length = (int) (progress * 13);
+        RenderUtil.bindTexture(texture);
+        drawTexturedModalRect(sx + 38, sy + 18, 200, 0, length, 8);
+      }
+    }
+  }
+
   @Override
   protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -357,6 +407,8 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
       drawScrollMask2(sx + 54, sy);
     }
     updateScrollPositionPost();
+
+    drawArrows(sx, sy);
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
 
@@ -382,8 +434,14 @@ public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
     IconEIO.map.render(IconEIO.ACTIVE_TAB, tabX + 5, tabY, true);
     IconEIO.map.render(IconEIO.ACTIVE_TAB, tabX + 5, tabY + TAB_HEIGHT, true);
     // (2) icons
+    this.zLevel = 200.0F;
+    itemRender.zLevel = 200.0F;
     itemRender.renderItemIntoGUI(fontRendererObj, mc.renderEngine, new ItemStack(Blocks.planks), tabX + 4, tabY + 4);
-    itemRender.renderItemIntoGUI(fontRendererObj, mc.renderEngine, new ItemStack(Items.enchanted_book), tabX + 4, tabY + TAB_HEIGHT + 4);
+    itemRender.renderItemIntoGUI(fontRendererObj, mc.renderEngine, new ItemStack(Items.enchanted_book), tabX + 4, tabY + TAB_HEIGHT + 4, true);
+    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+    this.zLevel = 0.0F;
+    itemRender.zLevel = 0.0F;
     GL11.glDisable(GL11.GL_LIGHTING);
     GL11.glEnable(GL11.GL_BLEND);
     // (3) buttons
