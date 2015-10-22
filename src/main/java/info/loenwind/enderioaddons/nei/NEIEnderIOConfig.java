@@ -11,6 +11,7 @@ import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
+import info.loenwind.enderioaddons.machine.tcom.BlockTcom;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import net.minecraft.item.ItemStack;
@@ -36,6 +37,13 @@ public class NEIEnderIOConfig implements IConfigureNEI {
         API.hideItem(new ItemStack(fluid.getBlock(), 1, OreDictionary.WILDCARD_VALUE));
         API.hideItem(new ItemStack(fluid.getBucket(), 1, OreDictionary.WILDCARD_VALUE));
       }
+    }
+    if (!Config.tcomEnabled.getBoolean()) {
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.TRAY.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.PYLON.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.PYLONTANK.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.TCOM_CONTROLLER.ordinal()));
+      API.hideItem(new ItemStack(BlockTcom.blockTcom, 1, OreDictionary.WILDCARD_VALUE));
     }
     if (!Config.impulseHopperEnabled.getBoolean()) {
       API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IHOPPER_CONTROLLER.ordinal()));

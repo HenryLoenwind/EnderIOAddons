@@ -9,6 +9,7 @@ import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
+import info.loenwind.enderioaddons.machine.tcom.BlockTcom;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import net.minecraft.init.Blocks;
@@ -41,6 +42,8 @@ public class Recipes implements InitAware {
 
   @ItemStackHolder(value = "EnderIO:blockIngotStorage", meta = 3)
   public static final ItemStack blockRedstoneAlloy = null;
+  @ItemStackHolder(value = "EnderIO:blockIngotStorage", meta = 6)
+  public static final ItemStack darkSteelBlock = null;
 
   @ItemStackHolder(value = "EnderIO:itemAlloy", meta = 0)
   public static final ItemStack electricSteel = null;
@@ -48,6 +51,8 @@ public class Recipes implements InitAware {
   public static final ItemStack conductiveIron = null;
   @ItemStackHolder(value = "EnderIO:itemAlloy", meta = 6)
   public static final ItemStack darkSteel = null;
+  @ItemStackHolder(value = "EnderIO:itemAlloy", meta = 7)
+  public static final ItemStack soularium = null;
 
   @ItemStackHolder(value = "EnderIO:itemMaterial", meta = 0)
   public static final ItemStack silicon = null;
@@ -70,6 +75,21 @@ public class Recipes implements InitAware {
 
   @ItemStackHolder(value = "EnderIO:blockPowerMonitor", meta = 0)
   public static final ItemStack blockPowerMonitor = null;
+
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_helmet")
+  public static final ItemStack darkSteel_helmet = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_chestplate")
+  public static final ItemStack darkSteel_chestplate = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_leggings")
+  public static final ItemStack darkSteel_leggings = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_boots")
+  public static final ItemStack darkSteel_boots = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_sword")
+  public static final ItemStack darkSteel_sword = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_pickaxe")
+  public static final ItemStack darkSteel_pickaxe = null;
+  @ItemStackHolder(value = "EnderIO:item.darkSteel_axe")
+  public static final ItemStack darkSteel_axe = null;
 
   public Recipes() {
   }
@@ -165,6 +185,24 @@ public class Recipes implements InitAware {
           GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTank, frameTank, frameTank, frameTank, waterController);
           GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTanks, waterController);
         }
+
+        if (Config.tcomEnabled.getBoolean()) {
+          ItemStack tray = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.TRAY.ordinal());
+          GameRegistry.addShapedRecipe(tray, "   ", "i i", "did", 'i', Items.iron_ingot, 'd', darkSteel);
+
+          ItemStack pylon = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.PYLON.ordinal());
+          GameRegistry.addShapedRecipe(pylon, "ese", " E ", "ese", 'e', electricSteel, 's', soularium, 'E', Blocks.enchanting_table);
+
+          ItemStack pylontank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.PYLONTANK.ordinal());
+          GameRegistry.addShapelessRecipe(pylontank, frameTank, pylon);
+
+          ItemStack tcomController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.TCOM_CONTROLLER.ordinal());
+          GameRegistry.addShapedRecipe(tcomController, "sCs", "pMa", "czc", 'M', machineChassi, 'z', zombieBit, 'c', crystal, 's', electricSteel, 'C',
+              Blocks.chest, 'p', Blocks.piston, 'a', new ItemStack(Blocks.anvil, 1, 0));
+
+          ItemStack tcom = new ItemStack(BlockTcom.blockTcom);
+          GameRegistry.addShapelessRecipe(tcom, machineFrame, tcomController, pylontank, tray, tray, tray, tray, tray, tray);
+        }
       }
 
       // Impulse Hopper
@@ -183,11 +221,12 @@ public class Recipes implements InitAware {
   }
 
   private static boolean isAnyFrameworkMachineEnabled() {
-    return Config.cobbleWorksEnabled.getBoolean() || Config.waterWorksEnabled.getBoolean() || Config.impulseHopperEnabled.getBoolean();
+    return Config.cobbleWorksEnabled.getBoolean() || Config.waterWorksEnabled.getBoolean() || Config.impulseHopperEnabled.getBoolean()
+        || Config.tcomEnabled.getBoolean();
   }
 
   private static boolean isAnyFrameworkMachineWithTanksEnabled() {
-    return Config.cobbleWorksEnabled.getBoolean() || Config.waterWorksEnabled.getBoolean();
+    return Config.cobbleWorksEnabled.getBoolean() || Config.waterWorksEnabled.getBoolean() || Config.tcomEnabled.getBoolean();
   }
 
   @Override

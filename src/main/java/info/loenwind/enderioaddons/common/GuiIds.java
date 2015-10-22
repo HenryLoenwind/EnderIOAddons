@@ -15,6 +15,7 @@ public class GuiIds {
   public static int GUI_ID_NIARD = 0;
   public static int GUI_ID_VOIDTANK = 0;
   public static int GUI_ID_PMON = 0;
+  public static int GUI_ID_TCOM = 0;
 
   private GuiIds() {
   }
@@ -27,6 +28,7 @@ public class GuiIds {
     GUI_ID_NIARD = nextID();
     GUI_ID_VOIDTANK = nextID();
     GUI_ID_PMON = nextID();
+    GUI_ID_TCOM = nextID();
   }
 
   private static int lastId = crazypants.enderio.GuiHandler.GUI_ID_CAP_BANK;

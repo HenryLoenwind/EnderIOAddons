@@ -10,7 +10,9 @@ import info.loenwind.autosave.handlers.forge.HandleFluid;
 import info.loenwind.autosave.handlers.forge.HandleFluidStack;
 import info.loenwind.autosave.handlers.internal.HandleStorable;
 import info.loenwind.autosave.handlers.java.HandleBoolean;
+import info.loenwind.autosave.handlers.java.HandleEnum;
 import info.loenwind.autosave.handlers.java.HandleFloat;
+import info.loenwind.autosave.handlers.java.HandleFloatArray;
 import info.loenwind.autosave.handlers.java.HandleInteger;
 import info.loenwind.autosave.handlers.minecraft.HandleItem;
 import info.loenwind.autosave.handlers.minecraft.HandleItemStack;
@@ -59,6 +61,8 @@ public class Registry {
     GLOBAL_REGISTRY.register(new HandleFloat());
     GLOBAL_REGISTRY.register(new HandleInteger());
     GLOBAL_REGISTRY.register(new HandleBoolean());
+    GLOBAL_REGISTRY.register(new HandleFloatArray());
+    GLOBAL_REGISTRY.register(new HandleEnum());
 
     // Forge basic types
     GLOBAL_REGISTRY.register(new HandleFluidStack());

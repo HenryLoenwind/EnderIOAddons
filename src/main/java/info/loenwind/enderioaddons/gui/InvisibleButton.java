@@ -1,4 +1,4 @@
-package info.loenwind.enderioaddons.machine.pmon;
+package info.loenwind.enderioaddons.gui;
 
 import java.awt.Rectangle;
 
@@ -7,7 +7,9 @@ import net.minecraft.client.gui.GuiButton;
 
 import com.enderio.core.client.gui.widget.GuiToolTip;
 
-public class PlusMinusButton extends GuiButton {
+import crazypants.enderio.machine.gui.GuiMachineBase;
+
+public class InvisibleButton extends GuiButton {
 
   public static final int DEFAULT_WIDTH = 8;
   public static final int DEFAULT_HEIGHT = 6;
@@ -15,18 +17,23 @@ public class PlusMinusButton extends GuiButton {
   private int xOrigin;
   private int yOrigin;
 
-  protected GuiPMon gui;
+  protected GuiMachineBase gui;
   protected String[] toolTipText;
-  protected boolean isPlus;
 
   private GuiToolTip toolTip;
 
-  public PlusMinusButton(GuiPMon gui, int id, int x, int y, boolean isPlus) {
+  public InvisibleButton(GuiMachineBase gui, int id, int x, int y) {
     super(id, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, "");
     this.gui = gui;
     this.xOrigin = x;
     this.yOrigin = y;
-    this.isPlus = isPlus;
+  }
+
+  public InvisibleButton(GuiMachineBase gui, int id, int x, int y, int width, int height) {
+    super(id, x, y, width, height, "");
+    this.gui = gui;
+    this.xOrigin = x;
+    this.yOrigin = y;
   }
 
   public void setToolTip(String... tooltipText) {
@@ -79,34 +86,13 @@ public class PlusMinusButton extends GuiButton {
     return toolTip;
   }
 
-  @Override
-  public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3) {
-    boolean result = super.mousePressed(par1Minecraft, par2, par3);
-    if (result) {
-      if (isPlus) {
-        if (gui.timebase >= 6) {
-          return false;
-        }
-        gui.timebase++;
-        gui.timebaseOffset -= 16;
-      } else {
-        if (gui.timebase <= 0) {
-          return false;
-        }
-        gui.timebase--;
-        gui.timebaseOffset += 16;
-      }
-    }
-    return result;
-  }
-
   /**
    * Draws this button to the screen.
    */
   @Override
   public void drawButton(Minecraft mc, int mouseX, int mouseY) {
     if (toolTip != null) {
-      toolTip.setVisible(visible);
+      toolTip.setVisible(visible && enabled);
     }
   }
 

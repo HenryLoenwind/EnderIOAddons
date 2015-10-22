@@ -25,6 +25,10 @@ import info.loenwind.enderioaddons.machine.pmon.ItemRendererPMon;
 import info.loenwind.enderioaddons.machine.pmon.RendererPMon;
 import info.loenwind.enderioaddons.machine.pmon.TESRPMon;
 import info.loenwind.enderioaddons.machine.pmon.TilePMon;
+import info.loenwind.enderioaddons.machine.tcom.BlockTcom;
+import info.loenwind.enderioaddons.machine.tcom.RendererTcom;
+import info.loenwind.enderioaddons.machine.tcom.TESRTcom;
+import info.loenwind.enderioaddons.machine.tcom.TileTcom;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.voidtank.FluidRendererVoidTank;
 import info.loenwind.enderioaddons.machine.voidtank.ItemRendererVoidTank;
@@ -85,6 +89,11 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     BlockIHopper.blockIHopper.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererIHopper(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileIHopper.class, new TESRFrameworkMachine());
+
+    BlockTcom.blockTcom.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    final RendererTcom rendererTcom = new RendererTcom(rendererFrameworkMachine);
+    RenderingRegistry.registerBlockHandler(rendererTcom);
+    ClientRegistry.bindTileEntitySpecialRenderer(TileTcom.class, new TESRTcom(rendererTcom));
 
     MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
 

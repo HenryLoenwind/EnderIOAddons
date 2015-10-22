@@ -80,6 +80,22 @@ public enum Config {
 
   pMonEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Graphical Power Monitor"), //
 
+  tcomRecyclingLossFix(Section.TCOM, 0.25d, "Fix loss of recycling in the Loot Recycler (0-1)"), //
+  tcomRecyclingLossChanced(Section.TCOM, 0.5d, "Chance based loss of recycling in the Loot Recycler (0-1)"), //
+
+  tcomRecyclingPowerPerTick(Section.TCOM, 10, "RF/tick for recycling in the Loot Recycler"), //
+  tcomRecyclingTicksPerItem(Section.TCOM, 45, "Ticks for recycling one item in the Loot Recycler (Note: Sound plays for 45 ticks)"), //
+
+  tcomExtractingPowerPerItem(Section.TCOM, 10, "RF for extracting one recycled item from the Loot Recycler"), //
+
+  tcomEnchantingPowerPerTick(Section.TCOM, 125, "RF/tick for enchanting in the Loot Recycler"), //
+  tcomEnchantingTicksPerItem(Section.TCOM, 80, "Ticks for enchanting one item in the Loot Recycler"), //
+  tcomEnchantingPowerPerFailure(Section.TCOM, 1250, "RF wasted on failing to enchant in the Loot Recycler"), //
+
+  tcomPowerIntakePerTick(Section.TCOM, 100, "RF/tick the Loot Recycler can take"), //
+
+  tcomEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Loot Recycler"), //
+
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

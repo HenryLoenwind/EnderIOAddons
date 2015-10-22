@@ -3,10 +3,12 @@ package info.loenwind.enderioaddons.machine.part;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullM;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+import info.loenwind.enderioaddons.machine.tcom.RendererTcom;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
@@ -48,42 +50,131 @@ public class MachinePartRenderer implements IItemRenderer {
     final RenderBlocks renderBlocks = notnullM((RenderBlocks) data[0], "Game state error: Missing RenderBlock parameter");
     @Nonnull
     final ItemStack itemToRender = notnullM(item, "Game state error: Missing item to render");
+
+    GL11.glPushMatrix();
+    if (item.getItemDamage() == MachinePart.TRAY.ordinal() || item.getItemDamage() == MachinePart.PYLON.ordinal()
+        || item.getItemDamage() == MachinePart.PYLONTANK.ordinal()) {
+      setup(implExplicit, type).render(itemToRender, renderBlocks, frameRenderer);
+    } else if (MachinePart.values()[item.getItemDamage()].renderAsFrameMachine) {
+      setup(implTechne, type).render(itemToRender, renderBlocks, frameRenderer);
+    } else if (MachinePart.values()[item.getItemDamage()].render3d) {
+      setup(implBlockAsItem, type).render(itemToRender, renderBlocks, frameRenderer);
+    }
+    GL11.glPopMatrix();
+  }
+
+  private Impl setup(Impl impl, ItemRenderType type) {
     if(type == ItemRenderType.INVENTORY) {
-      renderToInventory(itemToRender, renderBlocks);
+      impl.setup_Inventory();
     } else if(type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-      renderEquipped(itemToRender, renderBlocks);
+      impl.setup_Equipped();
     } else if(type == ItemRenderType.ENTITY) {
-      renderEntity(itemToRender, renderBlocks);
+      impl.setup_Entity();
     } else if (!loggedError) {
       Log.warn("MachinePartRenderer.renderItem: Unsupported render type");
       loggedError = true;
     }
+    return impl;
   }
 
-  private void renderEntity(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks) {
-    GL11.glPushMatrix();
-    GL11.glScalef(0.5f, 0.5f, 0.5f);
-    renderToInventory(item, renderBlocks);
-    GL11.glPopMatrix();
+  private static interface Impl {
+    void setup_Entity();
+
+    void setup_Equipped();
+
+    void setup_Inventory();
+
+    void render(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks, RendererFrameworkMachine frameRenderer);
   }
 
-  private void renderEquipped(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks) {
-    GL11.glPushMatrix();
-    GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-    renderToInventory(item, renderBlocks);
-    GL11.glPopMatrix();
-  }
+  private static class ImplTechne implements Impl {
 
-  private void renderToInventory(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks) {
-    GL11.glEnable(GL11.GL_ALPHA_TEST);
-    if (MachinePart.values()[item.getItemDamage()].renderAsFrameMachine) {
+    @Override
+    public void setup_Entity() {
+      GL11.glScalef(0.5F, 0.5F, 0.5F);
+    }
+
+    @Override
+    public void setup_Equipped() {
+      GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+    }
+
+    @Override
+    public void setup_Inventory() {
+    }
+
+    @Override
+    public void render(ItemStack item, RenderBlocks renderBlocks, RendererFrameworkMachine frameRenderer) {
+      GL11.glEnable(GL11.GL_ALPHA_TEST);
       RenderUtil.bindBlockTexture();
       frameRenderer.renderInventoryBlock(AbstractBlockFramework.blockDummy, item.getItemDamage() + 16, 0, renderBlocks);
-    } else if (MachinePart.values()[item.getItemDamage()].render3d) {
+      GL11.glDisable(GL11.GL_ALPHA_TEST);
+    }
+  }
+
+  private static class ImplBlockAsItem implements Impl {
+
+    @Override
+    public void setup_Entity() {
+      GL11.glScalef(0.5F, 0.5F, 0.5F);
+    }
+
+    @Override
+    public void setup_Equipped() {
+      GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+    }
+
+    @Override
+    public void setup_Inventory() {
+    }
+
+    @Override
+    public void render(ItemStack item, RenderBlocks renderBlocks, RendererFrameworkMachine frameRenderer) {
+      GL11.glEnable(GL11.GL_ALPHA_TEST);
       renderBlocks.setOverrideBlockTexture(ItemMachinePart.itemMachinePart.getIconFromDamage(item.getItemDamage()));
       renderBlocks.renderBlockAsItem(Blocks.stone, 0, 1.0F);
       renderBlocks.clearOverrideBlockTexture();
+      GL11.glDisable(GL11.GL_ALPHA_TEST);
     }
-    GL11.glDisable(GL11.GL_ALPHA_TEST);
+
   }
+
+  private static class ImplExplicit implements Impl {
+
+    @Override
+    public void setup_Entity() {
+      GL11.glScalef(0.5F, 0.5F, 0.5F);
+      GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+    }
+
+    @Override
+    public void setup_Equipped() {
+    }
+
+    @Override
+    public void setup_Inventory() {
+      GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+    }
+
+    @Override
+    public void render(ItemStack item, RenderBlocks renderBlocks, RendererFrameworkMachine frameRenderer) {
+      GL11.glEnable(GL11.GL_ALPHA_TEST);
+      Tessellator.instance.startDrawingQuads();
+      Tessellator.instance.setColorOpaque_F(1, 1, 1);
+      RenderUtil.bindBlockTexture();
+      if (item.getItemDamage() == MachinePart.TRAY.ordinal()) {
+        RendererTcom.renderStandaloneTray();
+      } else if (item.getItemDamage() == MachinePart.PYLON.ordinal()) {
+        RendererTcom.renderStandaloneEnchantmentPylon(false);
+      } else if (item.getItemDamage() == MachinePart.PYLONTANK.ordinal()) {
+        RendererTcom.renderStandaloneEnchantmentPylon(true);
+      }
+      Tessellator.instance.draw();
+      GL11.glDisable(GL11.GL_ALPHA_TEST);
+    }
+  }
+
+  private static final Impl implTechne = new ImplTechne();
+  private static final Impl implBlockAsItem = new ImplBlockAsItem();
+  private static final Impl implExplicit = new ImplExplicit();
 }

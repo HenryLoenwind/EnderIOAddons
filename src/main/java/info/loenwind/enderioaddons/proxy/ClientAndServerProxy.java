@@ -12,6 +12,7 @@ import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
+import info.loenwind.enderioaddons.machine.tcom.BlockTcom;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -35,6 +36,7 @@ public class ClientAndServerProxy implements InitAware {
     BlockNiard.create();
     BlockVoidTank.create();
     BlockPMon.create();
+    BlockTcom.create();
   }
 
   @Override

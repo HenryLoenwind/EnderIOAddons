@@ -22,6 +22,10 @@ public enum MachinePart {
   FILTER_ELEMENT("filterElement", true, false, false, null, false, false), //
   WATER_CONTROLLER("waterController", true, true, false, "waterController", false, false), //
   IHOPPER_CONTROLLER("ihopperController", true, true, false, "ihopperController", false, false), //
+  TCOM_CONTROLLER("tcomController", true, true, false, "tcomController", false, false), //
+  TRAY("tray", true, true, false, null, false, false), //
+  PYLON("pylon", true, true, false, null, false, false), //
+  PYLONTANK("pylontank", true, true, false, null, false, false), //
   ;
 
   @Nonnull
@@ -50,7 +54,7 @@ public enum MachinePart {
     this.hasTanks = hasTanks;
     this.hasSingleTank = hasSingleTank;
   }
-  
+
   public static void registerOres(@Nonnull Item item) {
     for (MachinePart m : values()) {
       OreDictionary.registerOre(m.oreDict, new ItemStack(item, 1, m.ordinal()));

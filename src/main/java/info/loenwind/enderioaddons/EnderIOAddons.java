@@ -9,6 +9,8 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import com.enderio.core.common.Lang;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -36,6 +38,8 @@ public class EnderIOAddons implements InitAware {
   public static final InitAware recipes = new Recipes();
   @Nonnull
   public static final InitAware network = new Manager();
+  @Nonnull
+  public static final Lang lang = new Lang(DOMAIN);
 
   @Override
   @EventHandler
