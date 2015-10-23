@@ -26,7 +26,7 @@ class Item2Mats {
   private static final Map<Item, List<Mats>> allItems = new HashMap<>();
 
   private static List<Mats> matList(Mats... mats) {
-    List<Mats> result = new ArrayList<>();
+    List<Mats> result = new ArrayList<>(mats.length);
     for (Mats mat : mats) {
       result.add(mat);
     }
@@ -34,7 +34,7 @@ class Item2Mats {
   }
 
   private static List<Mats> matList(int amount, Mats mat) {
-    List<Mats> result = new ArrayList<>();
+    List<Mats> result = new ArrayList<>(amount);
     for (int i = 1; i <= amount; i++) {
       result.add(mat);
     }
