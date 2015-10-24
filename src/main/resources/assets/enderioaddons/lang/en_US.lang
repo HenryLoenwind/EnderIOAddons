@@ -82,3 +82,10 @@ tile.blockTcom.tooltip.detailed.line1=The Loot Recycler can be used to break dow
 tile.blockTcom.tooltip.detailed.line2=loot into its components. It will also extract any
 tile.blockTcom.tooltip.detailed.line3=enchantments that are on those items.
 
+enderioaddons.flag.tooltip.parent=Parent: %1$s/%2$s/%3$s
+enderioaddons.flag.itemname.parent= (Parent: %1$s/%2$s/%3$s)
+enderioaddons.flag.tooltip.parent.none=Parent: none
+enderioaddons.flag.tooltip.uncharged=Not magnetized
+enderioaddons.flag.itemname.uncharged= (not magnetized)
+
+tile.blockFlag.name=Magnetic Flag

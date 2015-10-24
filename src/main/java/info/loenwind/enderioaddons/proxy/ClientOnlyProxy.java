@@ -8,6 +8,8 @@ import info.loenwind.enderioaddons.machine.drain.DrainBlockRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainFluidRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainItemRenderer;
 import info.loenwind.enderioaddons.machine.drain.TileDrain;
+import info.loenwind.enderioaddons.machine.flag.TESRFlag;
+import info.loenwind.enderioaddons.machine.flag.TileFlag;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.TESRFrameworkMachine;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
@@ -96,6 +98,8 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     ClientRegistry.bindTileEntitySpecialRenderer(TileTcom.class, new TESRTcom(rendererTcom));
 
     MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
+
+    ClientRegistry.bindTileEntitySpecialRenderer(TileFlag.class, new TESRFlag());
 
   }
 
