@@ -26,6 +26,9 @@ public enum MachinePart {
   TRAY("tray", true, true, false, null, false, false), //
   PYLON("pylon", true, true, false, null, false, false), //
   PYLONTANK("pylontank", true, true, false, null, false, false), //
+  CHASSIPARTS("chassiParts", false, false, false, null, false, false), //
+  FLAGPARTS("flagparts", false, false, false, null, false, false), //
+  SIMPLEMAGNET("simplemagnet", false, false, false, null, false, false), //
   ;
 
   @Nonnull

@@ -37,5 +37,30 @@
     "sounds": [
       "machine/tcom/fail1"
     ]
+  },
+  "machine.flag": {
+    "category": "block",
+    "sounds": [
+      "machine/flag/servo1",
+      "machine/flag/servo2"
+    ]
+  },
+  "machine.flag.fail": {
+    "category": "block",
+    "sounds": [
+      "machine/flag/fail1"
+    ]
+  },
+  "machine.magcharger": {
+    "category": "block",
+    "sounds": [
+      "machine/flag/charger1"
+    ]
+  },
+  "machine.magcharger.cont": {
+    "category": "block",
+    "sounds": [
+      "machine/flag/charger2"
+    ]
   }
 }

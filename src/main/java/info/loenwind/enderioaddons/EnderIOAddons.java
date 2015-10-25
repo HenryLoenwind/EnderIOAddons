@@ -37,7 +37,7 @@ public class EnderIOAddons implements InitAware {
   @Nonnull
   public static final InitAware recipes = new Recipes();
   @Nonnull
-  public static final InitAware network = new Manager();
+  public static final Manager network = new Manager();
   @Nonnull
   public static final Lang lang = new Lang(DOMAIN);
 

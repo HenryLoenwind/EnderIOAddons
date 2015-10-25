@@ -96,6 +96,16 @@ public enum Config {
 
   tcomEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Loot Recycler"), //
 
+  magcMagnetizingPowerPerTick(Section.MAGCHARGER, 10, "RF/tick for magnetizing in the Magnetic Charger"), //
+  magcMagnetizingTicksPerItem(Section.MAGCHARGER, 20, "Ticks for magnetizing one item in the Magnetic Charger (Note: Sound plays for 20 ticks)"), //
+  magcPowerIntakePerTick(Section.MAGCHARGER, 100, "RF/tick the Magnetic Charger can take"), //
+
+  magcEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Magnetic Charger"), //
+
+  flagDemagnetizingChance(Section.FLAG, 0.04d, "Chance that a Magnetic Flag demagnetizes when broken (0-1)"), //
+  flagKeepTargetOnBreaking(Section.FLAG, false, "Should Magnetic Flags keep their target when being broken?"), //
+
+  flagEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Magnetic Flag"), //
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

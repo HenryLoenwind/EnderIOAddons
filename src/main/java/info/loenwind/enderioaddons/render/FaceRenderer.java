@@ -107,6 +107,23 @@ public class FaceRenderer {
     }
   }
 
+  public static void renderSkirt(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    for (ForgeDirection face : AROUND) {
+      IIcon tex = icons[face.ordinal()];
+      if (tex != null) {
+        renderSingleFace(bb, face, tex, 0, 16, 0, 16, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
+  public static void renderSkirt(BoundingBox bb, IIcon tex, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    if (tex != null) {
+      for (ForgeDirection face : AROUND) {
+        renderSingleFace(bb, face, tex, 0, 16, 0, 16, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
   public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
     setupVertices(bb, xForm);
     IIcon tex = icons[face.ordinal()];
@@ -167,12 +184,27 @@ public class FaceRenderer {
     FaceRenderer.bc = null;
   }
 
+  private static final double ROTATION_AMOUNT = Math.PI / 2;
+
+  public static ForgeDirection rotate(VertexTransform xForm, ForgeDirection dir) {
+    if (xForm instanceof VertexRotationFacing) {
+      double angle = ((VertexRotationFacing) xForm).getAngle();
+      if (angle < ROTATION_AMOUNT * 0.5 || angle >= ROTATION_AMOUNT * 3.5) {
+        return dir;
+      } else if (angle >= ROTATION_AMOUNT * 0.5 && angle < ROTATION_AMOUNT * 1.5) {
+        return dir.getRotation(ForgeDirection.DOWN);
+      } else if (angle >= ROTATION_AMOUNT * 1.5 && angle < ROTATION_AMOUNT * 2.5) {
+        return dir.getOpposite();
+      } else if (angle >= ROTATION_AMOUNT * 2.5 && angle < ROTATION_AMOUNT * 3.5) {
+        return dir.getRotation(ForgeDirection.UP);
+      }
+    }
+    return dir;
+  }
+
   public static void renderSingleFace(ForgeDirection face, float minU, float maxU, float minV, float maxV, VertexTransform xForm, float[] brightnessPerSide,
       boolean inside) {
-    ForgeDirection normal = inside ? face.getOpposite() : face;
-    if (xForm instanceof VertexRotationFacing) {
-      normal = ((VertexRotationFacing) xForm).rotate(normal);
-    }
+    ForgeDirection normal = rotate(xForm, inside ? face.getOpposite() : face);
     Tessellator.instance.setNormal(normal.offsetX, normal.offsetY, normal.offsetZ);
 
     if (block != null && world != null && bc != null) {

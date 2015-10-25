@@ -17,6 +17,9 @@ enderioaddons.tcomController.name=Loot Recycler Framework Controller
 enderioaddons.tray.name=Item Tray
 enderioaddons.pylon.name=Enchantment Modulator Core
 enderioaddons.pylontank.name=Enchantment Modulator
+enderioaddons.chassiParts.name=Chassis Plates
+enderioaddons.flagparts.name=Flags and Poles
+enderioaddons.simplemagnet.name=Simple Magnet
 
 tile.blockCobbleworks.name=Cobblestone Framework
 tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.
@@ -82,3 +85,20 @@ tile.blockTcom.tooltip.detailed.line1=The Loot Recycler can be used to break dow
 tile.blockTcom.tooltip.detailed.line2=loot into its components. It will also extract any
 tile.blockTcom.tooltip.detailed.line3=enchantments that are on those items.
 
+enderioaddons.flag.tooltip.parent=Parent: %1$s/%2$s/%3$s
+enderioaddons.flag.itemname.parent= (Parent: %1$s/%2$s/%3$s)
+enderioaddons.flag.tooltip.parent.none=Parent: none
+enderioaddons.flag.tooltip.uncharged=Not magnetized
+enderioaddons.flag.itemname.uncharged= (not magnetized)
+
+tile.blockFlag.name=Magnetic Flag
+tile.blockFlag.tooltip.detailed.line1=A flag that will point to where the last flag was
+tile.blockFlag.tooltip.detailed.line2=placed. The target can be changed by right-clicking
+tile.blockFlag.tooltip.detailed.line3=a placed flag. Target can be cleared in a crafting
+tile.blockFlag.tooltip.detailed.line4=grid.
+tile.blockFlag.tooltip.detailed.line5=Needs to be charged in a Magnetic Charger before use.
+
+tile.blockMagCharger.name=Magnetic Charger
+tile.blockMagCharger.tooltip.detailed.line1=Charges Magnetic Flags.
+
+enderioaddons.nei.magcharger=Magnetic Charger

@@ -4,7 +4,9 @@ import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
+import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
+import info.loenwind.enderioaddons.machine.magcharger.BlockMagCharger;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
@@ -217,6 +219,29 @@ public class Recipes implements InitAware {
         GameRegistry.addShapelessRecipe(ihopper, machineFrame, ihopperController, hopper, hopper, hopper);
       }
 
+    }
+
+    if (Config.flagEnabled.getBoolean() || Config.magcEnabled.getBoolean()) {
+      ItemStack simpleMagnet = new ItemStack(ItemMachinePart.itemMachinePart, 2, MachinePart.SIMPLEMAGNET.ordinal());
+      GameRegistry.addShapedRecipe(simpleMagnet, "ccc", "c c", "s s", 's', electricSteel, 'c', conductiveIron);
+      ItemStack chassiParts = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CHASSIPARTS.ordinal());
+      GameRegistry.addShapedRecipe(chassiParts, "iii", "iMi", "iii", 'M', machineChassi, 'i', Items.iron_ingot);
+
+      // Magnetic Flag
+      if (Config.flagEnabled.getBoolean()) {
+        ItemStack flagParts = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.FLAGPARTS.ordinal());
+        GameRegistry.addShapedRecipe(flagParts, "sRR", "sRR", "s  ", 's', electricSteel, 'R', new ItemStack(Blocks.wool, 1, 14));
+        ItemStack flags = new ItemStack(BlockFlag.blockFlag, 16, 1);
+        GameRegistry.addShapedRecipe(flags, " f ", " f ", "csc", 'f', flagParts, 's', simpleMagnet, 'c', chassiParts);
+        ItemStack flag = new ItemStack(BlockFlag.blockFlag, 1, 0);
+        GameRegistry.addShapelessRecipe(flag, flag);
+      }
+
+      // Magnetic Charger
+      if (Config.flagEnabled.getBoolean()) {
+        ItemStack magc = new ItemStack(BlockMagCharger.blockMagCharger, 1, 0);
+        GameRegistry.addShapedRecipe(magc, "CsC", "sMs", "csc", 'M', machineChassi, 'C', conductiveIron, 's', simpleMagnet, 'c', chassiParts);
+      }
     }
   }
 
