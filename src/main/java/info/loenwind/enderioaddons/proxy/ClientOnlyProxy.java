@@ -8,6 +8,8 @@ import info.loenwind.enderioaddons.machine.drain.DrainBlockRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainFluidRenderer;
 import info.loenwind.enderioaddons.machine.drain.DrainItemRenderer;
 import info.loenwind.enderioaddons.machine.drain.TileDrain;
+import info.loenwind.enderioaddons.machine.flag.BlockFlag;
+import info.loenwind.enderioaddons.machine.flag.ItemRendererFlag;
 import info.loenwind.enderioaddons.machine.flag.TESRFlag;
 import info.loenwind.enderioaddons.machine.flag.TileFlag;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
@@ -15,6 +17,11 @@ import info.loenwind.enderioaddons.machine.framework.TESRFrameworkMachine;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.ihopper.RendererIHopper;
 import info.loenwind.enderioaddons.machine.ihopper.TileIHopper;
+import info.loenwind.enderioaddons.machine.magcharger.BlockMagCharger;
+import info.loenwind.enderioaddons.machine.magcharger.ItemRendererMagCharger;
+import info.loenwind.enderioaddons.machine.magcharger.RendererMagCharger;
+import info.loenwind.enderioaddons.machine.magcharger.TESRMagCharger;
+import info.loenwind.enderioaddons.machine.magcharger.TileMagCharger;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.niard.BlockRendererNiard;
 import info.loenwind.enderioaddons.machine.niard.FluidRendererNiard;
@@ -100,6 +107,12 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
 
     ClientRegistry.bindTileEntitySpecialRenderer(TileFlag.class, new TESRFlag());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockFlag.blockFlag), new ItemRendererFlag());
+
+    BlockMagCharger.blockMagCharger.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new RendererMagCharger());
+    ClientRegistry.bindTileEntitySpecialRenderer(TileMagCharger.class, new TESRMagCharger());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockMagCharger.blockMagCharger), new ItemRendererMagCharger());
 
   }
 

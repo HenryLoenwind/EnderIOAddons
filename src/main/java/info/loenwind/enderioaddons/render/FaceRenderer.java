@@ -107,6 +107,23 @@ public class FaceRenderer {
     }
   }
 
+  public static void renderSkirt(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    for (ForgeDirection face : AROUND) {
+      IIcon tex = icons[face.ordinal()];
+      if (tex != null) {
+        renderSingleFace(bb, face, tex, 0, 16, 0, 16, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
+  public static void renderSkirt(BoundingBox bb, IIcon tex, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    if (tex != null) {
+      for (ForgeDirection face : AROUND) {
+        renderSingleFace(bb, face, tex, 0, 16, 0, 16, xForm, brightnessPerSide, inside);
+      }
+    }
+  }
+
   public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
     setupVertices(bb, xForm);
     IIcon tex = icons[face.ordinal()];

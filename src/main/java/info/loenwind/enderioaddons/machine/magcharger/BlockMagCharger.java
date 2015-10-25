@@ -104,6 +104,7 @@ public class BlockMagCharger extends AbstractMachineBlock<TileMagCharger> {
     iconBuffer[0][6] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":chargerBottom");
     iconBuffer[0][7] = iIconRegister.registerIcon(getTopIconKey(false));
     iconBuffer[0][8] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":chargerBar");
+    iconBuffer[0][9] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":tcomTrayTop");
 
     // the 6 sides in ON state
     iconBuffer[1][0] = iIconRegister.registerIcon(getBottomIconKey(true));
@@ -117,6 +118,7 @@ public class BlockMagCharger extends AbstractMachineBlock<TileMagCharger> {
     iconBuffer[1][6] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":chargerBottomActive");
     iconBuffer[1][7] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":chargerTop");
     iconBuffer[1][8] = new IconFlipped(iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":chargerBar"), true, false);
+    iconBuffer[1][9] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":tcomTrayTop");
 
     registerOverlayIcons(iIconRegister);
 

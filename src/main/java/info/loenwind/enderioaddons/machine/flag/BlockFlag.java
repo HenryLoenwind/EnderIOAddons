@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.flag;
 
+import static info.loenwind.enderioaddons.config.Config.flagDemagnetizingChance;
+import static info.loenwind.enderioaddons.config.Config.flagKeepTargetOnBreaking;
 import static info.loenwind.enderioaddons.network.PacketParticles.spawnParticle;
 import info.loenwind.enderioaddons.EnderIOAddons;
 
@@ -33,6 +35,12 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
   public static final ModObject ModObject_blockFlag = EnumHelper.addEnum(ModObject.class, "blockFlag", new Class<?>[0], new Object[0]);
   public static BlockFlag blockFlag;
   private static final IIcon[] icons = new IIcon[12];
+
+  /**
+   * obeliskRenderer ignores meta, this allows us to draw items with meta in
+   * certain places without copying the whole renderer
+   */
+  public static boolean fakeMeta = false;
 
   public static BlockFlag create() {
     blockFlag = new BlockFlag();
@@ -88,7 +96,7 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
   @Override
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(int side, int meta) {
-    if (meta != 0 && side >= 2 && side <= 5) {
+    if ((meta != 0 || fakeMeta) && side >= 2 && side <= 5) {
       return icons[side + 6];
     }
     return icons[side];
@@ -111,8 +119,13 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
   public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack itemstack) {
     TileEntity te = world.getTileEntity(x, y, z);
     if (itemstack != null && itemstack.getItem() instanceof ItemFlag && te instanceof TileFlag) {
-      ((TileFlag) te).readItemStackNBT(itemstack);
-      ((TileFlag) te).reparentItemstack(itemstack);
+      if (itemstack.getItemDamage() != 0) {
+        ((TileFlag) te).setCharged(false);
+        spawnParticle(world, "reddust", x + .5, y + .5, z + .5, 0, 0, 0);
+      } else {
+        ((TileFlag) te).readItemStackNBT(itemstack);
+        ((TileFlag) te).reparentItemstack(itemstack);
+      }
     }
   }
 
@@ -146,12 +159,17 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
   @Override
   protected void processDrop(World world, int x, int y, int z, TileEntityEnder te, ItemStack itemstack) {
     if (te instanceof TileFlag) {
-      if (te.getWorldObj().rand.nextInt(25) != 0) { // TODO config
+      if (te.getWorldObj().rand.nextDouble() < flagDemagnetizingChance.getDouble()) {
         ((TileFlag) te).setCharged(false);
         itemstack.setItemDamage(1);
+        ((TileFlag) te).writeItemStackNBT(itemstack);
         spawnParticle(world, "reddust", x, y, z, 0, 0, 0);
+      } else if (!((TileFlag) te).isCharged()) {
+        itemstack.setItemDamage(1);
+        ((TileFlag) te).writeItemStackNBT(itemstack);
+      } else if (flagKeepTargetOnBreaking.getBoolean()) {
+        ((TileFlag) te).writeItemStackNBT(itemstack);
       }
-      ((TileFlag) te).writeItemStackNBT(itemstack);
     }
   }
 
@@ -167,7 +185,7 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
       BlockCoord bc = te.getParent();
       if (bc != null) {
         list.add(EnderIOAddons.lang.localize("flag.tooltip.parent", bc.x, bc.y, bc.z));
-      } else if (!te.isCharged()) {
+      } else if (!te.isCharged() | itemstack.getItemDamage() != 0) {
         list.add(EnderIOAddons.lang.localize("flag.tooltip.uncharged"));
       }
     }

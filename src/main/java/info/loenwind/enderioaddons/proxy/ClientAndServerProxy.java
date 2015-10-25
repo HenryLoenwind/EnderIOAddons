@@ -10,6 +10,7 @@ import info.loenwind.enderioaddons.machine.drain.InfiniteWaterSourceStopper;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
+import info.loenwind.enderioaddons.machine.magcharger.BlockMagCharger;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
@@ -39,6 +40,7 @@ public class ClientAndServerProxy implements InitAware {
     BlockPMon.create();
     BlockTcom.create();
     BlockFlag.create();
+    BlockMagCharger.create();
   }
 
   @Override

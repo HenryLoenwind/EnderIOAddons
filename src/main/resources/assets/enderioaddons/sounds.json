@@ -50,5 +50,17 @@
     "sounds": [
       "machine/flag/fail1"
     ]
+  },
+  "machine.magcharger": {
+    "category": "block",
+    "sounds": [
+      "machine/flag/charger1"
+    ]
+  },
+  "machine.magcharger.cont": {
+    "category": "block",
+    "sounds": [
+      "machine/flag/charger2"
+    ]
   }
 }

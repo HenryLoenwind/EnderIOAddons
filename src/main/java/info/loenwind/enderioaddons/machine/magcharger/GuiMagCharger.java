@@ -14,13 +14,13 @@ import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
 public class GuiMagCharger extends GuiPoweredMachineBase<TileMagCharger> {
 
-  public GuiMagCharger(@Nonnull InventoryPlayer par1InventoryPlayer, @Nonnull TileMagCharger te) {
+  public GuiMagCharger(InventoryPlayer par1InventoryPlayer, @Nonnull TileMagCharger te) {
     super(te, new ContainerMagCharger(par1InventoryPlayer, te));
   }
 
   @Override
   protected boolean showRecipeButton() {
-    return false;
+    return true;
   }
 
   @Override
@@ -32,9 +32,12 @@ public class GuiMagCharger extends GuiPoweredMachineBase<TileMagCharger> {
 
     drawTexturedModalRect(sx, sy, 0, 0, xSize, ySize);
 
-    if (shouldRenderProgress()) {
-      int progress = getProgressScaled(24);
+    if (getTileEntity().isActive()) {
+      int progress = (int) (getTileEntity().getProgressScaled() * 24);
       drawTexturedModalRect(sx + 80, sy + 34, 176, 14, progress + 1, 16);
+      updateProgressTooltips(scaleProgressForTooltip(getTileEntity().getProgressScaled()), getTileEntity().getProgressScaled());
+    } else {
+      updateProgressTooltips(-1, -1);
     }
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
