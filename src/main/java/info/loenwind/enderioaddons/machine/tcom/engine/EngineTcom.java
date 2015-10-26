@@ -61,7 +61,7 @@ public class EngineTcom {
     int maxDamage = itemStack.getMaxDamage();
     int stackSize = itemStack.stackSize;
     Map<Integer, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
-    float factor = (maxDamage - itemDamage) / maxDamage * stackSize * (1f - minloss) * (1f - (float) rand.nextDouble() * randloss);
+    float factor = (maxDamage - itemDamage) / maxDamage * stackSize * (1f - minloss - (float) rand.nextDouble() * randloss);
     for (Mats mat : mats) {
       materialPool[mat.ordinal()] += 1f * factor;
     }
