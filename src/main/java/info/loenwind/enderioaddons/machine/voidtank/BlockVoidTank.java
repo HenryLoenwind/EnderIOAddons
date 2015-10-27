@@ -237,4 +237,9 @@ public class BlockVoidTank extends AbstractMachineBlock<TileVoidTank> implements
     return 1;
   }
 
+  @Override
+  public boolean canRenderInPass(int pass) {
+    return true;
+  }
+
 }

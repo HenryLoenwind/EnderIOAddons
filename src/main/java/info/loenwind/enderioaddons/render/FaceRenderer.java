@@ -88,7 +88,7 @@ public class FaceRenderer {
 
   private final static ForgeDirection[] AROUND = { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
 
-  public static void renderSkirt(BoundingBox bb, IIcon[] icons, int texMinU, int texMaxU, int texMinV, int texMaxV, VertexTransform xForm,
+  public static void renderSkirt(BoundingBox bb, IIcon[] icons, double texMinU, double texMaxU, double texMinV, double texMaxV, VertexTransform xForm,
       float[] brightnessPerSide, boolean inside) {
     for (ForgeDirection face : AROUND) {
       IIcon tex = icons[face.ordinal()];
@@ -98,7 +98,7 @@ public class FaceRenderer {
     }
   }
 
-  public static void renderSkirt(BoundingBox bb, IIcon tex, int texMinU, int texMaxU, int texMinV, int texMaxV, VertexTransform xForm,
+  public static void renderSkirt(BoundingBox bb, IIcon tex, double texMinU, double texMaxU, double texMinV, double texMaxV, VertexTransform xForm,
       float[] brightnessPerSide, boolean inside) {
     if (tex != null) {
       for (ForgeDirection face : AROUND) {
@@ -137,7 +137,7 @@ public class FaceRenderer {
     }
   }
 
-  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon[] icons, int texMinU, int texMaxU, int texMinV, int texMaxV,
+  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon[] icons, double texMinU, double texMaxU, double texMinV, double texMaxV,
       VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
     IIcon tex = icons[face.ordinal()];
     if (tex != null) {
@@ -145,20 +145,22 @@ public class FaceRenderer {
     }
   }
 
-  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon tex, int texMinU, int texMaxU, int texMinV, int texMaxV,
+  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon tex, double texMinU, double texMaxU, double texMinV, double texMaxV,
       VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    setupVertices(bb, xForm);
+    float minU = tex.getInterpolatedU(texMinU);
+    float maxU = tex.getInterpolatedU(texMaxU);
+    float minV = tex.getInterpolatedV(texMinV);
+    float maxV = tex.getInterpolatedV(texMaxV);
+    renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+  }
+
+  public static void renderSingleFace(BoundingBox bb, ForgeDirection face, IIcon tex, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
     setupVertices(bb, xForm);
     float minU = tex.getMinU();
     float maxU = tex.getMaxU();
     float minV = tex.getMinV();
     float maxV = tex.getMaxV();
-    float sizeU = maxU - minU;
-    float sizeV = maxV - minV;
-    minU += texMinU / 16.0f * sizeU;
-    maxU -= (16.0f - texMaxU) / 16.0f * sizeU;
-    minV += (16.0f - texMaxV) / 16.0f * sizeV;
-    maxV -= texMinV / 16.0f * sizeV;
-
     renderSingleFace(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
   }
 

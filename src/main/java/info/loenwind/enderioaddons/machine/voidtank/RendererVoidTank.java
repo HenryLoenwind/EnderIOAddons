@@ -24,6 +24,7 @@ import com.enderio.core.common.vecmath.Vector3d;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import crazypants.enderio.EnderIO;
+import crazypants.util.RenderPassHelper;
 
 public class RendererVoidTank implements ISimpleBlockRenderingHandler {
 
@@ -98,57 +99,61 @@ public class RendererVoidTank implements ISimpleBlockRenderingHandler {
     }
 
     if (isBroken) {
-      IIcon[] icons = RenderUtil.getBlockTextures(BlockVoidTank.blockVoidTank, 0);
-      FaceRenderer.renderCube(bbi, icons, xform, brightnessPerInSide, true);
-      FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+      if (RenderPassHelper.getBlockRenderPass() == 0) {
+        IIcon[] icons = RenderUtil.getBlockTextures(BlockVoidTank.blockVoidTank, 0);
+        FaceRenderer.renderCube(bbi, icons, xform, brightnessPerInSide, true);
+        FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+      } else {
+        for (ForgeDirection dir : EAST_WEST) {
+          final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
+          if (icon1 != null) {
+            renderSingleFace(bb1, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
 
-      for (ForgeDirection dir : EAST_WEST) {
-        final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
-        if (icon1 != null) {
-          renderSingleFace(bb1, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          final IIcon icon2 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 12, 0);
+          if (icon2 != null) {
+            renderSingleFace(bb2, dir, icon2, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
+
+          final IIcon icon3 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 18, 0);
+          if (icon3 != null) {
+            renderSingleFace(bb3, dir, icon3, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
         }
 
-        final IIcon icon2 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 12, 0);
-        if (icon2 != null) {
-          renderSingleFace(bb2, dir, icon2, 0, 16, 0, 16, xform, brightnessPerSide, false);
+        for (ForgeDirection dir : NORTH_SOUTH) {
+          final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
+          if (icon1 != null) {
+            renderSingleFace(bb0, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
         }
 
-        final IIcon icon3 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 18, 0);
-        if (icon3 != null) {
-          renderSingleFace(bb3, dir, icon3, 0, 16, 0, 16, xform, brightnessPerSide, false);
-        }
-      }
+        for (ForgeDirection dir : UP_DOWN) {
+          final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
+          if (icon1 != null) {
+            renderSingleFace(bb4, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
 
-      for (ForgeDirection dir : NORTH_SOUTH) {
-        final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
-        if (icon1 != null) {
-          renderSingleFace(bb0, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
-        }
-      }
+          final IIcon icon2 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 12, 0);
+          if (icon2 != null) {
+            renderSingleFace(bb5, dir, icon2, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
 
-      for (ForgeDirection dir : UP_DOWN) {
-        final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
-        if (icon1 != null) {
-          renderSingleFace(bb4, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
-        }
-
-        final IIcon icon2 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 12, 0);
-        if (icon2 != null) {
-          renderSingleFace(bb5, dir, icon2, 0, 16, 0, 16, xform, brightnessPerSide, false);
-        }
-
-        final IIcon icon3 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 18, 0);
-        if (icon3 != null) {
-          renderSingleFace(bb6, dir, icon3, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          final IIcon icon3 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 18, 0);
+          if (icon3 != null) {
+            renderSingleFace(bb6, dir, icon3, 0, 16, 0, 16, xform, brightnessPerSide, false);
+          }
         }
       }
     } else {
-      IIcon[] icons = makeBlockTextureList(EnderIO.blockTank.getIcon(SOUTH.ordinal(), 1));
-      FaceRenderer.renderCube(bbi, icons, xform, brightnessPerInSide, true);
-      FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
-
-      IIcon[] icon4 = RenderUtil.getBlockTextures(Blocks.portal, 0);
-      FaceRenderer.renderCube(bbu, icon4, null, RenderUtil.getDefaultPerSideBrightness(), false);
+      if (RenderPassHelper.getBlockRenderPass() == 0) {
+        IIcon[] icons = makeBlockTextureList(EnderIO.blockTank.getIcon(SOUTH.ordinal(), 1));
+        FaceRenderer.renderCube(bbi, icons, xform, brightnessPerInSide, true);
+        FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+      } else {
+        IIcon[] icon4 = RenderUtil.getBlockTextures(Blocks.portal, 0);
+        FaceRenderer.renderCube(bbu, icon4, null, RenderUtil.getDefaultPerSideBrightness(), false);
+      }
     }
   }
 
