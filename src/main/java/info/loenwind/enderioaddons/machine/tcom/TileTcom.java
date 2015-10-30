@@ -5,6 +5,7 @@ import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.common.SideRestriction;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.framework.AbstractTileFramework;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
@@ -401,9 +402,9 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
     return this;
   }
 
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   public final int[] renderData = { 160, 1, 15, 0 };
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   public long lastRenderTick = 0;
 
 }

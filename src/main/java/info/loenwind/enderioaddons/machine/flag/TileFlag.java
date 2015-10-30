@@ -8,6 +8,7 @@ import info.loenwind.autosave.Writer;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.common.SideRestriction;
 
 import javax.annotation.Nullable;
 
@@ -30,7 +31,7 @@ public class TileFlag extends TileEntityEio {
 
   @Store
   private BlockCoord parent = null;
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   private long renderAge = -1;
   @Store({ CLIENT })
   private boolean isFreshlyPlaced = true;

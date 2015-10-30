@@ -7,6 +7,7 @@ import static info.loenwind.enderioaddons.machine.pmon.PacketPMon.requestUpdate;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
+import info.loenwind.enderioaddons.common.SideRestriction;
 
 import javax.annotation.Nullable;
 
@@ -146,7 +147,7 @@ public class TilePMon extends TileEnderIOAddons {
     currentTask = createTask(null);
   }
 
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   private long[] lastUpdateRequest = new long[stats.length];
 
   @SideOnly(Side.CLIENT)
@@ -162,7 +163,7 @@ public class TilePMon extends TileEnderIOAddons {
     return stats[id];
   }
 
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   protected DynaTextureProvider dynaTextureProvider = null;
 
   @SideOnly(Side.CLIENT)
@@ -183,9 +184,9 @@ public class TilePMon extends TileEnderIOAddons {
     }
   }
 
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   protected int[] iconMins = new int[DynaTextureProvider.TEXSIZE];
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   protected int[] iconMaxs = new int[DynaTextureProvider.TEXSIZE];
 
   @SideOnly(Side.CLIENT)
