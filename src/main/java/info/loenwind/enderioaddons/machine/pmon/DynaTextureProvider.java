@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResource;
@@ -161,10 +162,12 @@ public class DynaTextureProvider {
     @SuppressWarnings({ "static-method", "unused" })
     @SubscribeEvent
     public void unload(WorldEvent.Unload event) {
-      for (DynaTextureProvider instance : instances) {
-        instance.free();
+      if (event.world instanceof WorldClient) {
+        for (DynaTextureProvider instance : instances) {
+          instance.free();
+        }
+        instances.clear();
       }
-      instances.clear();
     }
   }
 
