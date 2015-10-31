@@ -3,8 +3,8 @@ package info.loenwind.autosave;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.annotations.Store.StoreFor;
+import info.loenwind.autosave.engine.StorableEngine;
 import info.loenwind.autosave.exceptions.NoHandlerFoundException;
-import info.loenwind.autosave.handlers.internal.HandleStorable;
 import info.loenwind.enderioaddons.common.NullHelper;
 
 import java.util.EnumSet;
@@ -43,7 +43,7 @@ public class Writer {
    */
   public static <T> void write(@Nonnull Registry registry, @Nonnull Set<Store.StoreFor> phase, @Nonnull NBTTagCompound tag, @Nonnull T object) {
     try {
-      (new HandleStorable<T>()).toplevelStore(registry, phase, tag, object);
+      StorableEngine.store(registry, phase, tag, object);
     } catch (IllegalAccessException | InstantiationException | NoHandlerFoundException e) {
       throw new RuntimeException(e);
     }
