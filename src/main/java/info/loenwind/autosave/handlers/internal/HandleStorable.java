@@ -6,6 +6,7 @@ import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.annotations.Store.StoreFor;
 import info.loenwind.autosave.exceptions.NoHandlerFoundException;
+import info.loenwind.enderioaddons.common.Log;
 import info.loenwind.enderioaddons.common.NullHelper;
 
 import java.lang.reflect.Field;
@@ -84,7 +85,11 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
     cacheHandlers(registry, clazz);
 
     for (Field field : fieldCache.get(clazz)) {
-      if (!Collections.disjoint(phaseCache.get(field), phase)) {
+      final Set<StoreFor> fieldphases = phaseCache.get(field);
+      if (fieldphases == null || field == null) {
+        Log.warn("Data error in NBT handling: class=" + clazz + " field=" + field + " phases=" + fieldphases
+            + ". Please report this at https://github.com/HenryLoenwind/EnderIOAddons/issues");
+      } else if (!Collections.disjoint(fieldphases, phase)) {
         Object fieldData = field.get(object);
         String fieldName = field.getName();
         if (fieldData != null && fieldName != null) {
@@ -115,7 +120,11 @@ public class HandleStorable<T extends Object> implements IHandler<T> {
     cacheHandlers(registry, clazz);
 
     for (Field field : fieldCache.get(clazz)) {
-      if (!Collections.disjoint(phaseCache.get(field), phase)) {
+      final Set<StoreFor> fieldphases = phaseCache.get(field);
+      if (fieldphases == null || field == null) {
+        Log.warn("Data error in NBT handling: class=" + clazz + " field=" + field + " phases=" + fieldphases
+            + ". Please report this at https://github.com/HenryLoenwind/EnderIOAddons/issues");
+      } else if (!Collections.disjoint(fieldphases, phase)) {
         Object fieldData = field.get(object);
         String fieldName = field.getName();
         if (!tag.hasKey(fieldName + NULL_POSTFIX) && fieldName != null) {
