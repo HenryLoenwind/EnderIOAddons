@@ -4,6 +4,7 @@ import static info.loenwind.enderioaddons.config.Config.cobbleWorksEnabled;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.fluid.Fluids;
+import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
@@ -60,9 +61,11 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     if (!Config.pMonEnabled.getBoolean()) {
       API.hideItem(new ItemStack(BlockPMon.blockPMon, 1, OreDictionary.WILDCARD_VALUE));
     }
+    if (!Config.flagEnabled.getBoolean() && !Config.magcEnabled.getBoolean() && !Config.decoBlockEnabled.getBoolean()) {
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CHASSIPARTS.ordinal()));
+    }
     if (!Config.flagEnabled.getBoolean() && !Config.magcEnabled.getBoolean()) {
       API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 2, MachinePart.SIMPLEMAGNET.ordinal()));
-      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CHASSIPARTS.ordinal()));
     }
     if (Config.flagEnabled.getBoolean() && Config.magcEnabled.getBoolean()) {
       API.registerRecipeHandler(new MagChargerRecipeHandler());
@@ -74,6 +77,9 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     }
     if (!Config.flagEnabled.getBoolean()) {
       API.hideItem(new ItemStack(BlockMagCharger.blockMagCharger, 1, OreDictionary.WILDCARD_VALUE));
+    }
+    if (!Config.decoBlockEnabled.getBoolean()) {
+      API.hideItem(new ItemStack(BlockChassis.blockChassis, 1, OreDictionary.WILDCARD_VALUE));
     }
   }
 

@@ -102,3 +102,20 @@ tile.blockMagCharger.name=Magnetic Charger
 tile.blockMagCharger.tooltip.detailed.line1=Charges Magnetic Flags.
 
 enderioaddons.nei.magcharger=Magnetic Charger
+
+tile.blockChassis.0.name=Machine Chassis (decoration block)
+tile.blockChassis.1.name=Blank Machine (decoration block)
+tile.blockChassis.2.name=Machine Tops (decoration block)
+tile.blockChassis.3.name=Machine Sides (decoration block)
+tile.blockChassis.4.name=Machine Backs (decoration block)
+tile.blockChassis.5.name=Machine with sides (decoration block)
+tile.blockChassis.6.name=Machine width backs (decoration block)
+tile.blockChassis.7.name=Blank Soul Machine (decoration block)
+tile.blockChassis.8.name=Soul Machine Tops (decoration block)
+tile.blockChassis.9.name=Soul Machine Sides (decoration block)
+tile.blockChassis.10.name=Soul Machine Backs (decoration block)
+tile.blockChassis.11.name=Soul Machine with sides (decoration block)
+tile.blockChassis.12.name=Soul Machine width backs (decoration block)
+tile.blockChassis.13.name=Red Machine (decoration block)
+tile.blockChassis.14.name=Broken Spawner (decoration block)
+tile.blockChassis.15.name=Invisible Block (decoration block)

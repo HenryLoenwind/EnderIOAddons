@@ -1,28 +1,31 @@
 package info.loenwind.enderioaddons.recipe;
 
+import static crazypants.util.RecipeUtil.addShaped;
+import static info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks.blockCobbleworks;
+import static info.loenwind.enderioaddons.machine.drain.BlockDrain.blockDrain;
+import static info.loenwind.enderioaddons.machine.ihopper.BlockIHopper.blockIHopper;
+import static info.loenwind.enderioaddons.machine.magcharger.BlockMagCharger.blockMagCharger;
+import static info.loenwind.enderioaddons.machine.niard.BlockNiard.blockNiard;
+import static info.loenwind.enderioaddons.machine.pmon.BlockPMon.blockPMon;
+import static info.loenwind.enderioaddons.machine.tcom.BlockTcom.blockTcom;
+import static info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank.blockVoidTank;
+import static info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks.blockWaterworks;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.config.Config;
-import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
-import info.loenwind.enderioaddons.machine.drain.BlockDrain;
+import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
-import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
-import info.loenwind.enderioaddons.machine.magcharger.BlockMagCharger;
-import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
-import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
-import info.loenwind.enderioaddons.machine.tcom.BlockTcom;
-import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
-import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
+import crazypants.util.RecipeUtil;
 
 public class Recipes implements InitAware {
 
@@ -104,30 +107,25 @@ public class Recipes implements InitAware {
   public void init(FMLInitializationEvent event) {
     // Drain
     if (Config.drainEnabled.getBoolean()) {
-      ItemStack drain = new ItemStack(BlockDrain.blockDrain, 1, 0);
-      GameRegistry.addRecipe(new ShapedOreRecipe(drain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
-          electricSteel, 'v', Items.cauldron));
+      addShaped(blockDrain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e', electricSteel, 'v',
+          Items.cauldron);
     }
 
     // Niard
     if (Config.niardEnabled.getBoolean()) {
-      ItemStack niard = new ItemStack(BlockNiard.blockNiard, 1, 0);
-      GameRegistry.addRecipe(new ShapedOreRecipe(niard, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
-          electricSteel, 'v', darkSteelBars));
+      addShaped(blockNiard, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e', electricSteel, 'v',
+          darkSteelBars);
     }
 
     // Void Tank
     if (Config.voidTankEnabled.getBoolean()) {
-      ItemStack voidTank = new ItemStack(BlockVoidTank.blockVoidTank, 1, 0);
-      GameRegistry.addRecipe(new ShapedOreRecipe(voidTank, "omo", "sfs", "oto", 'm', machineChassi, 't', advancedTank, 'o', "blockObsidian", 'f',
-          Items.flint_and_steel, 's', darkSteel));
+      addShaped(blockVoidTank, "omo", "sfs", "oto", 'm', machineChassi, 't', advancedTank, 'o', "blockObsidian", 'f', Items.flint_and_steel, 's', darkSteel);
     }
 
     // Power Monitor
     if (Config.pMonEnabled.getBoolean()) {
-      ItemStack pmon = new ItemStack(BlockPMon.blockPMon, 1, 0);
-      GameRegistry.addRecipe(new ShapedOreRecipe(pmon, "xxx", "xpx", "123", 'p', blockPowerMonitor, '1', "dyeRed", '2', "dyeYellow", '3', "dyeGreen", 'x',
-          new ItemStack(Blocks.wool, 1, 15)));
+      addShaped(blockPMon, "xxx", "xpx", "123", 'p', blockPowerMonitor, '1', "dyeRed", '2', "dyeYellow", '3', "dyeGreen", 'x',
+          new ItemStack(Blocks.wool, 1, 15));
     }
 
     ItemStack zombieBit;
@@ -143,104 +141,140 @@ public class Recipes implements InitAware {
     // Frame parts
     if (isAnyFrameworkMachineEnabled()) {
       ItemStack machineFrame = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME.ordinal());
-      GameRegistry.addShapedRecipe(machineFrame, "dsd", "s s", "dsd", 's', electricSteel, 'd', darkSteel);
+      addShaped(machineFrame, "dsd", "s s", "dsd", 's', electricSteel, 'd', darkSteel);
 
       if (isAnyFrameworkMachineWithTanksEnabled()) {
         ItemStack frameTank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FRAME_TANK.ordinal());
-        GameRegistry.addShapedRecipe(frameTank, "scs", "c c", "scs", 's', silicon, 'c', clearGlass);
+        addShaped(frameTank, "scs", "c c", "scs", 's', silicon, 'c', clearGlass);
 
         ItemStack frameTanks = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FRAME_TANKS.ordinal());
-        GameRegistry.addShapelessRecipe(frameTanks, frameTank, frameTank, frameTank, frameTank);
+        addShapeless(frameTanks, frameTank, frameTank, frameTank, frameTank);
 
         ItemStack machineFrameTank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MACHINE_FRAME_TANK.ordinal());
-        GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTank, frameTank, frameTank, frameTank);
-        GameRegistry.addShapelessRecipe(machineFrameTank, machineFrame, frameTanks);
+        addShapeless(machineFrameTank, machineFrame, frameTank, frameTank, frameTank, frameTank);
+        addShapeless(machineFrameTank, machineFrame, frameTanks);
 
         // Cobbleworks
         if (Config.cobbleWorksEnabled.getBoolean()) {
           ItemStack cobbleController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COBBLE_CONTROLLER.ordinal());
-          GameRegistry.addShapedRecipe(cobbleController, "sis", "lMw", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit,
-              'l', Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
-          GameRegistry.addShapedRecipe(cobbleController, "sis", "wMl", "pzp", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit,
-              'l', Items.lava_bucket, 'w', Items.water_bucket, 'p', crystal);
+          addShaped(cobbleController, "sis", "lMw", "pzp", 'i', "ingotIron", 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l', Items.lava_bucket,
+              'w', Items.water_bucket, 'p', crystal);
+          addShaped(cobbleController, "sis", "wMl", "pzp", 'i', "ingotIron", 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'l', Items.lava_bucket,
+              'w', Items.water_bucket, 'p', crystal);
 
-          ItemStack cobbleworks = new ItemStack(BlockCobbleworks.blockCobbleworks);
-          GameRegistry.addShapelessRecipe(cobbleworks, machineFrameTank, cobbleController);
-          GameRegistry.addShapelessRecipe(cobbleworks, machineFrame, frameTank, frameTank, frameTank, frameTank, cobbleController);
-          GameRegistry.addShapelessRecipe(cobbleworks, machineFrame, frameTanks, cobbleController);
+          addShapeless(blockCobbleworks, machineFrameTank, cobbleController);
+          addShapeless(blockCobbleworks, machineFrame, frameTank, frameTank, frameTank, frameTank, cobbleController);
+          addShapeless(blockCobbleworks, machineFrame, frameTanks, cobbleController);
         }
 
         // Waterworks
         if (Config.waterWorksEnabled.getBoolean()) {
           ItemStack heatingElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.HEATING_ELEMENT.ordinal());
-          GameRegistry.addShapedRecipe(heatingElement, "ccs", "srs", "scc", 's', silicon, 'c', conductiveIron, 'r', blockRedstoneAlloy);
+          addShaped(heatingElement, "ccs", "srs", "scc", 's', silicon, 'c', conductiveIron, 'r', blockRedstoneAlloy);
 
           ItemStack filterElement = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FILTER_ELEMENT.ordinal());
-          GameRegistry.addShapedRecipe(filterElement, "bbb", "ccc", "bbb", 'b', darkSteelBars, 'c', binderComposite);
+          addShaped(filterElement, "bbb", "ccc", "bbb", 'b', darkSteelBars, 'c', binderComposite);
 
           ItemStack waterController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.WATER_CONTROLLER.ordinal());
-          GameRegistry.addShapedRecipe(waterController, "sis", "fMf", "fhf", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'f', filterElement,
-              'h', heatingElement);
+          addShaped(waterController, "sis", "fMf", "fhf", 'i', "ingotIron", 's', electricSteel, 'M', machineChassi, 'f', filterElement, 'h', heatingElement);
 
-          ItemStack waterworks = new ItemStack(BlockWaterworks.blockWaterworks);
-          GameRegistry.addShapelessRecipe(waterworks, machineFrameTank, waterController);
-          GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTank, frameTank, frameTank, frameTank, waterController);
-          GameRegistry.addShapelessRecipe(waterworks, machineFrame, frameTanks, waterController);
+          addShapeless(blockWaterworks, machineFrameTank, waterController);
+          addShapeless(blockWaterworks, machineFrame, frameTank, frameTank, frameTank, frameTank, waterController);
+          addShapeless(blockWaterworks, machineFrame, frameTanks, waterController);
         }
 
         if (Config.tcomEnabled.getBoolean()) {
           ItemStack tray = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.TRAY.ordinal());
-          GameRegistry.addShapedRecipe(tray, "   ", "i i", "did", 'i', Items.iron_ingot, 'd', darkSteel);
+          addShaped(tray, "   ", "i i", "did", 'i', "ingotIron", 'd', darkSteel);
 
           ItemStack pylon = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.PYLON.ordinal());
-          GameRegistry.addShapedRecipe(pylon, "ese", " E ", "ese", 'e', electricSteel, 's', soularium, 'E', Blocks.enchanting_table);
+          addShaped(pylon, "ese", " E ", "ese", 'e', electricSteel, 's', soularium, 'E', Blocks.enchanting_table);
 
           ItemStack pylontank = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.PYLONTANK.ordinal());
-          GameRegistry.addShapelessRecipe(pylontank, frameTank, pylon);
+          addShapeless(pylontank, frameTank, pylon);
 
           ItemStack tcomController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.TCOM_CONTROLLER.ordinal());
-          GameRegistry.addShapedRecipe(tcomController, "sCs", "pMa", "czc", 'M', machineChassi, 'z', zombieBit, 'c', crystal, 's', electricSteel, 'C',
-              Blocks.chest, 'p', Blocks.piston, 'a', new ItemStack(Blocks.anvil, 1, 0));
+          addShaped(tcomController, "sCs", "pMa", "czc", 'M', machineChassi, 'z', zombieBit, 'c', crystal, 's', electricSteel, 'C', Blocks.chest, 'p',
+              Blocks.piston, 'a', new ItemStack(Blocks.anvil, 1, 0));
 
-          ItemStack tcom = new ItemStack(BlockTcom.blockTcom);
-          GameRegistry.addShapelessRecipe(tcom, machineFrame, tcomController, pylontank, tray, tray, tray, tray, tray, tray);
+          addShapeless(blockTcom, machineFrame, tcomController, pylontank, tray, tray, tray, tray, tray, tray);
         }
       }
 
       // Impulse Hopper
       if (Config.impulseHopperEnabled.getBoolean()) {
         ItemStack ihopperController = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IHOPPER_CONTROLLER.ordinal());
-        GameRegistry.addShapedRecipe(ihopperController, "sis", "hMt", "tzh", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit,
-            'h', hopper, 't', redstoneTorch);
-        GameRegistry.addShapedRecipe(ihopperController, "sis", "tMh", "hzt", 'i', Items.iron_ingot, 's', electricSteel, 'M', machineChassi, 'z', zombieBit,
-            'h', hopper, 't', redstoneTorch);
+        addShaped(ihopperController, "sis", "hMt", "tzh", 'i', "ingotIron", 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'h', hopper, 't',
+            redstoneTorch);
+        addShaped(ihopperController, "sis", "tMh", "hzt", 'i', "ingotIron", 's', electricSteel, 'M', machineChassi, 'z', zombieBit, 'h', hopper, 't',
+            redstoneTorch);
 
-        ItemStack ihopper = new ItemStack(BlockIHopper.blockIHopper);
-        GameRegistry.addShapelessRecipe(ihopper, machineFrame, ihopperController, hopper, hopper, hopper);
+        addShapeless(blockIHopper, machineFrame, ihopperController, hopper, hopper, hopper);
       }
 
     }
 
-    if (Config.flagEnabled.getBoolean() || Config.magcEnabled.getBoolean()) {
-      ItemStack simpleMagnet = new ItemStack(ItemMachinePart.itemMachinePart, 2, MachinePart.SIMPLEMAGNET.ordinal());
-      GameRegistry.addShapedRecipe(simpleMagnet, "ccc", "c c", "s s", 's', electricSteel, 'c', conductiveIron);
+    if (Config.flagEnabled.getBoolean() || Config.magcEnabled.getBoolean() || Config.decoBlockEnabled.getBoolean()) {
       ItemStack chassiParts = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CHASSIPARTS.ordinal());
-      GameRegistry.addShapedRecipe(chassiParts, "iii", "iMi", "iii", 'M', machineChassi, 'i', Items.iron_ingot);
+      addShaped(chassiParts, "iii", "iMi", "iii", 'M', machineChassi, 'i', "ingotIron");
 
-      // Magnetic Flag
-      if (Config.flagEnabled.getBoolean()) {
-        ItemStack flagParts = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.FLAGPARTS.ordinal());
-        GameRegistry.addShapedRecipe(flagParts, "sRR", "sRR", "s  ", 's', electricSteel, 'R', new ItemStack(Blocks.wool, 1, 14));
-        ItemStack flags = new ItemStack(BlockFlag.blockFlag, 16, 1);
-        GameRegistry.addShapedRecipe(flags, " f ", " f ", "csc", 'f', flagParts, 's', simpleMagnet, 'c', chassiParts);
-        ItemStack flag = new ItemStack(BlockFlag.blockFlag, 1, 0);
-        GameRegistry.addShapelessRecipe(flag, flag);
+      if (Config.flagEnabled.getBoolean() || Config.magcEnabled.getBoolean()) {
+        ItemStack simpleMagnet = new ItemStack(ItemMachinePart.itemMachinePart, 2, MachinePart.SIMPLEMAGNET.ordinal());
+        addShaped(simpleMagnet, "ccc", "c c", "s s", 's', electricSteel, 'c', conductiveIron);
+
+        // Magnetic Flag
+        if (Config.flagEnabled.getBoolean()) {
+          ItemStack flagParts = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.FLAGPARTS.ordinal());
+          addShaped(flagParts, "sRR", "sRR", "s  ", 's', electricSteel, 'R', new ItemStack(Blocks.wool, 1, 14));
+          ItemStack flags = new ItemStack(BlockFlag.blockFlag, 16, 1);
+          addShaped(flags, " f ", " f ", "csc", 'f', flagParts, 's', simpleMagnet, 'c', chassiParts);
+          ItemStack flag = new ItemStack(BlockFlag.blockFlag, 1, 0);
+          addShapeless(flag, flag);
+        }
+
+        // Magnetic Charger
+        if (Config.flagEnabled.getBoolean()) {
+          addShaped(blockMagCharger, "CsC", "sMs", "csc", 'M', machineChassi, 'C', conductiveIron, 's', simpleMagnet, 'c', chassiParts);
+        }
       }
 
-      // Magnetic Charger
-      if (Config.flagEnabled.getBoolean()) {
-        ItemStack magc = new ItemStack(BlockMagCharger.blockMagCharger, 1, 0);
-        GameRegistry.addShapedRecipe(magc, "CsC", "sMs", "csc", 'M', machineChassi, 'C', conductiveIron, 's', simpleMagnet, 'c', chassiParts);
+      // Decoration Block
+      if (Config.decoBlockEnabled.getBoolean()) {
+        ItemStack[] deco = new ItemStack[16];
+        for (int i = 0; i < 16; i++) {
+          deco[i] = new ItemStack(BlockChassis.blockChassis, 1, i);
+        }
+        addShaped(deco[0], " p ", "p p", " p ", 'p', chassiParts);
+        addShaped(deco[1], " i ", "idi", " i ", 'd', deco[0], 'i', "ingotIron");
+        addShaped(deco[1], "ipi", "p p", "ipi", 'p', chassiParts, 'i', "ingotIron");
+        addShaped(deco[1], "pip", "i i", "pip", 'p', chassiParts, 'i', "ingotIron");
+        addShapeless(deco[2], deco[1]);
+        addShapeless(deco[3], deco[2]);
+        addShapeless(deco[4], deco[3]);
+        addShapeless(deco[5], deco[4]);
+        addShapeless(deco[6], deco[5]);
+        addShapeless(deco[1], deco[6]);
+
+        addShaped(deco[7], " i ", "idi", " i ", 'd', deco[0], 'i', soularium);
+        addShaped(deco[7], "ipi", "p p", "ipi", 'p', chassiParts, 'i', soularium);
+        addShaped(deco[7], "pip", "i i", "pip", 'p', chassiParts, 'i', soularium);
+        addShapeless(deco[8], deco[7]);
+        addShapeless(deco[9], deco[8]);
+        addShapeless(deco[10], deco[9]);
+        addShapeless(deco[11], deco[10]);
+        addShapeless(deco[12], deco[11]);
+        addShapeless(deco[7], deco[12]);
+
+        addShapeless(deco[13], deco[1], "dyeRed");
+        addShapeless(deco[1], deco[13], Items.water_bucket);
+
+        addShaped(deco[14], " i ", "idi", " i ", 'd', deco[0], 'i', Blocks.iron_bars);
+        addShaped(deco[14], "ipi", "p p", "ipi", 'p', chassiParts, 'i', Blocks.iron_bars);
+        addShaped(deco[14], "pip", "i i", "pip", 'p', chassiParts, 'i', Blocks.iron_bars);
+
+        addShaped(deco[15], " i ", "idi", " i ", 'd', deco[0], 'i', clearGlass);
+        addShaped(deco[15], "ipi", "p p", "ipi", 'p', chassiParts, 'i', clearGlass);
+        addShaped(deco[15], "pip", "i i", "pip", 'p', chassiParts, 'i', clearGlass);
       }
     }
   }
@@ -256,6 +290,21 @@ public class Recipes implements InitAware {
 
   @Override
   public void init(FMLPostInitializationEvent event) {
+  }
+
+  // TODO when fixed in eio
+  public static void addShapeless(Item res, Object... recipe) {
+    RecipeUtil.addShapeless(new ItemStack(res), recipe);
+  }
+
+  // TODO when fixed in eio
+  public static void addShapeless(Block res, Object... recipe) {
+    RecipeUtil.addShapeless(new ItemStack(res), recipe);
+  }
+
+  // TODO when fixed in eio
+  public static void addShapeless(ItemStack res, Object... recipe) {
+    RecipeUtil.addShapeless(res, recipe);
   }
 
 }

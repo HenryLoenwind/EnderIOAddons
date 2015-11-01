@@ -106,6 +106,10 @@ public enum Config {
   flagKeepTargetOnBreaking(Section.FLAG, false, "Should Magnetic Flags keep their target when being broken?"), //
 
   flagEnabled(Section.RECIPES, true, "Enable the crafting recipe for the Magnetic Flag"), //
+
+  decoBlockInvisibleIsInvisible(Section.DECO, true, "Allow the invisible block to be invisible. Otherwise it will mimic a quite clear glass block."), //
+
+  decoBlockEnabled(Section.RECIPES, true, "Enable the crafting recipe for the decoration block"), //
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
