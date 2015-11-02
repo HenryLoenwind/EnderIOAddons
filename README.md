@@ -9,12 +9,4 @@ Do what you want with it, as long as you smile while doing so.
 
 =======
 
-Current state:
-
-* Cobbleworks: working and stable
-* Drain: working and stable
-* Waterworks: in progress, not yet doing anything
-* Impulse Hopper: working
-* Mine: not started
-* Metal Liquifier: not started
-* Metal Caster: not started
+Documentation is found in the https://github.com/HenryLoenwind/EnderIOAddons/wiki
