@@ -94,7 +94,7 @@ public class PacketPMon extends MessageTileEntity<TilePMon> {
           te.stats[msg.no].setPos(msg.pos);
           te.stats[msg.no].setData(msg.data);
           if (msg.no == te.stats.length - 1 && te.dynaTextureProvider != null) {
-            te.dynaTextureProvider.updateTexture();
+            ((DynaTextureProvider) te.dynaTextureProvider).updateTexture();
           }
         }
       }

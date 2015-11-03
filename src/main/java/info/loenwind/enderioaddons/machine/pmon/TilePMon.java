@@ -164,14 +164,14 @@ public class TilePMon extends TileEnderIOAddons {
   }
 
   @SideRestriction(Side.CLIENT)
-  protected DynaTextureProvider dynaTextureProvider = null;
+  protected Object dynaTextureProvider = null;
 
   @SideOnly(Side.CLIENT)
   public void bindTexture() {
     if (dynaTextureProvider == null) {
       dynaTextureProvider = new DynaTextureProvider(this);
     }
-    dynaTextureProvider.bindTexture();
+    ((DynaTextureProvider) dynaTextureProvider).bindTexture();
   }
 
   @Override
@@ -179,7 +179,7 @@ public class TilePMon extends TileEnderIOAddons {
   public void invalidate() {
     super.invalidate();
     if (dynaTextureProvider != null) {
-      dynaTextureProvider.free();
+      ((DynaTextureProvider) dynaTextureProvider).free();
       dynaTextureProvider = null;
     }
   }
