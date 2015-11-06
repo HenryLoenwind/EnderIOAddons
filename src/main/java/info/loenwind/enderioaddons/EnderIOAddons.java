@@ -15,6 +15,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
@@ -29,6 +30,10 @@ public class EnderIOAddons implements InitAware {
   public static final String MOD_NAME = "Ender IO Addons";
   @Nonnull
   public static final String VERSION = "@VERSION@";
+  @Nonnull
+  public static final String ENDERIO_VERSION = "@enderio_version@";
+  @Nonnull
+  public static final String UPDATE_URL = "http://enderioaddons.loenwind.info/versioninfo_" + ENDERIO_VERSION + ".json?" + VERSION;
 
   @SidedProxy(clientSide = "info.loenwind.enderioaddons.proxy.ClientOnlyProxy", serverSide = "info.loenwind.enderioaddons.proxy.ClientAndServerProxy")
   public static InitAware proxy;
@@ -53,6 +58,7 @@ public class EnderIOAddons implements InitAware {
   @Override
   @EventHandler
   public void init(FMLInitializationEvent event) {
+    FMLInterModComms.sendRuntimeMessage(MODID, "VersionChecker", "addVersionCheck", UPDATE_URL);
     config.init(event);
     proxy.init(event);
     recipes.init(event);
