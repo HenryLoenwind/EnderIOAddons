@@ -2,6 +2,9 @@ package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
+import info.loenwind.enderioaddons.machine.afarm.module.HarvestModule;
+import info.loenwind.enderioaddons.machine.afarm.module.IAfarmControlModule;
+import info.loenwind.enderioaddons.machine.afarm.module.NSEWmodule;
 import info.loenwind.enderioaddons.machine.niard.RadiusIterator;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ public class TileAfarm extends TileEnderIOAddons {
 
   public static final int NUM_CONTROL_SLOTS = 6;
   public static final int NUM_CONTROL_STORAGE_SLOTS = 12;
+  public static final int NUM_SEED_GHOST_SLOTS = 4;
   public static final int NUM_SEED_STORAGE_SLOTS = 12;
   public static final int NUM_OUTPUT_SLOTS = 18;
   public static final int NUM_TOOL_SLOTS = 2;
@@ -43,8 +47,8 @@ public class TileAfarm extends TileEnderIOAddons {
   private RadiusIterator itr;
 
   public TileAfarm() {
-    super(new SlotDefinitionAfarm(NUM_CONTROL_SLOTS, NUM_CONTROL_STORAGE_SLOTS, NUM_SEED_STORAGE_SLOTS, NUM_OUTPUT_SLOTS, NUM_TOOL_SLOTS, NUM_FERTILIZER_SLOTS,
-        NUM_CROPSTICK_SLOTS, 1));
+    super(new SlotDefinitionAfarm(NUM_CONTROL_SLOTS, NUM_CONTROL_STORAGE_SLOTS, NUM_SEED_GHOST_SLOTS, NUM_SEED_STORAGE_SLOTS, NUM_OUTPUT_SLOTS, NUM_TOOL_SLOTS,
+        NUM_FERTILIZER_SLOTS, NUM_CROPSTICK_SLOTS, 1));
     if (agricraft == null) {
       APIBase api = API.getAPI(1);
       if (api.getStatus().isOK() && api.getVersion() == 1) {
@@ -78,10 +82,11 @@ public class TileAfarm extends TileEnderIOAddons {
       return item.getItem() instanceof IAfarmControlModuleItem;
     case CROPSTICK:
       for (ItemStack cropStick : cropSticks) {
-        if (cropStick.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-          return cropStick.getItem() == item.getItem() && ItemStack.areItemStackTagsEqual(cropStick, item);
-        } else {
-          return ItemUtil.areStacksEqual(cropStick, item);
+        if (cropStick.getItemDamage() == OreDictionary.WILDCARD_VALUE && cropStick.getItem() == item.getItem()
+            && ItemStack.areItemStackTagsEqual(cropStick, item)) {
+          return true;
+        } else if (ItemUtil.areStacksEqual(cropStick, item)) {
+          return true;
         }
       }
       return false;
@@ -98,12 +103,29 @@ public class TileAfarm extends TileEnderIOAddons {
         return false;
       }
     case CONTROL:
-      // TODO cross check installed modules
-      return item.getItem() instanceof IAfarmControlModuleItem;
+      if (item.getItem() instanceof IAfarmControlModuleItem) {
+        IAfarmControlModule candidate = ((IAfarmControlModuleItem) item.getItem()).getWorker(item);
+        for (IAfarmControlModule installed : getControlModules()) {
+          if (!candidate.isCompatibleWith(installed) || !installed.isCompatibleWith(candidate)) {
+            return false;
+          }
+        }
+        return true;
+      }
+      return false;
+    case SEED_GHOST:
     case OUTPUT:
     case UPGRADE:
     default:
       return false;
+    }
+  }
+
+  @Override
+  public void setGhostSlotContents(int slot, ItemStack contents) {
+    if (((SlotDefinitionAfarm) slotDefinition).getSlotType(slot) == SLOT.SEED_GHOST && (contents == null || agricraft.isHandledByAgricraft(contents))) {
+      super.setInventorySlotContents(slot, contents);
+      forceClientUpdate = true;
     }
   }
 
@@ -235,8 +257,15 @@ public class TileAfarm extends TileEnderIOAddons {
     return false;
   }
 
+  private static final List<IAfarmControlModule> standardModules = new ArrayList<>();
+  static {
+    standardModules.add(new NSEWmodule());
+    standardModules.add(new HarvestModule());
+  }
+
   private List<IAfarmControlModule> getControlModules() {
     List<IAfarmControlModule> result = new ArrayList<>();
+    result.addAll(standardModules);
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.CONTROL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.CONTROL); i++) {
       if (inventory[i] != null && inventory[i].getItem() instanceof IAfarmControlModuleItem) {
         result.add(((IAfarmControlModuleItem) inventory[i].getItem()).getWorker(inventory[i]));

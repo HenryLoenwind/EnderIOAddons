@@ -64,6 +64,7 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
     for (int i = 0; i < tabButtons.length; i++) {
       tabButtons[i].onGuiInit();
     }
+    ((ContainerAfarm) inventorySlots).addGhostSlots(getGhostSlots());
     updateVisibility();
   }
 

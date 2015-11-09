@@ -10,15 +10,15 @@ import crazypants.enderio.machine.SlotDefinition;
 public class SlotDefinitionAfarm extends SlotDefinition {
 
   public enum SLOT {
-    CONTROL, CONTROL_STORAGE, SEED, OUTPUT, TOOL, FERTILIZER, CROPSTICK, UPGRADE;
+    CONTROL, CONTROL_STORAGE, SEED, SEED_GHOST, OUTPUT, TOOL, FERTILIZER, CROPSTICK, UPGRADE;
   }
 
   private final List<SLOT> slottypes = new ArrayList<>();
   private final Map<SLOT, Integer> minslots = new EnumMap<>(SLOT.class);
   private final Map<SLOT, Integer> maxslots = new EnumMap<>(SLOT.class);
 
-  public SlotDefinitionAfarm(int num_control_slots, int num_control_storage_slots, int num_seed_storage_slots, int num_output_slots, int num_tool_slots,
-      int num_fertilizer_slots, int num_cropstick_slots, int num_upgrade_slots) {
+  public SlotDefinitionAfarm(int num_control_slots, int num_control_storage_slots, int num_seed_ghost_slots, int num_seed_storage_slots, int num_output_slots,
+      int num_tool_slots, int num_fertilizer_slots, int num_cropstick_slots, int num_upgrade_slots) {
     super(num_control_storage_slots + num_seed_storage_slots + num_tool_slots + num_fertilizer_slots + num_cropstick_slots, num_output_slots, num_upgrade_slots);
     addSlot(SLOT.CONTROL_STORAGE, num_control_storage_slots);
     addSlot(SLOT.SEED, num_seed_storage_slots);
@@ -28,6 +28,7 @@ public class SlotDefinitionAfarm extends SlotDefinition {
     addSlot(SLOT.OUTPUT, num_output_slots);
     addSlot(SLOT.UPGRADE, num_upgrade_slots);
     addSlot(SLOT.CONTROL, num_control_slots);
+    addSlot(SLOT.SEED_GHOST, num_seed_ghost_slots);
   }
 
   private void addSlot(SLOT slottype, int num_slots) {

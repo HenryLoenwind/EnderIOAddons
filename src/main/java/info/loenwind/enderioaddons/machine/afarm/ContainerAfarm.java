@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
+import info.loenwind.enderioaddons.gui.IHidableSlotsContainer;
 import info.loenwind.enderioaddons.gui.StdOutputSlot;
 import info.loenwind.enderioaddons.gui.StdSlot;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
@@ -11,11 +12,12 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import com.enderio.core.client.gui.widget.GhostSlot;
 
-public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
+public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> implements IHidableSlotsContainer {
 
   static final int D = 18;
   static final int ROW1 = 17;
@@ -30,6 +32,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
   private List<StdSlot> tab1slots;
   private List<StdOutputSlot> tab2slots;
   private List<StdSlot> tab3slots;
+  private List<AfarmGhostSlot> tab1ghostSlots;
 
   public ContainerAfarm(InventoryPlayer playerInv, @Nonnull TileAfarm te) {
     super(playerInv, te);
@@ -41,10 +44,13 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
     tab1slots = new ArrayList<>();
     tab2slots = new ArrayList<>();
     tab3slots = new ArrayList<>();
+    tab1ghostSlots = new ArrayList<>();
+
+    final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) getInv().getSlotDefinition();
 
     int x = 1;
     int y = ROW1;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.CONTROL); slot <= ((SlotDefinitionAfarm) getInv().getSlotDefinition())
+    for (int slot = slotDef.getMinSlot(SLOT.CONTROL); slot <= slotDef
         .getMaxSlot(SLOT.CONTROL); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
@@ -53,8 +59,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
 
     x = 1;
     y = ROW25;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.CONTROL_STORAGE); slot <= ((SlotDefinitionAfarm) getInv()
-        .getSlotDefinition()).getMaxSlot(SLOT.CONTROL_STORAGE); slot++) {
+    for (int slot = slotDef.getMinSlot(SLOT.CONTROL_STORAGE); slot <= slotDef.getMaxSlot(SLOT.CONTROL_STORAGE); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
       tab0slots.add(theSlot);
@@ -66,7 +71,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
 
     x = 1;
     y = ROW25;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.SEED); slot <= ((SlotDefinitionAfarm) getInv().getSlotDefinition())
+    for (int slot = slotDef.getMinSlot(SLOT.SEED); slot <= slotDef
         .getMaxSlot(SLOT.SEED); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
@@ -79,7 +84,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
 
     x = 1;
     y = ROW1;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.OUTPUT); slot <= ((SlotDefinitionAfarm) getInv().getSlotDefinition())
+    for (int slot = slotDef.getMinSlot(SLOT.OUTPUT); slot <= slotDef
         .getMaxSlot(SLOT.OUTPUT); slot++) {
       final StdOutputSlot theSlot = new StdOutputSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
@@ -92,7 +97,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
 
     x = 1;
     y = ROW1;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.TOOL); slot <= ((SlotDefinitionAfarm) getInv().getSlotDefinition())
+    for (int slot = slotDef.getMinSlot(SLOT.TOOL); slot <= slotDef
         .getMaxSlot(SLOT.TOOL); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
@@ -101,8 +106,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
 
     x = 4;
     y = ROW1;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.FERTILIZER); slot <= ((SlotDefinitionAfarm) getInv()
-        .getSlotDefinition()).getMaxSlot(SLOT.FERTILIZER); slot++) {
+    for (int slot = slotDef.getMinSlot(SLOT.FERTILIZER); slot <= slotDef.getMaxSlot(SLOT.FERTILIZER); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
       tab3slots.add(theSlot);
@@ -110,8 +114,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
 
     x = 1;
     y = ROW25;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.CROPSTICK); slot <= ((SlotDefinitionAfarm) getInv()
-        .getSlotDefinition()).getMaxSlot(SLOT.CROPSTICK); slot++) {
+    for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
       tab3slots.add(theSlot);
@@ -120,34 +123,32 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
   }
 
   public void addGhostSlots(List<GhostSlot> ghostSlots) {
+    final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) getInv().getSlotDefinition();
     int x = COL + D;
     int y = ROW1;
-    for (int slot = ((SlotDefinitionAfarm) getInv().getSlotDefinition()).getMinSlot(SLOT.CONTROL); slot <= ((SlotDefinitionAfarm) getInv().getSlotDefinition())
-        .getMaxSlot(SLOT.CONTROL); slot++) {
-      final IHopperGhostSlot theSlot = new IHopperGhostSlot(slot, x, y);
+    tab1ghostSlots.clear();
+    for (int slot = slotDef.getMinSlot(SLOT.SEED_GHOST); slot <= slotDef.getMaxSlot(SLOT.SEED_GHOST); slot++) {
+      final AfarmGhostSlot theSlot = new AfarmGhostSlot(slot, x, y);
       x += D + D / 2;
       ghostSlots.add(theSlot);
+      tab1ghostSlots.add(theSlot);
     }
   }
 
-  private class IHopperGhostSlot extends GhostSlot {
-    private final int slotIndex;
+  private class AfarmGhostSlot extends GhostSlot {
 
-    public IHopperGhostSlot(int slotIndex, int x, int y) {
-      this.slotIndex = slotIndex;
+    public AfarmGhostSlot(int slotIndex, int x, int y) {
+      this.slot = slotIndex;
       this.x = x;
       this.y = y;
+      this.te = getInv();
     }
 
     @Override
     public ItemStack getStack() {
-      return getInv().getStackInSlot(slotIndex);
+      return getInv().getStackInSlot(slot);
     }
 
-    @Override
-    public void putStack(ItemStack newstack) {
-      // TODO      PacketHandler.INSTANCE.sendToServer(PacketIHopper.setGhostSlotContents(getInv(), slotIndex, newstack));
-    }
   }
 
   public void setTabVisibility(int tab) {
@@ -162,6 +163,23 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> {
     }
     for (StdSlot stdSlot : tab3slots) {
       stdSlot.enable(tab == 3);
+    }
+    for (AfarmGhostSlot slot : tab1ghostSlots) {
+      slot.visible = tab == 1;
+      System.out.println("ghost " + slot.visible);
+    }
+  }
+
+  @Override
+  public void hideSlot(int slotno, boolean hide) {
+    for (Object slot : inventorySlots) {
+      if (((Slot) slot).getSlotIndex() == slotno) {
+        if (slot instanceof StdSlot) {
+          ((StdSlot) slot).enable(!hide);
+        } else if (slot instanceof StdOutputSlot) {
+          ((StdOutputSlot) slot).enable(!hide);
+        }
+      }
     }
   }
 
