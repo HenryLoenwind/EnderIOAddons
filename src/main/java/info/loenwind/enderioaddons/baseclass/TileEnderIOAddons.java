@@ -102,4 +102,28 @@ public abstract class TileEnderIOAddons extends AbstractPoweredTaskEntity {
     }
   }
 
+  public boolean canUsePower(Float wantToUse) {
+    int w = wantToUse.intValue();
+    return !((w < 1 ? 1 : w) > getEnergyStored());
+  }
+
+  public boolean canUsePower(int wantToUse) {
+    return !(wantToUse > getEnergyStored());
+  }
+
+  public boolean usePower(Float wantToUse) {
+    int w = wantToUse.intValue();
+    return usePower(w < 1 ? 1 : w) > 0;
+  }
+
+  @Override
+  public int usePower(int wantToUse) {
+    if (wantToUse > getEnergyStored()) {
+      return 0;
+    } else {
+      setEnergyStored(getEnergyStored() - wantToUse);
+      return super.usePower(wantToUse);
+    }
+  }
+
 }
