@@ -10,16 +10,12 @@ import info.loenwind.enderioaddons.gui.AdvancedRedstoneModeButton;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
-import com.enderio.core.client.gui.widget.GhostSlot;
 import com.enderio.core.client.render.RenderUtil;
 import com.enderio.core.common.util.BlockCoord;
-import com.enderio.core.common.util.ItemUtil;
 
 import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
@@ -47,87 +43,6 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
   }
 
   @Override
-  protected void ghostSlotClicked(GhostSlot slot, int x, int y, int button) {
-    ItemStack handStack = Minecraft.getMinecraft().thePlayer.inventory.getItemStack();
-    ItemStack existingStack = slot.getStack();
-    if (button == 0) { // left
-      if (handStack == null || handStack.getItem() == null || handStack.stackSize == 0) { // empty hand
-        slot.putStack(null);
-      } else { // item in hand
-        if (existingStack == null || existingStack.getItem() == null || existingStack.stackSize == 0) { // empty slot
-          slot.putStack(handStack);
-        } else { // filled slot
-          if (ItemUtil.areStackMergable(existingStack, handStack)) { // same item
-            if (existingStack.stackSize < existingStack.getMaxStackSize()) {
-              existingStack.stackSize++;
-              slot.putStack(existingStack);
-            } else {
-              // NOP
-            }
-          } else { // different item
-            slot.putStack(handStack);
-          }
-        }
-      }
-    } else if (button == 1) { // right
-      if (handStack == null || handStack.getItem() == null || handStack.stackSize == 0) { // empty hand
-        slot.putStack(null);
-      } else { // item in hand
-        if (existingStack == null || existingStack.getItem() == null || existingStack.stackSize == 0) { // empty slot
-          ItemStack oneItem = handStack.copy();
-          oneItem.stackSize = 1;
-          slot.putStack(oneItem);
-        } else { // filled slot
-          if (ItemUtil.areStackMergable(existingStack, handStack)) { // same item
-            if (existingStack.stackSize > 1) {
-              existingStack.stackSize--;
-              slot.putStack(existingStack);
-            } else {
-              slot.putStack(null);
-            }
-          } else { // different item
-            ItemStack oneItem = handStack.copy();
-            oneItem.stackSize = 1;
-            slot.putStack(oneItem);
-          }
-        }
-      }
-    } else if (button == -2) { // wheel up
-      if (existingStack != null && existingStack.getItem() != null && existingStack.stackSize > 0 && existingStack.stackSize < existingStack.getMaxStackSize()) {
-        existingStack.stackSize++;
-        slot.putStack(existingStack);
-      }
-    } else if (button == -1) { // wheel down
-      if (existingStack != null && existingStack.getItem() != null) {
-        if (existingStack.stackSize > 1) {
-          existingStack.stackSize--;
-          slot.putStack(existingStack);
-        } else {
-          slot.putStack(null);
-        }
-      }
-    }
-  }
-
-  @Override
-  protected void mouseWheel(int x, int y, int delta) {
-    if (!ghostSlots.isEmpty()) {
-      GhostSlot slot = getGhostSlot(x, y);
-      if (slot != null) {
-        ghostSlotClicked(slot, x, y, delta < 0 ? -1 : -2);
-        return;
-      }
-    }
-    super.mouseWheel(x, y, delta);
-  }
-
-  @Override
-  protected void drawFakeItemStack(int x, int y, ItemStack stack) {
-    itemRender.renderItemAndEffectIntoGUI(fontRendererObj, mc.renderEngine, stack, x, y);
-    itemRender.renderItemOverlayIntoGUI(fontRendererObj, mc.renderEngine, stack, x, y, null);
-  }
-
-  @Override
   protected int getPowerHeight() {
     return 47;
   }
@@ -141,7 +56,6 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
   protected boolean showRecipeButton() {
     return false;
   }
-
 
   @Override
   protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
@@ -167,37 +81,6 @@ public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
     }
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
-
-    RenderUtil.bindBlockTexture();
-  }
-
-  private boolean doneGraying = false;
-
-  @Override
-  protected void drawFakeItemHover(int x, int y) {
-    doGraying();
-    doneGraying = true;
-    super.drawFakeItemHover(x, y);
-  }
-
-  private void doGraying() {
-    GL11.glDisable(GL11.GL_LIGHTING);
-    GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-    GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-    RenderUtil.bindTexture(GUI_TEXTURE);
-    GL11.glEnable(GL11.GL_BLEND);
-    drawTexturedModalRect(guiLeft + 43, guiTop + 35, 43, 35, 108, 18);
-    GL11.glDisable(GL11.GL_BLEND);
-  }
-
-  @Override
-  protected void drawFakeItemsEnd() {
-    if (!doneGraying) {
-      doGraying();
-    }
-    doneGraying = false;
-    super.drawFakeItemsEnd();
   }
 
 }
