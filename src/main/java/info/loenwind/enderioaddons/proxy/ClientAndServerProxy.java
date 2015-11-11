@@ -5,6 +5,7 @@ import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.fluid.Fluids;
 import info.loenwind.enderioaddons.gui.PacketAdvancedRedstoneMode;
 import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
+import info.loenwind.enderioaddons.machine.afarm.item.ItemModule;
 import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.drain.BlockDrain;
@@ -45,6 +46,7 @@ public class ClientAndServerProxy implements InitAware {
     BlockMagCharger.create();
     BlockChassis.create();
     BlockAfarm.create();
+    ItemModule.create();
   }
 
   @Override

@@ -5,6 +5,7 @@ import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.oredict.OreDictionary;
 
 import com.InfinityRaider.AgriCraft.api.v1.ISeedStats;
 import com.enderio.core.common.util.ItemUtil;
@@ -28,6 +29,8 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
           } else {
             return;
           }
+        } else {
+          System.out.println(seedStats.getGrowth() + " " + stack.getTagCompound().getBoolean(analyzed));
         }
       }
     }
@@ -65,7 +68,6 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
       if (tag.hasKey(growth) && tag.hasKey(gain) && tag.hasKey(strength)) {
         tag.setBoolean(analyzed, true);
         return;
-      } else {
       }
     } else {
       tag = new NBTTagCompound();
@@ -85,6 +87,44 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
   @Override
   public boolean isCompatibleWith(IAfarmControlModule other) {
     return !(other instanceof SeedAnalyzerModule);
+  }
+
+  static boolean isSameSeed(ItemStack seed1, ItemStack seed2) {
+    if (seed1.getItem() == seed2.getItem()) {
+      if (seed1.getItemDamage() != OreDictionary.WILDCARD_VALUE && seed2.getItemDamage() != OreDictionary.WILDCARD_VALUE && seed1.getItemDamage() != seed2.getItemDamage()) {
+        return false;
+      } else {
+        if (seed1.stackTagCompound == seed2.stackTagCompound || seed1.stackTagCompound == null || seed2.stackTagCompound == null || ItemStack.areItemStackTagsEqual(seed1, seed2)) {
+          return true;
+        }
+        for (Object key : seed1.stackTagCompound.func_150296_c()) {
+          if (!growth.equals(key) && !gain.equals(key) && !strength.equals(key) && !analyzed.equals(key)) {
+            Object o1 = seed1.stackTagCompound.getTag((String) key);
+            Object o2 = seed2.stackTagCompound.getTag((String) key);
+            if ((o1 == null) != (o2 == null)) {
+              return false;
+            }
+            if (o1 != null && !o1.equals(o2)) {
+              return false;
+            }
+          }
+        }
+        for (Object key : seed2.stackTagCompound.func_150296_c()) {
+          if (!growth.equals(key) && !gain.equals(key) && !strength.equals(key) && !analyzed.equals(key)) {
+            Object o1 = seed1.stackTagCompound.getTag((String) key);
+            Object o2 = seed2.stackTagCompound.getTag((String) key);
+            if ((o1 == null) != (o2 == null)) {
+              return false;
+            }
+            if (o1 != null && !o1.equals(o2)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
 }

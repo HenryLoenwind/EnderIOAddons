@@ -2,9 +2,20 @@ package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
+import info.loenwind.enderioaddons.machine.afarm.module.CropModule;
+import info.loenwind.enderioaddons.machine.afarm.module.CrossCropModule;
+import info.loenwind.enderioaddons.machine.afarm.module.FertilizerModule;
 import info.loenwind.enderioaddons.machine.afarm.module.HarvestModule;
 import info.loenwind.enderioaddons.machine.afarm.module.IAfarmControlModule;
 import info.loenwind.enderioaddons.machine.afarm.module.NSEWmodule;
+import info.loenwind.enderioaddons.machine.afarm.module.PlantModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteCropsModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteCrossCropsModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteDestroyModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteHarvestingModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecutePlantingModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteTillModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteWeedModule;
 import info.loenwind.enderioaddons.machine.niard.RadiusIterator;
 
 import java.util.ArrayList;
@@ -14,18 +25,23 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.InfinityRaider.AgriCraft.api.API;
 import com.InfinityRaider.AgriCraft.api.APIBase;
 import com.InfinityRaider.AgriCraft.api.v1.APIv1;
+import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.ItemUtil;
 
 import crazypants.enderio.machine.ContinuousTask;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
+import crazypants.enderio.machine.farm.FakeFarmPlayer;
 import crazypants.enderio.machine.farm.TileFarmStation.ToolType;
 import crazypants.enderio.power.BasicCapacitor;
 
@@ -40,11 +56,14 @@ public class TileAfarm extends TileEnderIOAddons {
   public static final int NUM_FERTILIZER_SLOTS = 3;
   public static final int NUM_CROPSTICK_SLOTS = 4;
 
+  private EntityPlayerMP farmerJoe;
+
   private static APIv1 agricraft = null;
   private static List<ItemStack> cropSticks;
   private static List<ItemStack> rakes;
 
-  private RadiusIterator itr;
+  private RadiusIterator itr = null;
+  private BlockCoord currentTile = null;
 
   public TileAfarm() {
     super(new SlotDefinitionAfarm(NUM_CONTROL_SLOTS, NUM_CONTROL_STORAGE_SLOTS, NUM_SEED_GHOST_SLOTS, NUM_SEED_STORAGE_SLOTS, NUM_OUTPUT_SLOTS, NUM_TOOL_SLOTS,
@@ -57,13 +76,18 @@ public class TileAfarm extends TileEnderIOAddons {
         rakes = agricraft.getRakeItems();
       }
     }
-    itr = new RadiusIterator(getLocation(), getFarmSize());
   }
 
   @Override
   public void init() {
     super.init();
     currentTask = createTask(null);
+  }
+
+  @Override
+  public void setWorldObj(World p_145834_1_) {
+    super.setWorldObj(p_145834_1_);
+    farmerJoe = new FakeFarmPlayer(MinecraftServer.getServer().worldServerForDimension(worldObj.provider.dimensionId));
   }
 
   @Override
@@ -129,7 +153,7 @@ public class TileAfarm extends TileEnderIOAddons {
     }
   }
 
-  private int getHoeSlot() {
+  public int getHoeSlot() {
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
       if (ToolType.HOE.itemMatches(inventory[i])) {
         return i;
@@ -138,7 +162,7 @@ public class TileAfarm extends TileEnderIOAddons {
     return -1;
   }
 
-  private int getRakeSlot() {
+  public int getRakeSlot() {
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
       if (isRake(inventory[i])) {
         return i;
@@ -152,17 +176,28 @@ public class TileAfarm extends TileEnderIOAddons {
       return false;
     }
     for (ItemStack rake : rakes) {
-      if (rake.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-        return rake.getItem() == item.getItem() && ItemStack.areItemStackTagsEqual(rake, item);
-      } else {
-        return ItemUtil.areStacksEqual(rake, item);
+      if ((rake.getItemDamage() == OreDictionary.WILDCARD_VALUE || rake.isItemStackDamageable())
+          && (rake.getItem() == item.getItem() && ItemStack.areItemStackTagsEqual(rake, item))) {
+        return true;
+      } else if (ItemUtil.areStacksEqual(rake, item)) {
+        return true;
       }
     }
     return false;
   }
 
   private int calcPowerUsePerTick() {
-    return Math.round(getFarmSize() * 1f); // TODO cfg
+    return Math.round(getFarmSize() * 1f + controlModuleCount() * 1f); // TODO cfg
+  }
+
+  private int controlModuleCount() {
+    int count = 0;
+    for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.CONTROL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.CONTROL); i++) {
+      if (inventory[i] != null) {
+        count++;
+      }
+    }
+    return count;
   }
 
   public int getFarmSize() {
@@ -191,7 +226,6 @@ public class TileAfarm extends TileEnderIOAddons {
 
   @Override
   public void onCapacitorTypeChange() {
-    int size = getFarmSize();
     int ppt = calcPowerUsePerTick();
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
@@ -205,9 +239,7 @@ public class TileAfarm extends TileEnderIOAddons {
       break;
     }
     currentTask = createTask(null);
-    if (size != getFarmSize()) {
-      itr = new RadiusIterator(getLocation(), getFarmSize());
-    }
+    itr = null;
   }
 
   @Override
@@ -241,17 +273,20 @@ public class TileAfarm extends TileEnderIOAddons {
   }
 
   protected boolean doTick() {
-    if (shouldDoWorkThisTick(getDelay())) {
-      List<IAfarmControlModule> controls = getControlModules();
-      if (controls.isEmpty()) {
-        return false;
+    if (agricraft != null && farmerJoe != null && shouldDoWorkThisTick(getDelay())) {
+      if (itr == null) {
+        itr = new RadiusIterator(getLocation(), getFarmSize());
       }
-      WorkTile tile = new WorkTile(itr.next(), this, agricraft);
+      while (currentTile == null || currentTile.equals(getLocation())) {
+        currentTile = itr.next();
+      }
+      WorkTile tile = new WorkTile(currentTile, this, agricraft, farmerJoe);
+      List<IAfarmControlModule> controls = getControlModules();
       for (IAfarmControlModule control : controls) {
         control.doWork(tile);
-        if (tile.done) {
-          break;
-        }
+      }
+      if (!tile.doneSomething) {
+        currentTile = itr.next();
       }
     }
     return false;
@@ -261,6 +296,17 @@ public class TileAfarm extends TileEnderIOAddons {
   static {
     standardModules.add(new NSEWmodule());
     standardModules.add(new HarvestModule());
+    standardModules.add(new PlantModule());
+    standardModules.add(new CrossCropModule());
+    standardModules.add(new CropModule());
+    standardModules.add(new ExecuteHarvestingModule());
+    standardModules.add(new ExecuteDestroyModule());
+    standardModules.add(new ExecutePlantingModule());
+    standardModules.add(new ExecuteCropsModule());
+    standardModules.add(new ExecuteCrossCropsModule());
+    standardModules.add(new ExecuteWeedModule());
+    standardModules.add(new ExecuteTillModule());
+    standardModules.add(new FertilizerModule());
   }
 
   private List<IAfarmControlModule> getControlModules() {

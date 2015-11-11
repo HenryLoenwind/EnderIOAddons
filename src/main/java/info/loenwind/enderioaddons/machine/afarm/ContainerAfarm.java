@@ -166,7 +166,6 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     }
     for (AfarmGhostSlot slot : tab1ghostSlots) {
       slot.visible = tab == 1;
-      System.out.println("ghost " + slot.visible);
     }
   }
 
