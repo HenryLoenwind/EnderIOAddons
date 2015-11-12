@@ -20,7 +20,11 @@ public class ExecuteCropsModule extends ExecuteModule {
       workTile.farm.markDirty();
       workTile.doneSomething = true;
     }
+  }
 
+  @Override
+  public int getPriority() {
+    return super.getPriority() + 1;
   }
 
 }

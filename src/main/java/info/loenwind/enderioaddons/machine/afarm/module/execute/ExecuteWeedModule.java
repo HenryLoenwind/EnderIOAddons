@@ -14,13 +14,16 @@ public class ExecuteWeedModule extends ExecuteModule {
       if (rakeSlot != -1) {
         final ItemStack stack = workTile.farm.getStackInSlot(rakeSlot);
         final World world = workTile.farm.getWorldObj();
-        workTile.agricraft.removeWeeds(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, stack);
+        // TODO switch back after agricraft 1.4.5
+        //        if (workTile.agricraft.removeWeeds(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, stack)) {
+        if (workTile.agricraft.removeWeeds(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, false)) {
+          spawnParticles(workTile);
+          workTile.doneSomething = true;
+        }
         if (stack.stackSize <= 0) {
           workTile.farm.setInventorySlotContents(workTile.cropsSlot, null);
         }
-        spawnParticles(workTile);
         workTile.farm.markDirty();
-        workTile.doneSomething = true;
       }
     }
   }

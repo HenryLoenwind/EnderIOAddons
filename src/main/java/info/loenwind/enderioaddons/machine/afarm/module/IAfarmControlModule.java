@@ -34,7 +34,7 @@ import info.loenwind.enderioaddons.machine.afarm.WorkTile;
  * modules)</li>
  * <li>EjectSeeds(110) - move all seeds from storage to output</li>
  * <li>Best only(110) - move seeds from storage to output if there's a better
- * one in storage (needs a new working hook)</li>
+ * one in storage</li>
  * </ul>
  *
  * Modules TODO:

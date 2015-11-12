@@ -18,7 +18,9 @@ public class MultiplyModule implements IAfarmControlModule {
     for (ForgeDirection direction : AROUND) {
       BlockCoord toCheck = workTile.bc.getLocation(direction);
       if (workTile.agricraft.isCrops(workTile.farm.getWorldObj(), toCheck.x, toCheck.y, toCheck.z)) {
-        if (workTile.agricraft.isEmpty(workTile.farm.getWorldObj(), toCheck.x, toCheck.y, toCheck.z)) {
+        if (workTile.agricraft.isEmpty(workTile.farm.getWorldObj(), toCheck.x, toCheck.y, toCheck.z)
+            || workTile.agricraft.isWeeds(workTile.farm.getWorldObj(), toCheck.x, toCheck.y, toCheck.z)
+            || workTile.agricraft.isCrossCrops(workTile.farm.getWorldObj(), toCheck.x, toCheck.y, toCheck.z)) {
           workTile.allowHarvesting = false;
         } else if (workTile.agricraft.isMature(workTile.farm.getWorldObj(), toCheck.x, toCheck.y, toCheck.z)) {
           workTile.allowCrossCrops = true;

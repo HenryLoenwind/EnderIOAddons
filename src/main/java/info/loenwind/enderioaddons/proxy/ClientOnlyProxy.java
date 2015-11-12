@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.proxy;
 
+import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
+import info.loenwind.enderioaddons.machine.afarm.RendererAfarm;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.RendererCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.TileCobbleworks;
@@ -113,6 +115,9 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     RenderingRegistry.registerBlockHandler(new RendererMagCharger());
     ClientRegistry.bindTileEntitySpecialRenderer(TileMagCharger.class, new TESRMagCharger());
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockMagCharger.blockMagCharger), new ItemRendererMagCharger());
+
+    BlockAfarm.blockAfarm.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new RendererAfarm());
 
   }
 

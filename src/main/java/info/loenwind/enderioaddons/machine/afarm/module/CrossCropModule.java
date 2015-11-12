@@ -9,13 +9,16 @@ public class CrossCropModule implements IAfarmControlModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    if (workTile.allowCrossCrops && workTile.agricraft.isEmpty(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)) {
+    // TODO: remove !isCrossCrops() when 1.4.5 is live
+    if (workTile.allowCrossCrops && workTile.agricraft.isEmpty(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)
+        && !workTile.agricraft.isCrossCrops(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)) {
       final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) workTile.farm.getSlotDefinition();
       for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {
         final ItemStack stack = workTile.farm.getStackInSlot(slot);
         if (stack != null) {
           workTile.cropsSlot = slot;
           workTile.doCrossCrops = true;
+          return;
         }
       }
     }

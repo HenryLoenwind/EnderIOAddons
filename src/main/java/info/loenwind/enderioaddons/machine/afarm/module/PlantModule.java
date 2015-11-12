@@ -13,7 +13,7 @@ public class PlantModule implements IAfarmControlModule {
   public void doWork(WorkTile workTile) {
     if (workTile.allowPlanting && !workTile.doPlanting && isEmpty(workTile)) {
       final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) workTile.farm.getSlotDefinition();
-      final ItemStack template = workTile.seedSlot != -1 ? workTile.farm.getStackInSlot(workTile.seedSlot) : null;
+      final ItemStack template = workTile.seedSlot != -1 ? workTile.farm.getStackInSlot(workTile.seedSlot + slotDef.getMinSlot(SLOT.SEED_GHOST)) : null;
       for (int slot = slotDef.getMinSlot(SLOT.SEED); slot <= slotDef.getMaxSlot(SLOT.SEED); slot++) {
         final ItemStack stack = workTile.farm.getStackInSlot(slot);
         if (stack != null && stack.getItem() != null) {

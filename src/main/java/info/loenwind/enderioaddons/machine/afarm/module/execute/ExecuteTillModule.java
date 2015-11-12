@@ -52,8 +52,4 @@ public class ExecuteTillModule extends ExecuteModule {
     return false;
   }
 
-  private static boolean canDamage(ItemStack stack) {
-    return stack != null && stack.isItemStackDamageable() && stack.getItem().isDamageable();
-  }
-
 }

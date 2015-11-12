@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import crazypants.enderio.network.PacketHandler;
 
-public final class StdSlot extends Slot {
+public class StdSlot extends Slot {
 
   private static final int MAGIC_NUMBER = -3000;
   private final int realx, realy;

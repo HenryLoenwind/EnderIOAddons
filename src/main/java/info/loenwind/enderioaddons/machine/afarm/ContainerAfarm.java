@@ -30,9 +30,10 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
 
   private List<StdSlot> tab0slots;
   private List<StdSlot> tab1slots;
-  private List<StdOutputSlot> tab2slots;
+  private List<StdSlot> tab2slots;
   private List<StdSlot> tab3slots;
-  private List<AfarmGhostSlot> tab1ghostSlots;
+  private List<AfarmGhostSlot> tab1ghostSlotsEven;
+  private List<AfarmGhostSlot> tab1ghostSlotsOdd;
 
   public ContainerAfarm(InventoryPlayer playerInv, @Nonnull TileAfarm te) {
     super(playerInv, te);
@@ -44,7 +45,8 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     tab1slots = new ArrayList<>();
     tab2slots = new ArrayList<>();
     tab3slots = new ArrayList<>();
-    tab1ghostSlots = new ArrayList<>();
+    tab1ghostSlotsEven = new ArrayList<>();
+    tab1ghostSlotsOdd = new ArrayList<>();
 
     final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) getInv().getSlotDefinition();
 
@@ -52,7 +54,12 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     int y = ROW1;
     for (int slot = slotDef.getMinSlot(SLOT.CONTROL); slot <= slotDef
         .getMaxSlot(SLOT.CONTROL); slot++) {
-      final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
+      final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y) {
+        @Override
+        public int getSlotStackLimit() {
+          return 1;
+        }
+      };
       addSlotToContainer(theSlot);
       tab0slots.add(theSlot);
     }
@@ -126,12 +133,19 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) getInv().getSlotDefinition();
     int x = COL + D;
     int y = ROW1;
-    tab1ghostSlots.clear();
+    tab1ghostSlotsEven.clear();
+    tab1ghostSlotsOdd.clear();
+    boolean even = true;
     for (int slot = slotDef.getMinSlot(SLOT.SEED_GHOST); slot <= slotDef.getMaxSlot(SLOT.SEED_GHOST); slot++) {
       final AfarmGhostSlot theSlot = new AfarmGhostSlot(slot, x, y);
       x += D + D / 2;
       ghostSlots.add(theSlot);
-      tab1ghostSlots.add(theSlot);
+      if (even) {
+        tab1ghostSlotsEven.add(theSlot);
+      } else {
+        tab1ghostSlotsOdd.add(theSlot);
+      }
+      even = !even;
     }
   }
 
@@ -151,21 +165,24 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
 
   }
 
-  public void setTabVisibility(int tab) {
+  public void setTabVisibility(int tab, boolean twoGhosts) {
     for (StdSlot stdSlot : tab0slots) {
       stdSlot.enable(tab == 0);
     }
     for (StdSlot stdSlot : tab1slots) {
       stdSlot.enable(tab == 1);
     }
-    for (StdOutputSlot stdSlot : tab2slots) {
+    for (StdSlot stdSlot : tab2slots) {
       stdSlot.enable(tab == 2);
     }
     for (StdSlot stdSlot : tab3slots) {
       stdSlot.enable(tab == 3);
     }
-    for (AfarmGhostSlot slot : tab1ghostSlots) {
+    for (AfarmGhostSlot slot : tab1ghostSlotsEven) {
       slot.visible = tab == 1;
+    }
+    for (AfarmGhostSlot slot : tab1ghostSlotsOdd) {
+      slot.visible = (tab == 1) && !twoGhosts;
     }
   }
 
@@ -175,8 +192,6 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
       if (((Slot) slot).getSlotIndex() == slotno) {
         if (slot instanceof StdSlot) {
           ((StdSlot) slot).enable(!hide);
-        } else if (slot instanceof StdOutputSlot) {
-          ((StdOutputSlot) slot).enable(!hide);
         }
       }
     }

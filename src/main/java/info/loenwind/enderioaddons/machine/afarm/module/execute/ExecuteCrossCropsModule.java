@@ -21,4 +21,9 @@ public class ExecuteCrossCropsModule extends ExecuteModule {
     }
   }
 
+  @Override
+  public int getPriority() {
+    return super.getPriority() + 2;
+  }
+
 }

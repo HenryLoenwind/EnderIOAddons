@@ -19,7 +19,7 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
       final ItemStack stack = workTile.farm.getStackInSlot(slot);
       ISeedStats seedStats = workTile.agricraft.getSeedStats(stack);
       if (seedStats != null) {
-        if (seedStats.getGrowth() == -1) {
+        if (!isAnalyzed(stack)) {
           if (workTile.farm.canUsePower(100)) { // TODO: cfg
             workTile.farm.usePower(100); // TODO cfg
             analyze(stack);
@@ -29,8 +29,6 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
           } else {
             return;
           }
-        } else {
-          System.out.println(seedStats.getGrowth() + " " + stack.getTagCompound().getBoolean(analyzed));
         }
       }
     }
@@ -79,9 +77,19 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
     tag.setBoolean(analyzed, true);
   }
 
+  public static boolean isAnalyzed(ItemStack specimen) {
+    if (specimen.hasTagCompound()) {
+      NBTTagCompound tag = specimen.getTagCompound();
+      if (tag.hasKey(analyzed)) {
+        return tag.getBoolean(analyzed);
+      }
+    }
+    return false;
+  }
+
   @Override
   public int getPriority() {
-    return 11;
+    return -1;
   }
 
   @Override

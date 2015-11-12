@@ -16,7 +16,7 @@ public class BestOnlyModule implements IAfarmControlModule {
       final ItemStack stack = workTile.farm.getStackInSlot(slot);
       if (stack != null) {
         ISeedStats stats = workTile.agricraft.getSeedStats(stack);
-        if (stats != null && stats.getGain() != -1) {
+        if (stats != null && SeedAnalyzerModule.isAnalyzed(stack)) {
           int seedQuality = stats.getGain() + stats.getGrowth() + stats.getStrength();
           if (seedQuality < stats.getMaxGain() + stats.getMaxGrowth() + stats.getMaxStrength()
               && ReplaceBetterModule.hasBetterSeed(workTile, stack, seedQuality) != -1) {

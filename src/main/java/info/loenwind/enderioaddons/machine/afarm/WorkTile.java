@@ -90,10 +90,10 @@ public class WorkTile {
 
   @Override
   public String toString() {
-    return "WorkTile [bc=" + bc + ", seedSlot=" + seedSlot + ", seedStorageSlot=" + seedStorageSlot + ", cropsSlot=" + cropsSlot + ", allowPlanting="
-        + allowPlanting + ", allowHarvesting=" + allowHarvesting + ", allowCrossCrops=" + allowCrossCrops + ", doPlanting=" + doPlanting + ", doHarvesting="
-        + doHarvesting + ", doDestroy=" + doDestroy + ", doCrossCrops=" + doCrossCrops + ", doCrops=" + doCrops + ", doTill=" + doTill + ", doWeed=" + doWeed
-        + "]";
+    return "WorkTile [bc=" + bc + ", seedSlot=" + seedSlot + ", seedStorageSlot=" + seedStorageSlot + ", cropsSlot=" + cropsSlot + ", fertilizerSlot="
+        + fertilizerSlot + ", allowPlanting=" + allowPlanting + ", allowHarvesting=" + allowHarvesting + ", allowCrossCrops=" + allowCrossCrops
+        + ", doPlanting=" + doPlanting + ", doHarvesting=" + doHarvesting + ", doDestroy=" + doDestroy + ", doCrossCrops=" + doCrossCrops + ", doCrops="
+        + doCrops + ", doTill=" + doTill + ", doWeed=" + doWeed + ", doFertilize=" + doFertilize + "]";
   }
 
 }

@@ -8,7 +8,7 @@ public class ExecutePlantingModule extends ExecuteModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    if (workTile.doPlanting && workTile.farm.canUsePower(100)) { // TODO: cfg
+    if (workTile.doPlanting && workTile.farm.canUsePower(100) && damageHoe(workTile)) { // TODO: cfg
       workTile.farm.usePower(100); // TODO cfg
       final World world = workTile.farm.getWorldObj();
       final ItemStack stack = workTile.farm.getStackInSlot(workTile.seedStorageSlot);
@@ -19,6 +19,11 @@ public class ExecutePlantingModule extends ExecuteModule {
       spawnParticles(workTile);
       workTile.farm.markDirty();
     }
+  }
+
+  @Override
+  public int getPriority() {
+    return super.getPriority() + 3;
   }
 
 }

@@ -12,9 +12,9 @@ public class ExecuteFertilizerModule extends ExecuteModule {
       workTile.farm.usePower(100); // TODO cfg
       final World world = workTile.farm.getWorldObj();
       final ItemStack stack = workTile.farm.getStackInSlot(workTile.fertilizerSlot);
-      workTile.agricraft.applyFertilizer(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, stack);
+      boolean ret = workTile.agricraft.applyFertilizer(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, stack);
       if (stack.stackSize <= 0) {
-        workTile.farm.setInventorySlotContents(workTile.cropsSlot, null);
+        workTile.farm.setInventorySlotContents(workTile.fertilizerSlot, null);
       }
       spawnParticles(workTile);
       workTile.farm.markDirty();

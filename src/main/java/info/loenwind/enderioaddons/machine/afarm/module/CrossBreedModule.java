@@ -21,7 +21,7 @@ public class CrossBreedModule implements IAfarmControlModule {
         workTile.allowPlanting = false;
         workTile.allowCrossCrops = true;
       } else {
-        workTile.seedSlot = 3;
+        workTile.seedSlot = 2;
         workTile.allowHarvesting = false;
       }
     }

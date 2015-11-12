@@ -11,7 +11,7 @@ public class ExecuteDestroyModule extends ExecuteModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    if (workTile.doDestroy && workTile.farm.canUsePower(100)) { // TODO: cfg
+    if (workTile.doDestroy && workTile.farm.canUsePower(100) && damageHoe(workTile)) { // TODO: cfg
       workTile.farm.usePower(100); // TODO cfg
       List<ItemStack> result = null;
       final World world = workTile.farm.getWorldObj();

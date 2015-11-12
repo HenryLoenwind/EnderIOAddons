@@ -23,6 +23,7 @@ public class BlockAfarm extends AbstractMachineBlock<TileAfarm> {
 
   protected BlockAfarm() {
     super(ModObject_blockAfarm, TileAfarm.class);
+    setBlockBounds(0, 0, 0, 1, 0.85f, 1);
   }
 
   @Override
@@ -55,7 +56,7 @@ public class BlockAfarm extends AbstractMachineBlock<TileAfarm> {
 
   @Override
   public boolean renderAsNormalBlock() {
-    return true;
+    return false;
   }
 
   @Override

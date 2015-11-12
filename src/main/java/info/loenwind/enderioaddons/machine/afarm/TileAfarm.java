@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.machine.afarm;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.module.CropModule;
+import info.loenwind.enderioaddons.machine.afarm.module.CrossBreedModule;
 import info.loenwind.enderioaddons.machine.afarm.module.CrossCropModule;
 import info.loenwind.enderioaddons.machine.afarm.module.FertilizerModule;
 import info.loenwind.enderioaddons.machine.afarm.module.HarvestModule;
@@ -12,6 +13,7 @@ import info.loenwind.enderioaddons.machine.afarm.module.PlantModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteCropsModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteCrossCropsModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteDestroyModule;
+import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteFertilizerModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteHarvestingModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecutePlantingModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteTillModule;
@@ -30,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.InfinityRaider.AgriCraft.api.API;
@@ -41,6 +44,7 @@ import com.enderio.core.common.util.ItemUtil;
 import crazypants.enderio.machine.ContinuousTask;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
+import crazypants.enderio.machine.IoMode;
 import crazypants.enderio.machine.farm.FakeFarmPlayer;
 import crazypants.enderio.machine.farm.TileFarmStation.ToolType;
 import crazypants.enderio.power.BasicCapacitor;
@@ -284,6 +288,8 @@ public class TileAfarm extends TileEnderIOAddons {
       List<IAfarmControlModule> controls = getControlModules();
       for (IAfarmControlModule control : controls) {
         control.doWork(tile);
+        // TODO add config value for this
+        //   Log.info(tile + " after " + control);
       }
       if (!tile.doneSomething) {
         currentTile = itr.next();
@@ -292,6 +298,7 @@ public class TileAfarm extends TileEnderIOAddons {
     return false;
   }
 
+  private static final IAfarmControlModuleComparator moduleComperator = new IAfarmControlModuleComparator();
   private static final List<IAfarmControlModule> standardModules = new ArrayList<>();
   static {
     standardModules.add(new NSEWmodule());
@@ -299,6 +306,7 @@ public class TileAfarm extends TileEnderIOAddons {
     standardModules.add(new PlantModule());
     standardModules.add(new CrossCropModule());
     standardModules.add(new CropModule());
+    standardModules.add(new FertilizerModule());
     standardModules.add(new ExecuteHarvestingModule());
     standardModules.add(new ExecuteDestroyModule());
     standardModules.add(new ExecutePlantingModule());
@@ -306,7 +314,8 @@ public class TileAfarm extends TileEnderIOAddons {
     standardModules.add(new ExecuteCrossCropsModule());
     standardModules.add(new ExecuteWeedModule());
     standardModules.add(new ExecuteTillModule());
-    standardModules.add(new FertilizerModule());
+    standardModules.add(new ExecuteFertilizerModule());
+    Collections.sort(standardModules, moduleComperator);
   }
 
   private List<IAfarmControlModule> getControlModules() {
@@ -317,19 +326,60 @@ public class TileAfarm extends TileEnderIOAddons {
         result.add(((IAfarmControlModuleItem) inventory[i].getItem()).getWorker(inventory[i]));
       }
     }
-    Collections.sort(result, comp);
+    Collections.sort(result, moduleComperator);
     return result;
   }
 
-  private static final Comp comp = new Comp();
+  public boolean twoGhosts() {
+    for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.CONTROL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.CONTROL); i++) {
+      if (inventory[i] != null && inventory[i].getItem() instanceof IAfarmControlModuleItem
+          && ((IAfarmControlModuleItem) inventory[i].getItem()).getWorker(inventory[i]) instanceof CrossBreedModule) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-  private static class Comp implements Comparator<IAfarmControlModule> {
+  private static class IAfarmControlModuleComparator implements Comparator<IAfarmControlModule> {
 
     @Override
     public int compare(IAfarmControlModule o1, IAfarmControlModule o2) {
       return Integer.compare(o1.getPriority(), o2.getPriority());
     }
 
+  }
+
+  @Override
+  public boolean supportsMode(ForgeDirection faceHit, IoMode mode) {
+    if (faceHit != ForgeDirection.DOWN) {
+      return mode == IoMode.DISABLED;
+    }
+    return super.supportsMode(faceHit, mode);
+  }
+
+  @Override
+  public boolean isSideDisabled(int var1) {
+    if (var1 != ForgeDirection.DOWN.ordinal()) {
+      return true;
+    }
+    return super.isSideDisabled(var1);
+  }
+
+  @Override
+  public IoMode getIoMode(ForgeDirection face) {
+    if (face != ForgeDirection.DOWN) {
+      return IoMode.DISABLED;
+    }
+    return super.getIoMode(face);
+  }
+
+  @Override
+  public void setIoMode(ForgeDirection faceHit, IoMode mode) {
+    if (faceHit != ForgeDirection.DOWN) {
+      super.setIoMode(faceHit, IoMode.DISABLED);
+      return;
+    }
+    super.setIoMode(faceHit, mode);
   }
 
 }

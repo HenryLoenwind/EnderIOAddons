@@ -1,10 +1,14 @@
 package info.loenwind.enderioaddons.render;
 
+import java.lang.reflect.Field;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.api.client.render.VertexTransform;
 import com.enderio.core.client.render.BoundingBox;
@@ -307,6 +311,116 @@ public class FaceRenderer {
         break;
       }
     }
+  }
+
+  public static void renderCube_alt(BoundingBox bb, IIcon[] icons, VertexTransform xForm, boolean inside) {
+    setupVertices(bb, xForm);
+    for (ForgeDirection face : ForgeDirection.VALID_DIRECTIONS) {
+      IIcon tex = icons[face.ordinal()];
+      if (tex != null) {
+        float minU = tex.getMinU();
+        float maxU = tex.getMaxU();
+        float minV = tex.getMinV();
+        float maxV = tex.getMaxV();
+
+        renderSingleFace_skewed(face, minU, maxU, minV, maxV, inside);
+      }
+    }
+  }
+
+  public static void renderSingleFace_skewed(ForgeDirection face, float minU, float maxU, float minV, float maxV, boolean inside) {
+    setupFields();
+
+    GL11.glBegin(GL11.GL_QUADS);
+
+    double w = 1;
+
+    if (inside) {
+    } else {
+      switch (face) {
+      case NORTH:
+        w = Math.abs(verts[1].x - verts[0].x);
+        addVecWithUV(verts[1], minU, maxV, w); // unten links
+        addVecWithUV(verts[0], maxU, maxV, w); // unten rechts
+        w = Math.abs(verts[3].x - verts[2].x);
+        addVecWithUV(verts[3], maxU, minV, w); // oben rechts
+        addVecWithUV(verts[2], minU, minV, w); // oben links
+        break;
+      case SOUTH:
+        addVecWithUV(verts[4], minU, maxV, w);
+        addVecWithUV(verts[5], maxU, maxV, w);
+        addVecWithUV(verts[6], maxU, minV, w);
+        addVecWithUV(verts[7], minU, minV, w);
+        break;
+      case UP:
+        addVecWithUV(verts[6], maxU, maxV, w);
+        addVecWithUV(verts[2], maxU, minV, w);
+        addVecWithUV(verts[3], minU, minV, w);
+        addVecWithUV(verts[7], minU, maxV, w);
+        break;
+      case DOWN:
+        addVecWithUV(verts[0], minU, minV, w);
+        addVecWithUV(verts[1], maxU, minV, w);
+        addVecWithUV(verts[5], maxU, maxV, w);
+        addVecWithUV(verts[4], minU, maxV, w);
+        break;
+      case EAST:
+        addVecWithUV(verts[2], maxU, minV, w);
+        addVecWithUV(verts[6], minU, minV, w);
+        addVecWithUV(verts[5], minU, maxV, w);
+        addVecWithUV(verts[1], maxU, maxV, w);
+        break;
+      case WEST:
+        addVecWithUV(verts[0], minU, maxV, w);
+        addVecWithUV(verts[4], maxU, maxV, w);
+        addVecWithUV(verts[7], maxU, minV, w);
+        addVecWithUV(verts[3], minU, minV, w);
+      default:
+        break;
+      }
+    }
+
+    GL11.glEnd();
+  }
+
+  private static Field xOffset, yOffset, zOffset;
+
+  private static void setupFields() {
+    if (xOffset != null) {
+      return;
+    }
+    try {
+      xOffset = Tessellator.class.getDeclaredField("xOffset");
+      xOffset.setAccessible(true);
+      yOffset = Tessellator.class.getDeclaredField("yOffset");
+      yOffset.setAccessible(true);
+      zOffset = Tessellator.class.getDeclaredField("zOffset");
+      zOffset.setAccessible(true);
+    } catch (NoSuchFieldException | SecurityException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private static void addVecWithUV(Vector3d vec, float u, float v, double w) {
+    try {
+      double x = vec.x + xOffset.getDouble(Tessellator.instance);
+      double y = vec.y + yOffset.getDouble(Tessellator.instance);
+      double z = vec.z + zOffset.getDouble(Tessellator.instance);
+      //      w = Math.abs(x / 2);
+      //      GL11.glTexCoord4d(u, v, 0d, 1f * w);
+
+      //w = Math.abs(y / 2);
+      //      if (w != 1)
+      //        w = x / (w + xOffset.getDouble(Tessellator.instance));
+      GL11.glTexCoord4d(u * w, v * w, 0d, 1f * w);
+      GL11.glVertex3d(x, y, z);
+    } catch (IllegalArgumentException | IllegalAccessException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 
 }

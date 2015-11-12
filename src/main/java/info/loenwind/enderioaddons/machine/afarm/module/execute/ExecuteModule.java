@@ -29,10 +29,10 @@ public abstract class ExecuteModule implements IAfarmControlModule {
       final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) workTile.farm.getSlotDefinition();
       for (ItemStack stack : result) {
         if (stack != null && stack.stackSize > 0) {
-          stack.stackSize -= ItemUtil.doInsertItem(workTile.farm, slotDef.getMinSlot(SLOT.SEED), slotDef.getMaxSlot(SLOT.SEED), stack);
+          stack.stackSize -= ItemUtil.doInsertItem(workTile.farm, slotDef.getMinSlot(SLOT.SEED), slotDef.getMaxSlot(SLOT.SEED) + 1, stack);
         }
         if (stack != null && stack.stackSize > 0) {
-          stack.stackSize -= ItemUtil.doInsertItem(workTile.farm, slotDef.getMinSlot(SLOT.CROPSTICK), slotDef.getMaxSlot(SLOT.CROPSTICK), stack);
+          stack.stackSize -= ItemUtil.doInsertItem(workTile.farm, slotDef.getMinSlot(SLOT.CROPSTICK), slotDef.getMaxSlot(SLOT.CROPSTICK) + 1, stack);
         }
         if (stack != null && stack.stackSize > 0) {
           stack = EjectSeedsModule.putIntoOutput(workTile, stack);
@@ -58,6 +58,10 @@ public abstract class ExecuteModule implements IAfarmControlModule {
     return stack.getItem().onItemUse(stack, player, world, below.x, below.y, below.z, 1, 0.5f, 0.5f, 0.5f);
   }
 
+  protected static boolean canDamage(ItemStack stack) {
+    return stack != null && stack.isItemStackDamageable() && stack.getItem().isDamageable();
+  }
+
   @Override
   public int getPriority() {
     return 100;
@@ -66,6 +70,18 @@ public abstract class ExecuteModule implements IAfarmControlModule {
   @Override
   public boolean isCompatibleWith(IAfarmControlModule other) {
     return !(other.getClass() == this.getClass());
+  }
+
+  public static boolean damageHoe(WorkTile workTile) {
+    int hoeSlot = workTile.farm.getHoeSlot();
+    if (hoeSlot != -1) {
+      final ItemStack tool = workTile.farm.getStackInSlot(hoeSlot);
+      if (canDamage(tool)) {
+        tool.damageItem(1, workTile.farmerJoe);
+      }
+      return true;
+    }
+    return false;
   }
 
 }

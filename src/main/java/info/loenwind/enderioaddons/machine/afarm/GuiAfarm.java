@@ -52,7 +52,7 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
   }
 
   private void updateVisibility() {
-    ((ContainerAfarm) inventorySlots).setTabVisibility(tab);
+    ((ContainerAfarm) inventorySlots).setTabVisibility(tab, getTileEntity().twoGhosts());
     for (int i = 0; i < tabButtons.length; i++) {
       tabButtons[i].enabled = tab != i;
     }
@@ -88,7 +88,11 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
   @Override
   protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-    texture = EnderIOAddons.DOMAIN + ":textures/gui/afarm" + tab + ".png"; // TODO tab 1a
+    if (tab == 1 && getTileEntity().twoGhosts()) {
+      texture = EnderIOAddons.DOMAIN + ":textures/gui/afarm1a.png";
+    } else {
+      texture = EnderIOAddons.DOMAIN + ":textures/gui/afarm" + tab + ".png";
+    }
     RenderUtil.bindTexture(texture);
     int sx = (width - xSize) / 2;
     int sy = (height - ySize) / 2;
