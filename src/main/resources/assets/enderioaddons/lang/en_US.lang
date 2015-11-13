@@ -119,3 +119,35 @@ tile.blockChassis.12.name=Soul Machine width backs (decoration block)
 tile.blockChassis.13.name=Red Machine (decoration block)
 tile.blockChassis.14.name=Broken Spawner (decoration block)
 tile.blockChassis.15.name=Invisible Block (decoration block)
+
+enderioaddons.nei.teaser=Info
+enderioaddons.nei.teaser.enderioaddons.afarminfo=This is the Ender IO Addons "AgriCraft Farming Station". It is not available because AgriCraft is not installed. You should get it, it is an awesome mod! You can find it on CurseForge.
+enderioaddons.afarminfo.name=AgriCraft Farming Station (not available)
+
+tile.blockAfarm.name=AgriCraft Farming Station
+
+enderioaddons.fcmBreedModule.name=Breeding Module
+enderioaddons.fcmCrossBreedModule.name=Crossbreeding module
+enderioaddons.fcmHarvestSeedsModule.name=Seed Harvesting Module
+enderioaddons.fcmSeedAnalyzerModule.name=Seed Analyzer Module
+enderioaddons.fcmMultiplyModule.name=Seed Multiplying Module
+enderioaddons.fcmHarvestUnanalyzedModule.name=Harvest Unanalyzed Plants Module
+enderioaddons.fcmReplaceBetterModule.name=Plant Upgrading Module
+enderioaddons.fcmWeedModule.name=Weeding Module
+enderioaddons.fcmEjectSeedsModule.name=Seed Ejecting Module
+enderioaddons.fcmBestOnlyModule.name=Seed Sorting Module
+enderioaddons.fcmBaseModule.name=Farming Base Module
+enderioaddons.fcmIQModule.name=Farming Intelligence Module
+
+enderioaddons.nei.teaser.enderioaddons.fcmBreedModule=The AgriCraft Farming Station upgrade module "Breeding" will plant seeds and cross crops in a checker-pattern to allow the plants to breed with each other.
+enderioaddons.nei.teaser.enderioaddons.fcmCrossBreedModule=The AgriCraft Farming Station upgrade module "Crossbreeding" will plant seeds of 2 kinds and cross crops in a checker-pattern to allow the plants to breed with each other.
+enderioaddons.nei.teaser.enderioaddons.fcmHarvestSeedsModule=The AgriCraft Farming Station upgrade module "Seed Harvesting" will harvest seeds instead of grown plants. You need to combine it with a "Breeding" or "Crossbreeding" module, because it will not harvest where it plants.
+enderioaddons.nei.teaser.enderioaddons.fcmSeedAnalyzerModule=The AgriCraft Farming Station upgrade module "Seed Analyzer" will automatically analyze seeds that are in the seed storage. It uses energy to do so.
+enderioaddons.nei.teaser.enderioaddons.fcmMultiplyModule=The AgriCraft Farming Station upgrade module "Multiplying" will plant sparsely and surround grown plants with cross crops. (This only works if AgriCraft is configured to allow plants to spread to neighboring crop sticks.)
+enderioaddons.nei.teaser.enderioaddons.fcmHarvestUnanalyzedModule=The AgriCraft Farming Station upgrade module "Harvest Unanalyzed Plants" will harvest any unanalyzed plants and return their seeds to the storage. You might want to combine it with a seed analyzer...
+enderioaddons.nei.teaser.enderioaddons.fcmReplaceBetterModule=The AgriCraft Farming Station upgrade module "Plant Upgrading" will replace any analyzed plant with a better seed, if one is in storage. Great to have when (cross-)breeding.
+enderioaddons.nei.teaser.enderioaddons.fcmWeedModule=The AgriCraft Farming Station upgrade module "Weeding" will remove weeds. It needs a rake in one of the tool slots. (This is useless if weeds are disabled.)
+enderioaddons.nei.teaser.enderioaddons.fcmEjectSeedsModule=The AgriCraft Farming Station upgrade module "Seed Ejecting" will transfer all seeds from the storage to the output slots. Useful if you want to multiply 10/10/10 seeds.
+enderioaddons.nei.teaser.enderioaddons.fcmBestOnlyModule=The AgriCraft Farming Station upgrade module "Seed Sorting" will transfer seeds from the storage to the output slots if there are better ones available. No need to keep the bad ones, is there?
+enderioaddons.nei.teaser.enderioaddons.fcmBaseModule=This base module is needed to craft AgriCraft Farming Station upgrade modules. On its own it's useless.
+enderioaddons.nei.teaser.enderioaddons.fcmIQModule=The Farming Intelligence Module is needed to craft the AgriCraft Farming Station as well as more advanced modules for it.

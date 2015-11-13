@@ -73,12 +73,18 @@ public class TileAfarm extends TileEnderIOAddons {
     super(new SlotDefinitionAfarm(NUM_CONTROL_SLOTS, NUM_CONTROL_STORAGE_SLOTS, NUM_SEED_GHOST_SLOTS, NUM_SEED_STORAGE_SLOTS, NUM_OUTPUT_SLOTS, NUM_TOOL_SLOTS,
         NUM_FERTILIZER_SLOTS, NUM_CROPSTICK_SLOTS, 1));
     if (agricraft == null) {
-      APIBase api = API.getAPI(1);
-      if (api.getStatus().isOK() && api.getVersion() == 1) {
-        agricraft = (APIv1) api;
-        cropSticks = agricraft.getCropsItems();
-        rakes = agricraft.getRakeItems();
-      }
+      throw new RuntimeException(
+          "Agricraft not installed but trying to create Agricraft Farmer. This is a coding error in Ender IO Addons. Please report this.");
+    }
+  }
+
+  public static void detectAgri() {
+    APIBase api = API.getAPI(1);
+    if (api.getStatus().isOK() && api.getVersion() == 1) {
+      agricraft = (APIv1) api;
+      cropSticks = agricraft.getCropsItems();
+      rakes = agricraft.getRakeItems();
+      AgriDetector.hasAgri = true;
     }
   }
 
@@ -96,8 +102,7 @@ public class TileAfarm extends TileEnderIOAddons {
 
   @Override
   public String getMachineName() {
-    // TODO Auto-generated method stub
-    return null;
+    return BlockAfarm.ModObject_blockAfarm.unlocalisedName;
   }
 
   @Override

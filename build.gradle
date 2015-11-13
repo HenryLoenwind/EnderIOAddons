@@ -37,7 +37,7 @@ minecraft {
     runDir = 'run'
 
     replace "@VERSION@", mod_version
-   	replace "${toReplace}", "required-after:Forge@[${forgeDep_version},);required-after:endercore@[${endercore_version},);required-after:EnderIO@[${enderio_version},);after:waterhooks[${waterhooks_version},)"
+   	replace "${toReplace}", "required-after:Forge@[${forgeDep_version},);required-after:endercore@[${endercore_version},);required-after:EnderIO@[${enderio_version},);after:waterhooks[${waterhooks_version},);after:AgriCraft@[${agricraft_version},)"
     replace "@enderio_version@", enderio_version
     replaceIn "EnderIOAddons.java"
 }
@@ -76,6 +76,8 @@ dependencies {
     compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"    
     
     exportedCompile "com.thoughtworks.xstream:xstream:1.4.8"
+    
+    compile files("lib/AgriCraft-1.7.10-1.4.2-api.jar")
 }
 
 sourceSets {

@@ -4,6 +4,7 @@ import static crazypants.enderio.EnderIO.proxy;
 import static info.loenwind.enderioaddons.render.FaceRenderer.renderSingleFace;
 import static info.loenwind.enderioaddons.render.FaceRenderer.setupVertices;
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import info.loenwind.enderioaddons.render.FaceRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -27,13 +28,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class TESRFlag extends TileEntitySpecialRenderer {
 
   private static final double px = 1D / 16D;
-
-  private static float[] brightnessPerSide = new float[6];
-  static {
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-    }
-  }
 
   private static final VertexRotationFacing xform = new VertexRotationFacing(SOUTH);
   static {
@@ -118,22 +112,22 @@ public class TESRFlag extends TileEntitySpecialRenderer {
     float minV = icon.getMinV();
     float maxV = icon.getInterpolatedV(renderAgeScaled + 1);
 
-    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
     minU = maxU;
     maxU = icon.getInterpolatedU(4);
-    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
     minU = maxU;
     maxU = icon.getInterpolatedU(6);
-    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
     minU = maxU;
     maxU = icon.getInterpolatedU(8);
-    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
 
     minU = icon.getInterpolatedU(2);
     maxU = icon.getInterpolatedU(4);
     minV = icon.getMinV();
     maxV = icon.getInterpolatedV(2);
-    renderSingleFace(ForgeDirection.UP, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.UP, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
 
     // (3) Render flag
     if (renderFlag) {
@@ -148,11 +142,11 @@ public class TESRFlag extends TileEntitySpecialRenderer {
       maxU = icon.getMaxU();
       minV = icon.getMinV();
       maxV = icon.getInterpolatedV(8);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, (tickCount & 0b100) == 0);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, (tickCount & 0b100) == 0);
 
       minV = icon.getInterpolatedV(8);
       maxV = icon.getMaxV();
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, (tickCount & 0b100) != 0);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, (tickCount & 0b100) != 0);
 
       xform2.setAngle(-5 * Math.PI / 180);
       setupVertices(bb_flag, xform3);
@@ -161,11 +155,11 @@ public class TESRFlag extends TileEntitySpecialRenderer {
       maxU = icon.getMaxU();
       minV = icon.getMinV();
       maxV = icon.getInterpolatedV(8);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, (tickCount & 0b100) == 0);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, (tickCount & 0b100) == 0);
 
       minV = icon.getInterpolatedV(8);
       maxV = icon.getMaxV();
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, (tickCount & 0b100) != 0);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, (tickCount & 0b100) != 0);
     }
 
   }

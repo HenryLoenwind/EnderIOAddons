@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.waterworks;
 
 import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +33,9 @@ public class RendererWaterworks implements ISimpleBlockRenderingHandler {
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockWaterworks.blockWaterworks, (TileWaterworks) null, true)) {
+      return true;
+    }
     return frameRenderer.renderWorldBlock(world, x, y, z, block, modelId, renderer);
   }
 

@@ -21,10 +21,10 @@ import info.loenwind.enderioaddons.machine.framework.GroupObjectWithIcon;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
-import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
 import info.loenwind.enderioaddons.machine.tcom.engine.EngineTcom;
 import info.loenwind.enderioaddons.machine.tcom.engine.Mats;
 import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 
 import java.util.List;
 import java.util.Map;
@@ -51,15 +51,6 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import crazypants.enderio.EnderIO;
 
 public class RendererTcom implements ISimpleBlockRenderingHandler {
-
-  private static float[] brightnessPerSide = new float[6];
-  private static float[] brightnessPerInSide = new float[6];
-  static {
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-      brightnessPerInSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir) * .75f;
-    }
-  }
 
   private static final VertexRotationFacing xform = new VertexRotationFacing(SOUTH);
   static {
@@ -111,6 +102,10 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockTcom.blockTcom, (TileTcom) null, true)) {
+      return true;
+    }
+
     TileEntity te = world != null ? world.getTileEntity(x, y, z) : null;
     IFrameworkMachine frameworkMachine = te instanceof IFrameworkMachine ? (IFrameworkMachine) te : null;
     TileTcom tileTcom = te instanceof TileTcom ? (TileTcom) te : null;
@@ -118,7 +113,7 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     if (frameworkMachine != null && tileTcom != null) {
 
       xform.setRotation(tileTcom.getFacingDir());
-      FaceRenderer.setLightingReference(world, BlockIHopper.blockIHopper, x, y, z);
+      FaceRenderer.setLightingReference(world, BlockTcom.blockTcom, x, y, z);
       Tessellator.instance.addTranslation(x, y, z);
 
       for (TankSlot tankSlot : TankSlot.values()) {
@@ -173,15 +168,15 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     }
 
     // top box
-    renderCube(bb1, icons1, xform, brightnessPerSide, false);
-    renderSingleFace(bb4, UP, icon_top, 0, 16, 0, 16, xform, brightnessPerSide, false);
+    renderCube(bb1, icons1, xform, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, UP, icon_top, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
 
     // inside
-    renderSingleFace(bb5, DOWN, icon_bottom, 0, 16, 0, 16, xform, brightnessPerSide, true);
-    renderSingleFace(bb2, EAST, icon_side, 0, 16, 0, 16, xform, brightnessPerSide, true);
-    renderSingleFace(bb2, WEST, icon_side, 0, 16, 0, 16, xform, brightnessPerSide, true);
-    renderSingleFace(bb3, NORTH, icon_side, 0, 16, 0, 16, xform, brightnessPerSide, true);
-    renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, xform, brightnessPerSide, true);
+    renderSingleFace(bb5, DOWN, icon_bottom, 0, 16, 0, 16, xform, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb2, EAST, icon_side, 0, 16, 0, 16, xform, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb2, WEST, icon_side, 0, 16, 0, 16, xform, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb3, NORTH, icon_side, 0, 16, 0, 16, xform, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, xform, FaceRenderer.stdBrightnessInside, true);
   }
 
   public static void renderStandaloneTray() {
@@ -199,15 +194,15 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     BoundingBox bb5 = makePartialBB(0, 1, 0, 16, 16, 16);
 
     // top box
-    renderCube(bb1, icons1, null, brightnessPerSide, false);
-    renderSingleFace(bb4, UP, icon_top, 0, 16, 0, 16, null, brightnessPerSide, false);
+    renderCube(bb1, icons1, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, UP, icon_top, 0, 16, 0, 16, null, FaceRenderer.stdBrightness, false);
 
     // inside
-    renderSingleFace(bb5, DOWN, icon_bottom, 0, 16, 0, 16, null, brightnessPerSide, true);
-    renderSingleFace(bb2, EAST, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
-    renderSingleFace(bb2, WEST, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
-    renderSingleFace(bb3, NORTH, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
-    renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, null, brightnessPerSide, true);
+    renderSingleFace(bb5, DOWN, icon_bottom, 0, 16, 0, 16, null, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb2, EAST, icon_side, 0, 16, 0, 16, null, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb2, WEST, icon_side, 0, 16, 0, 16, null, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb3, NORTH, icon_side, 0, 16, 0, 16, null, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb3, SOUTH, icon_side, 0, 16, 0, 16, null, FaceRenderer.stdBrightnessInside, true);
   }
 
   public static void renderStandaloneEnchantmentPylon(boolean withTank) {
@@ -222,14 +217,14 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     float maxV = 1f;
 
     setupVertices(bb2, null);
-    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, brightnessPerSide, true);
-    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, brightnessPerSide, true);
-    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, null, brightnessPerSide, true);
-    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, null, brightnessPerSide, true);
-    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, true);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, true);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, true);
+    renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, true);
+    renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
 
     minU = 0f;
     maxU = 20f / 48f;
@@ -237,18 +232,18 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
     maxV = .5f;
 
     setupVertices(bb3, null);
-    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, null, FaceRenderer.stdBrightness, false);
 
     minU = 0f;
     maxU = 10f / 48f;
     minV = 0f;
     maxV = 10f / 64f;
 
-    renderSingleFace(ForgeDirection.UP, minU, maxU, minV, maxV, null, brightnessPerSide, false);
-    renderSingleFace(ForgeDirection.DOWN, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+    renderSingleFace(ForgeDirection.UP, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(ForgeDirection.DOWN, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
 
     if (withTank) {
       Tessellator.instance.draw();
@@ -262,7 +257,7 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
 
       setupVertices(BoundingBox.UNIT_CUBE, null);
       for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-        renderSingleFace(dir, minU, maxU, minV, maxV, null, brightnessPerSide, false);
+        renderSingleFace(dir, minU, maxU, minV, maxV, null, FaceRenderer.stdBrightness, false);
       }
     }
   }
@@ -295,7 +290,7 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
         if (lower) {
           bbi = bbi.translate(0, -8f / 16f, 0);
         }
-        renderSingleFace(bbi, UP, icon, 0, 16, 0, 16, xform, brightnessPerSide, false);
+        renderSingleFace(bbi, UP, icon, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
       }
     }
 
@@ -351,8 +346,8 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       if (lower) {
         bb = bb.translate(0, -8f / 16f, 0);
       }
-      FaceRenderer.renderSkirt(bb, icons, 0, 16, 0, 2 + renderAmount, xform, brightnessPerSide, false);
-      FaceRenderer.renderSingleFace(bb, UP, icons, 0, 16, 0, 16, xform, brightnessPerSide, false);
+      FaceRenderer.renderSkirt(bb, icons, 0, 16, 0, 2 + renderAmount, xform, FaceRenderer.stdBrightness, false);
+      FaceRenderer.renderSingleFace(bb, UP, icons, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
       return true;
     } else {
       return false;
@@ -422,11 +417,11 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       }
 
       setupVertices(bb1, xform);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.UP, 0f, 32f / 64f, 0f, 32f / 320f, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.UP, 0f, 32f / 64f, 0f, 32f / 320f, xform, FaceRenderer.stdBrightness, false);
 
       if (te.renderData[1] < 0) {
         minV = (te.renderData[0] + renderAmount2 * 2) / 320f;
@@ -435,11 +430,11 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       }
 
       setupVertices(bb, xform);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.UP, 0f, 32f / 64f, 0f, 32f / 320f, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.UP, 0f, 32f / 64f, 0f, 32f / 320f, xform, FaceRenderer.stdBrightness, false);
     }
 
     if (renderAmount < 16) {
@@ -460,14 +455,14 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       float maxV = 1f;
 
       setupVertices(bb2, xform);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
-      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
-      renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, brightnessPerSide, true);
-      renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, true);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, true);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, true);
+      renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, true);
+      renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
 
       minU = 0f;
       maxU = 20f / 48f;
@@ -475,10 +470,10 @@ public class RendererTcom implements ISimpleBlockRenderingHandler {
       maxV = .5f;
 
       setupVertices(bb3, xform);
-      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
-      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, brightnessPerSide, false);
+      renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.WEST, maxU, minU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
+      renderSingleFace(ForgeDirection.EAST, maxU, minU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
     }
 
     Tessellator.instance.draw();

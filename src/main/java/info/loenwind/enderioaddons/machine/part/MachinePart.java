@@ -29,6 +29,9 @@ public enum MachinePart {
   CHASSIPARTS("chassiParts", false, false, false, null, false, false), //
   FLAGPARTS("flagparts", false, false, false, null, false, false), //
   SIMPLEMAGNET("simplemagnet", false, false, false, null, false, false), //
+  AFARMINFO("afarminfo", false, false, false, null, false, false), //
+  FCM_BASE("fcmBaseModule", false, false, false, null, false, false), //
+  FCM_IQ("fcmIQModule", false, false, false, null, false, false), //
   ;
 
   @Nonnull

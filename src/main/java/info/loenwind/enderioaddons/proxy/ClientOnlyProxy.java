@@ -1,6 +1,8 @@
 package info.loenwind.enderioaddons.proxy;
 
+import info.loenwind.enderioaddons.machine.afarm.AgriDetector;
 import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
+import info.loenwind.enderioaddons.machine.afarm.ItemRendererAfarm;
 import info.loenwind.enderioaddons.machine.afarm.RendererAfarm;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.RendererCobbleworks;
@@ -116,8 +118,11 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     ClientRegistry.bindTileEntitySpecialRenderer(TileMagCharger.class, new TESRMagCharger());
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockMagCharger.blockMagCharger), new ItemRendererMagCharger());
 
-    BlockAfarm.blockAfarm.localRenderId = RenderingRegistry.getNextAvailableRenderId();
-    RenderingRegistry.registerBlockHandler(new RendererAfarm());
+    if (AgriDetector.hasAgri) {
+      BlockAfarm.blockAfarm.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+      RenderingRegistry.registerBlockHandler(new RendererAfarm());
+      MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockAfarm.blockAfarm), new ItemRendererAfarm());
+    }
 
   }
 

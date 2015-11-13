@@ -19,7 +19,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO;after:waterhooks", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
+@Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO;after:waterhooks;after:AgriCraft", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
 public class EnderIOAddons implements InitAware {
   @Nonnull
   public static final String MODID = "enderioaddons";

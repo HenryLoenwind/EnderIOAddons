@@ -2,12 +2,18 @@ package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.GuiIds;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.common.util.ForgeDirection;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.AbstractMachineBlock;
+import crazypants.enderio.machine.IoMode;
 
 public class BlockAfarm extends AbstractMachineBlock<TileAfarm> {
 
@@ -77,6 +83,24 @@ public class BlockAfarm extends AbstractMachineBlock<TileAfarm> {
   @Override
   protected String getBackIconKey(boolean active) {
     return EnderIOAddons.DOMAIN + ":AfarmSide";
+  }
+
+  public static IIcon farmlight;
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public void registerBlockIcons(IIconRegister iIconRegister) {
+    super.registerBlockIcons(iIconRegister);
+    farmlight = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":farmlight");
+  }
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public IIcon getOverlayIconForMode(TileAfarm tile, ForgeDirection face, IoMode mode) {
+    if (face != ForgeDirection.DOWN) {
+      return null;
+    }
+    return super.getOverlayIconForMode(tile, face, mode);
   }
 
 }

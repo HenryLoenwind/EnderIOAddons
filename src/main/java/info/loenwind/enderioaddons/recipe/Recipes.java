@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.recipe;
 
 import static crazypants.util.RecipeUtil.addShaped;
+import static crazypants.util.RecipeUtil.addShapeless;
 import static info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks.blockCobbleworks;
 import static info.loenwind.enderioaddons.machine.drain.BlockDrain.blockDrain;
 import static info.loenwind.enderioaddons.machine.ihopper.BlockIHopper.blockIHopper;
@@ -16,16 +17,13 @@ import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
-import crazypants.util.RecipeUtil;
 
 public class Recipes implements InitAware {
 
@@ -290,21 +288,6 @@ public class Recipes implements InitAware {
 
   @Override
   public void init(FMLPostInitializationEvent event) {
-  }
-
-  // TODO when fixed in eio
-  public static void addShapeless(Item res, Object... recipe) {
-    RecipeUtil.addShapeless(new ItemStack(res), recipe);
-  }
-
-  // TODO when fixed in eio
-  public static void addShapeless(Block res, Object... recipe) {
-    RecipeUtil.addShapeless(new ItemStack(res), recipe);
-  }
-
-  // TODO when fixed in eio
-  public static void addShapeless(ItemStack res, Object... recipe) {
-    RecipeUtil.addShapeless(res, recipe);
   }
 
 }
