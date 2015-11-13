@@ -75,8 +75,7 @@ public class ItemMachinePart extends Item {
   @SideOnly(Side.CLIENT)
   public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
     for (int j = 0; j < MachinePart.values().length; ++j) {
-      if ((AgriDetector.hasAgri && j == MachinePart.AFARMINFO.ordinal())
-          || (!AgriDetector.hasAgri && (j == MachinePart.FCM_BASE.ordinal() || j == MachinePart.FCM_IQ.ordinal()))) {
+      if ((AgriDetector.hasAgri && j == MachinePart.AFARMINFO.ordinal()) || (!AgriDetector.hasAgri && MachinePart.isAgri(j))) {
         continue;
       }
       par3List.add(new ItemStack(par1, 1, j));

@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
@@ -15,22 +16,32 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
   @Override
   public void doWork(WorkTile workTile) {
     final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) workTile.farm.getSlotDefinition();
+    boolean foundSeeds = false;
     for (int slot = slotDef.getMinSlot(SLOT.SEED); slot <= slotDef.getMaxSlot(SLOT.SEED); slot++) {
       final ItemStack stack = workTile.farm.getStackInSlot(slot);
-      ISeedStats seedStats = workTile.agricraft.getSeedStats(stack);
-      if (seedStats != null) {
-        if (!isAnalyzed(stack)) {
-          if (workTile.farm.canUsePower(100)) { // TODO: cfg
-            workTile.farm.usePower(100); // TODO cfg
-            analyze(stack);
-            reStack(workTile, slotDef, slot, stack);
-            workTile.farm.markDirty();
-            return; // analyze one stack per work only
-          } else {
-            return;
+      if (stack != null && stack.getItem() != null) {
+        workTile.farm.notifications.remove(Notif.NO_SEEDS);
+        foundSeeds = true;
+        ISeedStats seedStats = workTile.agricraft.getSeedStats(stack);
+        if (seedStats != null) {
+          if (!isAnalyzed(stack)) {
+            if (workTile.farm.canUsePower(100)) { // TODO: cfg
+              workTile.farm.notifications.remove(Notif.NO_POWER);
+              workTile.farm.usePower(100); // TODO cfg
+              analyze(stack);
+              reStack(workTile, slotDef, slot, stack);
+              workTile.farm.markDirty();
+              return; // analyze one stack per work only
+            } else {
+              workTile.farm.notifications.add(Notif.NO_POWER);
+              return;
+            }
           }
         }
       }
+    }
+    if (!foundSeeds) {
+      workTile.farm.notifications.add(Notif.NO_SEEDS);
     }
   }
 

@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module.execute;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
@@ -40,6 +41,9 @@ public abstract class ExecuteModule implements IAfarmControlModule {
         if (stack != null && stack.stackSize > 0) {
           final World world = workTile.farm.getWorldObj();
           world.spawnEntityInWorld(new EntityItem(world, workTile.bc.x + 0.5, workTile.bc.y + 0.9, workTile.bc.z + 0.5, stack));
+          workTile.farm.notifications.add(Notif.FULL);
+        } else {
+          workTile.farm.notifications.remove(Notif.FULL);
         }
       }
       workTile.farm.markDirty();

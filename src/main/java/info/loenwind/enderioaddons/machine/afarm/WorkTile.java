@@ -1,8 +1,10 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 
 import com.InfinityRaider.AgriCraft.api.v1.APIv1;
+import com.InfinityRaider.AgriCraft.api.v1.ISeedStats;
 import com.enderio.core.common.util.BlockCoord;
 
 public class WorkTile {
@@ -11,12 +13,29 @@ public class WorkTile {
   public final TileAfarm farm;
   public final APIv1 agricraft;
   public final EntityPlayerMP farmerJoe;
+  public final boolean isWeeds;
+  public final boolean isAnalyzed;
+  public final ISeedStats stats;
+  public final ItemStack seed;
+  public final boolean isEmpty;
+  public final boolean isMature;
+  public final boolean isCrops;
+  public final boolean isCrossCrops;
 
   public WorkTile(BlockCoord bc, TileAfarm farm, APIv1 agricraft, EntityPlayerMP farmerJoe) {
     this.bc = bc;
     this.farm = farm;
     this.agricraft = agricraft;
     this.farmerJoe = farmerJoe;
+
+    isWeeds = agricraft.isWeeds(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    isAnalyzed = agricraft.isAnalyzed(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    stats = agricraft.getStats(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    seed = agricraft.getPlantedSeed(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    isEmpty = agricraft.isEmpty(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    isMature = agricraft.isMature(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    isCrops = agricraft.isCrops(farm.getWorldObj(), bc.x, bc.y, bc.z);
+    isCrossCrops = agricraft.isCrossCrops(farm.getWorldObj(), bc.x, bc.y, bc.z);
   }
 
   /**
@@ -90,10 +109,12 @@ public class WorkTile {
 
   @Override
   public String toString() {
-    return "WorkTile [bc=" + bc + ", seedSlot=" + seedSlot + ", seedStorageSlot=" + seedStorageSlot + ", cropsSlot=" + cropsSlot + ", fertilizerSlot="
-        + fertilizerSlot + ", allowPlanting=" + allowPlanting + ", allowHarvesting=" + allowHarvesting + ", allowCrossCrops=" + allowCrossCrops
-        + ", doPlanting=" + doPlanting + ", doHarvesting=" + doHarvesting + ", doDestroy=" + doDestroy + ", doCrossCrops=" + doCrossCrops + ", doCrops="
-        + doCrops + ", doTill=" + doTill + ", doWeed=" + doWeed + ", doFertilize=" + doFertilize + "]";
+    return "WorkTile [bc=" + bc + ", isWeeds=" + isWeeds + ", isAnalyzed=" + isAnalyzed + ", stats=" + stats + ", seed=" + seed + ", isEmpty=" + isEmpty
+        + ", isMature=" + isMature + ", isCrops=" + isCrops + ", isCrossCrops=" + isCrossCrops + ", seedSlot=" + seedSlot + ", seedStorageSlot="
+        + seedStorageSlot + ", cropsSlot=" + cropsSlot + ", fertilizerSlot=" + fertilizerSlot + ", allowPlanting=" + allowPlanting + ", allowHarvesting="
+        + allowHarvesting + ", allowCrossCrops=" + allowCrossCrops + ", doPlanting=" + doPlanting + ", doHarvesting=" + doHarvesting + ", doDestroy="
+        + doDestroy + ", doCrossCrops=" + doCrossCrops + ", doCrops=" + doCrops + ", doTill=" + doTill + ", doWeed=" + doWeed + ", doFertilize=" + doFertilize
+        + "]";
   }
 
 }

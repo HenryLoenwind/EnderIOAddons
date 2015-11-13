@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module.execute;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -11,20 +12,24 @@ public class ExecuteTillModule extends ExecuteModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    if (workTile.doTill && workTile.farm.canUsePower(100)) { // TODO: cfg
-      int hoeSlot = workTile.farm.getHoeSlot();
-      if (hoeSlot != -1) {
-        final ItemStack stack = workTile.farm.getStackInSlot(hoeSlot);
-        if (tillBlock(workTile, stack)) {
-          workTile.farm.usePower(100); // TODO cfg
-          workTile.farm.markDirty();
-          spawnParticles(workTile);
-          workTile.doneSomething = true;
+    if (workTile.doTill) {
+      if (workTile.farm.canUsePower(100)) { // TODO: cfg
+        int hoeSlot = workTile.farm.getHoeSlot();
+        if (hoeSlot != -1) {
+          final ItemStack stack = workTile.farm.getStackInSlot(hoeSlot);
+          if (tillBlock(workTile, stack)) {
+            workTile.farm.usePower(100); // TODO cfg
+            workTile.farm.markDirty();
+            spawnParticles(workTile);
+            workTile.doneSomething = true;
+          }
+          if (stack.stackSize <= 0) {
+            workTile.farm.setInventorySlotContents(hoeSlot, null);
+            workTile.farm.markDirty();
+          }
         }
-        if (stack.stackSize <= 0) {
-          workTile.farm.setInventorySlotContents(hoeSlot, null);
-          workTile.farm.markDirty();
-        }
+      } else {
+        workTile.farm.notifications.add(Notif.NO_POWER);
       }
     }
   }

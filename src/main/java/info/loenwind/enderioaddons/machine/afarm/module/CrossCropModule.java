@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
@@ -9,18 +10,18 @@ public class CrossCropModule implements IAfarmControlModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    // TODO: remove !isCrossCrops() when 1.4.5 is live
-    if (workTile.allowCrossCrops && workTile.agricraft.isEmpty(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)
-        && !workTile.agricraft.isCrossCrops(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)) {
+    if (workTile.allowCrossCrops && workTile.isEmpty && !workTile.isCrossCrops && !workTile.isWeeds) {
       final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) workTile.farm.getSlotDefinition();
       for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {
         final ItemStack stack = workTile.farm.getStackInSlot(slot);
         if (stack != null) {
           workTile.cropsSlot = slot;
           workTile.doCrossCrops = true;
+          workTile.farm.notifications.remove(Notif.NO_CROPS);
           return;
         }
       }
+      workTile.farm.notifications.add(Notif.NO_CROPS);
     }
   }
 

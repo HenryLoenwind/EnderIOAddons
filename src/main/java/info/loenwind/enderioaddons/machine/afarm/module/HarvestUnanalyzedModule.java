@@ -6,8 +6,7 @@ public class HarvestUnanalyzedModule implements IAfarmControlModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    workTile.doDestroy = workTile.agricraft.getPlantedSeed(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z) != null
-        && !workTile.agricraft.isAnalyzed(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z);
+    workTile.doDestroy = workTile.seed != null && !workTile.isAnalyzed;
   }
 
   @Override

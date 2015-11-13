@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
@@ -11,22 +12,24 @@ public class ReplaceBetterModule implements IAfarmControlModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    if (!workTile.doDestroy && workTile.agricraft.isAnalyzed(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)) {
-      ISeedStats stats = workTile.agricraft.getStats(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z);
-      if (stats != null && stats.getGain() + stats.getGrowth() + stats.getStrength() < stats.getMaxGain() + stats.getMaxGrowth() + stats.getMaxStrength()) {
-        ItemStack seed = workTile.agricraft.getPlantedSeed(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z);
-        if (seed != null) {
-          int seedQuality = stats.getGain() + stats.getGrowth() + stats.getStrength();
-          int betterSeed = hasBetterSeed(workTile, seed, seedQuality);
-          if (betterSeed != -1) {
-            workTile.cropsSlot = getCropsSticks(workTile);
-            if (workTile.cropsSlot != -1) {
-              workTile.seedStorageSlot = betterSeed;
-              workTile.doDestroy = true;
-              workTile.doHarvesting = false;
-              workTile.doCrops = true;
-              workTile.doPlanting = true;
-            }
+    if (!workTile.doDestroy && workTile.isAnalyzed) {
+      if (workTile.seed != null
+          && workTile.stats != null
+          && workTile.stats.getGain() + workTile.stats.getGrowth() + workTile.stats.getStrength() < workTile.stats.getMaxGain() + workTile.stats.getMaxGrowth()
+              + workTile.stats.getMaxStrength()) {
+        int seedQuality = workTile.stats.getGain() + workTile.stats.getGrowth() + workTile.stats.getStrength();
+        int betterSeed = hasBetterSeed(workTile, workTile.seed, seedQuality);
+        if (betterSeed != -1) {
+          workTile.cropsSlot = getCropsSticks(workTile);
+          if (workTile.cropsSlot != -1) {
+            workTile.farm.notifications.remove(Notif.NO_CROPS);
+            workTile.seedStorageSlot = betterSeed;
+            workTile.doDestroy = true;
+            workTile.doHarvesting = false;
+            workTile.doCrops = true;
+            workTile.doPlanting = true;
+          } else {
+            workTile.farm.notifications.add(Notif.NO_CROPS);
           }
         }
       }

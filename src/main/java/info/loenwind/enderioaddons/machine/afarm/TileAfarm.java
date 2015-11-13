@@ -1,6 +1,22 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
+import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
+import static info.loenwind.enderioaddons.config.Config.farmArea1;
+import static info.loenwind.enderioaddons.config.Config.farmArea2;
+import static info.loenwind.enderioaddons.config.Config.farmArea3;
+import static info.loenwind.enderioaddons.config.Config.farmBreaksIronRakesChance;
+import static info.loenwind.enderioaddons.config.Config.farmBreaksIronRakesEnabled;
+import static info.loenwind.enderioaddons.config.Config.farmBreaksWoodenRakesChance;
+import static info.loenwind.enderioaddons.config.Config.farmBreaksWoodenRakesEnabled;
+import static info.loenwind.enderioaddons.config.Config.farmDelay1;
+import static info.loenwind.enderioaddons.config.Config.farmDelay2;
+import static info.loenwind.enderioaddons.config.Config.farmRFperTickPerArea;
+import static info.loenwind.enderioaddons.config.Config.farmRFperTickPerModule;
+import info.loenwind.autosave.annotations.Storable;
+import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
+import info.loenwind.enderioaddons.common.Log;
+import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.module.CropModule;
 import info.loenwind.enderioaddons.machine.afarm.module.CrossBreedModule;
@@ -19,6 +35,8 @@ import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecutePlantingM
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteTillModule;
 import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteWeedModule;
 import info.loenwind.enderioaddons.machine.niard.RadiusIterator;
+import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
+import info.loenwind.enderioaddons.machine.part.MachinePart;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +45,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,6 +68,7 @@ import crazypants.enderio.machine.farm.FakeFarmPlayer;
 import crazypants.enderio.machine.farm.TileFarmStation.ToolType;
 import crazypants.enderio.power.BasicCapacitor;
 
+@Storable
 public class TileAfarm extends TileEnderIOAddons {
 
   public static final int NUM_CONTROL_SLOTS = 6;
@@ -68,6 +88,9 @@ public class TileAfarm extends TileEnderIOAddons {
 
   private RadiusIterator itr = null;
   private BlockCoord currentTile = null;
+
+  @Store({ CLIENT })
+  public NotifSet notifications = new NotifSet();
 
   public TileAfarm() {
     super(new SlotDefinitionAfarm(NUM_CONTROL_SLOTS, NUM_CONTROL_STORAGE_SLOTS, NUM_SEED_GHOST_SLOTS, NUM_SEED_STORAGE_SLOTS, NUM_OUTPUT_SLOTS, NUM_TOOL_SLOTS,
@@ -129,9 +152,9 @@ public class TileAfarm extends TileEnderIOAddons {
       return agricraft.isHandledByAgricraft(item);
     case TOOL:
       if (isRake(item)) {
-        return getRakeSlot() == -1;
+        return getRakeSlot_silent() == -1;
       } else if (ToolType.HOE.itemMatches(item)) {
-        return getHoeSlot() == -1;
+        return getHoeSlot_silent() == -1;
       } else {
         return false;
       }
@@ -162,9 +185,31 @@ public class TileAfarm extends TileEnderIOAddons {
     }
   }
 
+  private int getHoeSlot_silent() {
+    for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
+      if (ToolType.HOE.itemMatches(inventory[i])) {
+        notifications.remove(Notif.NO_HOE);
+        return i;
+      }
+    }
+    return -1;
+  }
+
   public int getHoeSlot() {
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
       if (ToolType.HOE.itemMatches(inventory[i])) {
+        notifications.remove(Notif.NO_HOE);
+        return i;
+      }
+    }
+    notifications.add(Notif.NO_HOE);
+    return -1;
+  }
+
+  private int getRakeSlot_silent() {
+    for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
+      if (isRake(inventory[i])) {
+        notifications.remove(Notif.NO_RAKE);
         return i;
       }
     }
@@ -173,11 +218,68 @@ public class TileAfarm extends TileEnderIOAddons {
 
   public int getRakeSlot() {
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
-      if (isRake(inventory[i])) {
+      if (isRake(inventory[i]) && !tryToBrakeRake(i)) {
+        notifications.remove(Notif.NO_RAKE);
         return i;
       }
     }
+    notifications.add(Notif.NO_RAKE);
     return -1;
+  }
+
+  private boolean tryToBrakeRake(int i) {
+    String itemName = inventory[i].getItem().getUnlocalizedName(inventory[i]);
+    if ("item.agricraft:handRake.wood".equals(itemName) && farmBreaksWoodenRakesEnabled.getBoolean()
+        && random.nextDouble() < farmBreaksWoodenRakesChance.getDouble()) {
+      if (inventory[i].stackSize > 1) {
+        inventory[i].stackSize--;
+      } else {
+        inventory[i] = null;
+      }
+      putIntoOutputOrWorld(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal()));
+    } else if ("item.agricraft:handRake.iron".equals(itemName) && farmBreaksIronRakesEnabled.getBoolean()
+        && random.nextDouble() < farmBreaksIronRakesChance.getDouble()) {
+      if (inventory[i].stackSize > 1) {
+        inventory[i].stackSize--;
+      } else {
+        inventory[i] = null;
+      }
+      putIntoOutputOrWorld(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal()));
+    }
+    return inventory[i] == null;
+  }
+
+  private void putIntoOutputOrWorld(ItemStack stack) {
+    int firstfree = -1;
+    if (stack != null) {
+      final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) getSlotDefinition();
+      for (int oslot = slotDef.getMinSlot(SLOT.OUTPUT); oslot <= slotDef.getMaxSlot(SLOT.OUTPUT); oslot++) {
+        final ItemStack ostack = getStackInSlot(oslot);
+        if (ostack != null) {
+          if (ItemUtil.areStackMergable(stack, ostack) && ostack.stackSize < ostack.getMaxStackSize()) {
+            int free = ostack.getMaxStackSize() - ostack.stackSize;
+            if (free >= stack.stackSize) {
+              ostack.stackSize += stack.stackSize;
+              stack.stackSize = 0;
+              break;
+            } else {
+              ostack.stackSize = ostack.getMaxStackSize();
+              stack.stackSize -= free;
+            }
+          }
+        } else if (firstfree == -1) {
+          firstfree = oslot;
+        }
+      }
+      if (stack.stackSize > 0) {
+        if (firstfree != -1) {
+          setInventorySlotContents(firstfree, stack);
+          stack.stackSize = 0;
+        } else {
+          getWorldObj().spawnEntityInWorld(new EntityItem(getWorldObj(), xCoord + 0.5, yCoord + 0.9, zCoord + 0.5, stack));
+        }
+      }
+    }
   }
 
   private static boolean isRake(ItemStack item) {
@@ -192,11 +294,11 @@ public class TileAfarm extends TileEnderIOAddons {
         return true;
       }
     }
-    return false;
+    return item.getItem() == ItemMachinePart.itemMachinePart && item.getItemDamage() == MachinePart.IRAKE.ordinal();
   }
 
   private int calcPowerUsePerTick() {
-    return Math.round(getFarmSize() * 1f + controlModuleCount() * 1f); // TODO cfg
+    return (int) Math.round(getFarmSize() * farmRFperTickPerArea.getDouble() + controlModuleCount() * farmRFperTickPerModule.getDouble());
   }
 
   private int controlModuleCount() {
@@ -212,11 +314,11 @@ public class TileAfarm extends TileEnderIOAddons {
   public int getFarmSize() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return 3; // TODO cfg
+      return farmArea1.getInt();
     case ACTIVATED_CAPACITOR:
-      return 5;
+      return farmArea2.getInt();
     case ENDER_CAPACITOR:
-      return 7;
+      return farmArea3.getInt();
     }
     return 0;
   }
@@ -224,11 +326,11 @@ public class TileAfarm extends TileEnderIOAddons {
   public int getDelay() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      return 20; // TODO cfg
+      return farmDelay1.getInt();
     case ACTIVATED_CAPACITOR:
-      return 10;
+      return farmDelay2.getInt();
     case ENDER_CAPACITOR:
-      return 3;
+      return farmDelay2.getInt();
     }
     return Integer.MAX_VALUE;
   }
@@ -238,13 +340,13 @@ public class TileAfarm extends TileEnderIOAddons {
     int ppt = calcPowerUsePerTick();
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      setCapacitor(new BasicCapacitor(ppt * 40, 250000, ppt));
+      setCapacitor(new BasicCapacitor(ppt * 10, 25000, ppt));
       break;
     case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(ppt * 40, 500000, ppt));
+      setCapacitor(new BasicCapacitor(ppt * 40, 50000, ppt));
       break;
     case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(ppt * 40, 1000000, ppt));
+      setCapacitor(new BasicCapacitor(ppt * 80, 100000, ppt));
       break;
     }
     currentTask = createTask(null);
@@ -261,24 +363,34 @@ public class TileAfarm extends TileEnderIOAddons {
     return new ContinuousTask(getPowerUsePerTick());
   }
 
+  @Override
+  protected boolean processTasks(boolean redstoneChecksPassed) {
+    if (redstoneChecksPassed) {
+      return super.processTasks(redstoneChecksPassed);
+    }
+    notifications.clear();
+    notifications.add(Notif.OFFLINE);
+    return notifications.isChanged();
+  }
+
   // tick goes in here
   @Override
   protected boolean checkProgress(boolean redstoneChecksPassed) {
-    if (canTick(redstoneChecksPassed) && redstoneChecksPassed) {
+    if (canTick()) {
       return doTick();
     }
     return false;
   }
 
-  protected boolean canTick(boolean redstoneChecksPassed) {
-    if (redstoneChecksPassed) {
-      if (usePower(getPowerUsePerTick()) == 0) {
-        return false;
-      } else {
-        return true;
-      }
+  protected boolean canTick() {
+    notifications.remove(Notif.OFFLINE);
+    if (usePower(getPowerUsePerTick()) == 0) {
+      notifications.add(Notif.NO_POWER);
+      return false;
+    } else {
+      notifications.remove(Notif.NO_POWER);
+      return true;
     }
-    return false;
   }
 
   protected boolean doTick() {
@@ -293,14 +405,18 @@ public class TileAfarm extends TileEnderIOAddons {
       List<IAfarmControlModule> controls = getControlModules();
       for (IAfarmControlModule control : controls) {
         control.doWork(tile);
-        // TODO add config value for this
-        //   Log.info(tile + " after " + control);
+        if (Config.farmDebugLoggingEnabled.getBoolean()) {
+          Log.info(tile + " after " + control);
+        }
       }
       if (!tile.doneSomething) {
         currentTile = itr.next();
       }
     }
-    return false;
+    if (shouldDoWorkThisTick(20 * 180)) {
+      notifications.clear();
+    }
+    return notifications.isChanged();
   }
 
   private static final IAfarmControlModuleComparator moduleComperator = new IAfarmControlModuleComparator();

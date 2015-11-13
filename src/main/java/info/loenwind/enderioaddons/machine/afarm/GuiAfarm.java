@@ -3,6 +3,8 @@ package info.loenwind.enderioaddons.machine.afarm;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.gui.InvisibleButton;
 
+import java.awt.Color;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.gui.GuiButton;
@@ -14,6 +16,7 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import com.enderio.core.client.render.ColorUtil;
 import com.enderio.core.client.render.RenderUtil;
 
 import cpw.mods.fml.common.Optional;
@@ -99,8 +102,40 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
 
     drawTexturedModalRect(sx, sy, 0, 0, xSize, ySize);
     drawTabs(sx, sy);
+    drawTexts(sx, sy);
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
+  }
+
+  protected void drawTexts(int sx, int sy) {
+    int rgb = ColorUtil.getRGB(Color.white);
+    switch (tab) {
+    case 0:
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab0.modules"), sx + 34, sy + 7, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab0.modulestorage"), sx + 34, sy + 35, rgb);
+      break;
+    case 1:
+      if (getTileEntity().twoGhosts()) {
+        fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.seed1"), sx + 34, sy + 7, rgb);
+        fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.seed2"), sx + 88, sy + 7, rgb);
+      } else {
+        fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.nw"), sx + 34, sy + 7, rgb);
+        fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.ne"), sx + 61, sy + 7, rgb);
+        fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.se"), sx + 88, sy + 7, rgb);
+        fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.sw"), sx + 115, sy + 7, rgb);
+      }
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab1.seedstorage"), sx + 34, sy + 35, rgb);
+      break;
+    case 2:
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab2.output"), sx + 34, sy + 7, rgb);
+      break;
+    case 3:
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.tools"), sx + 34, sy + 7, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.fertilizer"), sx + 88, sy + 7, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.cropsticks"), sx + 34, sy + 35, rgb);
+      break;
+    }
+    RenderUtil.bindTexture(texture);
   }
 
   private int blockX0 = 0, blockX1 = 0, blockY0 = 0, blockY1 = 0;

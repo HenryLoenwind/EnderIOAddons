@@ -7,7 +7,7 @@ public class HarvestModule implements IAfarmControlModule {
   @Override
   public void doWork(WorkTile workTile) {
     if (workTile.allowHarvesting) {
-      workTile.doHarvesting = workTile.agricraft.isMature(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z);
+      workTile.doHarvesting = workTile.isMature;
     }
   }
 

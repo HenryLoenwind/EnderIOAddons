@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
@@ -11,12 +12,15 @@ public class PlantModule implements IAfarmControlModule {
 
   @Override
   public void doWork(WorkTile workTile) {
-    if (workTile.allowPlanting && !workTile.doPlanting && isEmpty(workTile)) {
+    if (workTile.allowPlanting && !workTile.doPlanting && workTile.isEmpty) {
       final SlotDefinitionAfarm slotDef = (SlotDefinitionAfarm) workTile.farm.getSlotDefinition();
       final ItemStack template = workTile.seedSlot != -1 ? workTile.farm.getStackInSlot(workTile.seedSlot + slotDef.getMinSlot(SLOT.SEED_GHOST)) : null;
+      boolean foundSeeds = false;
       for (int slot = slotDef.getMinSlot(SLOT.SEED); slot <= slotDef.getMaxSlot(SLOT.SEED); slot++) {
         final ItemStack stack = workTile.farm.getStackInSlot(slot);
         if (stack != null && stack.getItem() != null) {
+          workTile.farm.notifications.remove(Notif.NO_SEEDS);
+          foundSeeds = true;
           if (template != null && !SeedAnalyzerModule.isSameSeed(template, stack)) {
             continue;
           }
@@ -31,11 +35,10 @@ public class PlantModule implements IAfarmControlModule {
           }
         }
       }
+      if (!foundSeeds) {
+        workTile.farm.notifications.add(Notif.NO_SEEDS);
+      }
     }
-  }
-
-  public static boolean isEmpty(WorkTile workTile) {
-    return workTile.agricraft.isEmpty(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z);
   }
 
   @Override

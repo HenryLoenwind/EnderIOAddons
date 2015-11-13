@@ -151,3 +151,36 @@ enderioaddons.nei.teaser.enderioaddons.fcmEjectSeedsModule=The AgriCraft Farming
 enderioaddons.nei.teaser.enderioaddons.fcmBestOnlyModule=The AgriCraft Farming Station upgrade module "Seed Sorting" will transfer seeds from the storage to the output slots if there are better ones available. No need to keep the bad ones, is there?
 enderioaddons.nei.teaser.enderioaddons.fcmBaseModule=This base module is needed to craft AgriCraft Farming Station upgrade modules. On its own it's useless.
 enderioaddons.nei.teaser.enderioaddons.fcmIQModule=The Farming Intelligence Module is needed to craft the AgriCraft Farming Station as well as more advanced modules for it.
+
+enderioaddons.afarm.gui.tab0.modules=Control Modules
+enderioaddons.afarm.gui.tab0.modulestorage=Module Storage
+enderioaddons.afarm.gui.tab1.seed1=Seed 1
+enderioaddons.afarm.gui.tab1.seed2=Seed 2
+enderioaddons.afarm.gui.tab1.nw=NW
+enderioaddons.afarm.gui.tab1.ne=NE
+enderioaddons.afarm.gui.tab1.se=SE
+enderioaddons.afarm.gui.tab1.sw=SW
+enderioaddons.afarm.gui.tab1.seedstorage=Seed Storage
+enderioaddons.afarm.gui.tab2.output=Output
+enderioaddons.afarm.gui.tab3.tools=Tools
+enderioaddons.afarm.gui.tab3.fertilizer=Fertilizer
+enderioaddons.afarm.gui.tab3.cropsticks=Crop Sticks
+
+enderioaddons.afarm.notification.NO_POWER=No Power
+enderioaddons.afarm.notification.NO_HOE=No Hoe
+enderioaddons.afarm.notification.NO_RAKE=No Rake
+enderioaddons.afarm.notification.NO_CROPS=No Crop Sticks
+enderioaddons.afarm.notification.NO_SEEDS=No Seeds
+enderioaddons.afarm.notification.NO_FERTILIZER=No Fertilizer
+enderioaddons.afarm.notification.FULL=Full!
+enderioaddons.afarm.notification.WEEDS=Weeds!
+enderioaddons.afarm.notification.OFFLINE=Offline
+
+enderioaddons.handRakeWoodBroken.name=Broken Wooden Hand Rake
+enderioaddons.handRakeIronBroken.name=Broken Iron Hand Rake
+enderioaddons.iRake.name=Industrial Rake (machine use only)
+
+enderioaddons.nei.teaser.enderioaddons.handRakeWoodBroken=This once was a sturdy hand tool. But now the excessive stress of being used as part of a machine has broken it.
+enderioaddons.nei.teaser.enderioaddons.handRakeIronBroken=This once was a sturdy hand tool. But now the excessive stress of being used as part of a machine has broken it.
+enderioaddons.nei.teaser.enderioaddons.iRake=While much too unwieldy to be used by hand, this rake is perfect for use in a machine. It'll take a bit more power, but this rake won't break.
+

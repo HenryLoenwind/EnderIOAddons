@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
@@ -49,9 +50,16 @@ public class EjectSeedsModule implements IAfarmControlModule {
           firstfree = oslot;
         }
       }
-      if (stack.stackSize > 0 && firstfree != -1) {
-        workTile.farm.setInventorySlotContents(firstfree, stack);
-        stack.stackSize = 0;
+      if (stack.stackSize > 0) {
+        if (firstfree != -1) {
+          workTile.farm.setInventorySlotContents(firstfree, stack);
+          stack.stackSize = 0;
+          workTile.farm.notifications.remove(Notif.FULL);
+        } else {
+          workTile.farm.notifications.add(Notif.FULL);
+        }
+      } else {
+        workTile.farm.notifications.remove(Notif.FULL);
       }
     }
     return stack;

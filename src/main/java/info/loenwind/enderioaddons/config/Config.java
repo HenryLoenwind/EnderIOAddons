@@ -110,6 +110,45 @@ public enum Config {
   decoBlockInvisibleIsInvisible(Section.DECO, true, "Allow the invisible block to be invisible. Otherwise it will mimic a quite clear glass block."), //
 
   decoBlockEnabled(Section.RECIPES, true, "Enable the crafting recipe for the decoration block"), //
+
+  farmNO_POWEREnabled(Section.FARM_NOTIF, true, "Enable the notification NO_POWER"), //
+  farmNO_HOEEnabled(Section.FARM_NOTIF, true, "Enable the notification NO_HOE"), //
+  farmNO_RAKEEnabled(Section.FARM_NOTIF, true, "Enable the notification NO_RAKE"), //
+  farmNO_CROPSEnabled(Section.FARM_NOTIF, true, "Enable the notification NO_CROPS"), //
+  farmNO_SEEDSEnabled(Section.FARM_NOTIF, true, "Enable the notification NO_SEEDS"), //
+  farmNO_FERTILIZEREnabled(Section.FARM_NOTIF, false, "Enable the notification NO_FERTILIZER"), //
+  farmFULLEnabled(Section.FARM_NOTIF, true, "Enable the notification FULL"), //
+  farmWEEDSEnabled(Section.FARM_NOTIF, true, "Enable the notification WEEDS"), //
+  farmOFFLINEEnabled(Section.FARM_NOTIF, true, "Enable the notification OFFLINE"), //
+
+  farmBreaksWoodenRakesEnabled(Section.FARM, true, "If enabled, the farming station can break wooden hand rakes"), //
+  farmBreaksIronRakesEnabled(Section.FARM, true, "If enabled, the farming station can break iron hand rakes"), //
+  farmBreaksWoodenRakesChance(Section.FARM, 1d / 300d, "Chance that a farming station breaks a wooden hand rake (0-1)"), //
+  farmBreaksIronRakesChance(Section.FARM, 1d / 900d, "Chance that a farming station breaks a wooden hand rake (0-1)"), //
+
+  farmRFperRaking(Section.FARM, 100, "RF used when raking with a hand rake"), //
+  farmRFperRakingIndustrial(Section.FARM, 200, "RF used when raking with an industrial rake"), //
+
+  farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
+
+  farmRFperTickPerArea(Section.FARM, 2.5d, "RF used per tick per 'ring' of farmland"), //
+  farmRFperTickPerModule(Section.FARM, 5d, "RF used per tick per installed module"), //
+
+  /*
+   * The default values will give fields of 48/120/360 blocks. It will take
+   * 960/1200/1080 ticks or 48/60/54 seconds per field (assuming there are no
+   * double actions).
+   */
+
+  farmArea1(Section.FARM, 3, "'Rings' of farmland a farm with no capacitor upgrades will work"), //
+  farmArea2(Section.FARM, 5, "'Rings' of farmland a farm with first capacitor upgrade will work"), //
+  farmArea3(Section.FARM, 9, "'Rings' of farmland a farm with second capacitor upgrade will work"), //
+
+  farmDelay1(Section.FARM, 20, "number of ticks it takes a farm with no capacitor upgrades to work one tile of land"), //
+  farmDelay2(Section.FARM, 10, "number of ticks it takes a farm with first capacitor upgrade to work one tile of land"), //
+  farmDelay3(Section.FARM, 3, "number of ticks it takes a farm with second capacitor upgrade to work one tile of land"), //
+
+  farmEnabled(Section.RECIPES, true, "Enable the crafting recipe for the AgriCraft farming station (will only work if AgriCraft is installed)"), //
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
