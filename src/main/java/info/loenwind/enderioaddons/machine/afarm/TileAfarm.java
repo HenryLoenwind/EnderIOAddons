@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -59,6 +60,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import com.InfinityRaider.AgriCraft.api.API;
 import com.InfinityRaider.AgriCraft.api.APIBase;
 import com.InfinityRaider.AgriCraft.api.v1.APIv1;
+import com.InfinityRaider.AgriCraft.api.v1.ICropPlant;
+import com.InfinityRaider.AgriCraft.api.v1.IMutation;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.ItemUtil;
 
@@ -127,7 +130,8 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     currentTask = createTask(null);
   }
 
-  public EntityPlayerMP getFarmerJoe() {
+  private EntityPlayerMP getFarmerJoe() {
+    // delayed init
     if (farmerJoe == null || farmerJoe.worldObj != worldObj) {
       farmerJoe = new FakeFarmPlayer(MinecraftServer.getServer().worldServerForDimension(worldObj.provider.dimensionId));
     }
@@ -138,6 +142,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
   public String getMachineName() {
     return BlockAfarm.ModObject_blockAfarm.unlocalisedName;
   }
+
+  /////////////////////////////////////////////////////////////////////
+  // Slot handline
+  /////////////////////////////////////////////////////////////////////
 
   @Override
   protected boolean isMachineItemValidForSlot(int slotno, @Nullable ItemStack item) {
@@ -195,6 +203,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
       forceClientUpdate = true;
     }
   }
+
+  /////////////////////////////////////////////////////////////////////
+  // Tool handling
+  /////////////////////////////////////////////////////////////////////
 
   private int getHoeSlot_silent() {
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.TOOL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.TOOL); i++) {
@@ -307,6 +319,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     return item.getItem() == ItemMachinePart.itemMachinePart && item.getItemDamage() == MachinePart.IRAKE.ordinal();
   }
 
+  /////////////////////////////////////////////////////////////////////
+  // Power use and capacitors
+  /////////////////////////////////////////////////////////////////////
+
   private int calcPowerUsePerTick() {
     return (int) Math.round(getFarmSize() * farmRFperTickPerArea.getDouble() + controlModuleCount() * farmRFperTickPerModule.getDouble());
   }
@@ -372,6 +388,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
   protected IPoweredTask createTask(NBTTagCompound taskTagCompound) {
     return new ContinuousTask(getPowerUsePerTick());
   }
+
+  /////////////////////////////////////////////////////////////////////
+  // Ticking
+  /////////////////////////////////////////////////////////////////////
 
   @Override
   protected boolean processTasks(boolean redstoneChecksPassed) {
@@ -451,6 +471,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     return false;
   }
 
+  /////////////////////////////////////////////////////////////////////
+  // Control module handling
+  /////////////////////////////////////////////////////////////////////
+
   private static final IAfarmControlModuleComparator moduleComperator = new IAfarmControlModuleComparator();
   private static final List<IAfarmControlModule> standardModules = new ArrayList<>();
   static {
@@ -483,6 +507,19 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     return result;
   }
 
+  private static class IAfarmControlModuleComparator implements Comparator<IAfarmControlModule> {
+
+    @Override
+    public int compare(IAfarmControlModule o1, IAfarmControlModule o2) {
+      return Integer.compare(o1.getPriority(), o2.getPriority());
+    }
+
+  }
+
+  /////////////////////////////////////////////////////////////////////
+  // Slot layout information for the GUI
+  /////////////////////////////////////////////////////////////////////
+
   public boolean twoGhosts() {
     for (int i = ((SlotDefinitionAfarm) slotDefinition).getMinSlot(SLOT.CONTROL); i <= ((SlotDefinitionAfarm) slotDefinition).getMaxSlot(SLOT.CONTROL); i++) {
       if (inventory[i] != null && inventory[i].getItem() instanceof IAfarmControlModuleItem
@@ -493,14 +530,9 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     return false;
   }
 
-  private static class IAfarmControlModuleComparator implements Comparator<IAfarmControlModule> {
-
-    @Override
-    public int compare(IAfarmControlModule o1, IAfarmControlModule o2) {
-      return Integer.compare(o1.getPriority(), o2.getPriority());
-    }
-
-  }
+  /////////////////////////////////////////////////////////////////////
+  // IO mode restriction
+  /////////////////////////////////////////////////////////////////////
 
   @Override
   public boolean supportsMode(ForgeDirection faceHit, IoMode mode) {
@@ -535,6 +567,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     super.setIoMode(faceHit, mode);
   }
 
+  /////////////////////////////////////////////////////////////////////
+  // Network communication client to server
+  /////////////////////////////////////////////////////////////////////
+
   @Override
   public void networkUpdate(int id, int data) {
     if (id == 0) {
@@ -557,6 +593,104 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
   @Override
   public int getNetworkUpdateCheckInterval() {
     return 0;
+  }
+
+  /////////////////////////////////////////////////////////////////////
+  // Slot background items for the GUI
+  /////////////////////////////////////////////////////////////////////
+
+  private static List<ItemStack> seedCache = new ArrayList<>();
+  private static List<ItemStack> produceCache = new ArrayList<>();
+  private static List<ItemStack> toolsCache = new ArrayList<>();
+
+  public static List<ItemStack> getModules() {
+    return Collections.singletonList(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_BASE.ordinal()));
+  }
+
+  public static List<ItemStack> getFertilizers() {
+    return Collections.singletonList(new ItemStack(Items.dye, 1, 15));
+  }
+
+  public static List<ItemStack> getCropsticks() {
+    return cropSticks;
+  }
+
+  public static List<ItemStack> getTools() {
+    if (toolsCache.isEmpty()) {
+      toolsCache.add(new ItemStack(Items.wooden_hoe));
+      toolsCache.add(new ItemStack(Items.stone_hoe));
+      toolsCache.add(new ItemStack(Items.iron_hoe));
+      toolsCache.add(new ItemStack(Items.golden_hoe));
+      toolsCache.add(new ItemStack(Items.diamond_hoe));
+      for (ItemStack hoe : crazypants.enderio.config.Config.farmHoes) {
+        addToToolsCache(hoe);
+      }
+      for (ItemStack rake : rakes) {
+        addToToolsCache(rake);
+      }
+      toolsCache.add(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IRAKE.ordinal()));
+    }
+    return toolsCache;
+  }
+
+  private static void addToToolsCache(ItemStack stack) {
+    if (stack == null || stack.getItem() == null) {
+      return;
+    }
+    for (ItemStack itemStack : toolsCache) {
+      if (itemStack.isItemEqual(stack)) {
+        return;
+      }
+    }
+    toolsCache.add(stack.copy());
+  }
+
+  public static List<ItemStack> getProduce() {
+    getSeeds();
+    return produceCache;
+  }
+
+  public static List<ItemStack> getSeeds() {
+    if (seedCache.isEmpty()) {
+      IMutation[] registeredMutations = agricraft.getRegisteredMutations();
+      for (IMutation mutation : registeredMutations) {
+        ItemStack[] parents = mutation.getParents();
+        for (ItemStack itemStack : parents) {
+          addToSeedCache(itemStack);
+        }
+        addToSeedCache(mutation.getResult());
+      }
+    }
+    return seedCache;
+  }
+
+  private static void addToSeedCache(ItemStack stack) {
+    if (stack == null || stack.getItem() == null) {
+      return;
+    }
+    for (ItemStack itemStack : seedCache) {
+      if (itemStack.isItemEqual(stack)) {
+        return;
+      }
+    }
+    seedCache.add(stack.copy());
+    ICropPlant cropPlant = agricraft.getCropPlant(stack);
+    ArrayList<ItemStack> fruits = cropPlant.getAllFruits();
+    for (ItemStack itemStack : fruits) {
+      addToProduceCache(itemStack);
+    }
+  }
+
+  private static void addToProduceCache(ItemStack stack) {
+    if (stack == null || stack.getItem() == null) {
+      return;
+    }
+    for (ItemStack itemStack : produceCache) {
+      if (itemStack.isItemEqual(stack)) {
+        return;
+      }
+    }
+    produceCache.add(stack.copy());
   }
 
 }
