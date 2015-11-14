@@ -21,14 +21,14 @@ import crazypants.enderio.ModObject;
 public class ItemModule extends Item implements IAfarmControlModuleItem {
 
   public static final ModObject ModObject_itemModule = EnumHelper.addEnum(ModObject.class, "itemModule", new Class<?>[0], new Object[0]);
-  public static ItemModule itemMachinePart;
+  public static ItemModule itemModule;
 
   private final IIcon[] icons;
 
   public static ItemModule create() {
-    itemMachinePart = new ItemModule();
-    itemMachinePart.init();
-    return itemMachinePart;
+    itemModule = new ItemModule();
+    itemModule.init();
+    return itemModule;
   }
 
   private ItemModule() {

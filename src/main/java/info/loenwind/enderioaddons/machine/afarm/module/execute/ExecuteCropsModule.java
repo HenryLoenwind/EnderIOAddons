@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module.execute;
 
+import static info.loenwind.enderioaddons.config.Config.farmRFperCrops;
 import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
 import net.minecraft.item.ItemStack;
@@ -10,8 +11,8 @@ public class ExecuteCropsModule extends ExecuteModule {
   @Override
   public void doWork(WorkTile workTile) {
     if (workTile.doCrops) {
-      if (workTile.farm.canUsePower(100)) { // TODO: cfg
-        workTile.farm.usePower(100); // TODO cfg
+      if (workTile.farm.canUsePower(farmRFperCrops.getInt())) {
+        workTile.farm.usePower(farmRFperCrops.getInt());
         final World world = workTile.farm.getWorldObj();
         final ItemStack stack = workTile.farm.getStackInSlot(workTile.cropsSlot);
         workTile.agricraft.placeCrops(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, stack);

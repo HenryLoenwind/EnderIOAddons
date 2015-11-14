@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.gui.InvisibleButton;
+import info.loenwind.enderioaddons.network.Manager;
 
 import java.awt.Color;
 
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import com.enderio.core.client.gui.button.CheckBox;
 import com.enderio.core.client.render.ColorUtil;
 import com.enderio.core.client.render.RenderUtil;
 
@@ -34,6 +36,8 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
   protected InvisibleButton[] tabButtons = new InvisibleButton[4];
   protected int tab = 0;
   private String texture = null;
+  private CheckBox enabledB;
+  private boolean tillBisAttached = false;
 
   public GuiAfarm(InventoryPlayer par1InventoryPlayer, @Nonnull TileAfarm te) {
     super(te, new ContainerAfarm(par1InventoryPlayer, te));
@@ -42,6 +46,10 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
       tabButtons[i] = new InvisibleButton(this, -1, 0, 0);
     }
 
+    enabledB = new CheckBox(this, -1, 34 + 1, 62 + 1);
+    enabledB.setSelectedToolTip(EnderIOAddons.lang.localize("farm.gui.till.enabled").split("\\|"));
+    enabledB.setUnselectedToolTip(EnderIOAddons.lang.localize("farm.gui.till.disabled").split("\\|"));
+    enabledB.setSelected(te.tillAggresively);
   }
 
   @Override
@@ -58,6 +66,14 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
     ((ContainerAfarm) inventorySlots).setTabVisibility(tab, getTileEntity().twoGhosts());
     for (int i = 0; i < tabButtons.length; i++) {
       tabButtons[i].enabled = tab != i;
+    }
+    if (tab == 3 && !tillBisAttached) {
+      enabledB.setSelected(getTileEntity().tillAggresively);
+      enabledB.onGuiInit();
+      tillBisAttached = true;
+    } else if (tab != 3 && tillBisAttached) {
+      enabledB.detach();
+      tillBisAttached = false;
     }
   }
 
@@ -79,6 +95,9 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
         updateVisibility();
         return;
       }
+    }
+    if (btn == enabledB) {
+      Manager.sendUpdateToServer(getTileEntity(), enabledB.isSelected() ? 1 : 0);
     }
     super.actionPerformed(btn);
   }
@@ -130,9 +149,10 @@ public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
       fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab2.output"), sx + 34, sy + 7, rgb);
       break;
     case 3:
-      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.tools"), sx + 34, sy + 7, rgb);
-      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.fertilizer"), sx + 88, sy + 7, rgb);
-      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.cropsticks"), sx + 34, sy + 35, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.cropsticks"), sx + 34, sy + 7, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.tools"), sx + 34, sy + 35, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.fertilizer"), sx + 88, sy + 35, rgb);
+      fontRendererObj.drawStringWithShadow(EnderIOAddons.lang.localize("afarm.gui.tab3.till"), sx + 34 + 16 + 3, sy + 62 + 4, rgb);
       break;
     }
     RenderUtil.bindTexture(texture);

@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
 import static info.loenwind.enderioaddons.machine.afarm.BlockAfarm.farmlight;
+import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 import static net.minecraftforge.common.util.ForgeDirection.UP;
 import info.loenwind.enderioaddons.render.FaceRenderer;
 import info.loenwind.enderioaddons.render.OverlayRenderer;
@@ -23,10 +24,11 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RendererAfarm implements ISimpleBlockRenderingHandler {
 
-  private static final VertXForm xform_main = new VertXForm(0.9, 0.5, true, true, true);
+  private static final VertXForm xform_main = new VertXForm(0.85, 0.5, true, true, true);
   private static final BoundingBox bb_body = BoundingBox.UNIT_CUBE;
   private static final float hatThickness = 0.15f;
   private static final BoundingBox bb_hat = BoundingBox.UNIT_CUBE.scale(1, hatThickness, 1).translate(0, 0.3f + hatThickness / 2f, 0);
+  private static final BoundingBox bb_hati = new BoundingBox(bb_hat.minX, bb_hat.minY, bb_hat.minZ, bb_hat.maxX, bb_hat.maxY - 0.05, bb_hat.maxZ);
 
   private static final float scale_cross = 0.7f;
   private static final float width_cross = 0.5f;
@@ -76,23 +78,24 @@ public class RendererAfarm implements ISimpleBlockRenderingHandler {
 
     FaceRenderer.startSkewedDrawing();
 
-    FaceRenderer.renderCube_skewed(bb_body, icons, xform_main, FaceRenderer.stdBrightness, false);
+    FaceRenderer.renderSkirt_skewed(bb_body, icons, xform_main, FaceRenderer.stdBrightness, 1f, 0.7f, false);
+    FaceRenderer.renderSingleFace_skewed(UP, icons, xform_main, FaceRenderer.stdBrightness, 1f, 1f, false);
+    FaceRenderer.renderSingleFace_skewed(DOWN, icons, xform_main, FaceRenderer.stdBrightness, 1f, 1f, false);
     FaceRenderer.renderSkirt_skewed(bb_hat, icons, xform_main, FaceRenderer.stdBrightness, false);
-    FaceRenderer.renderSkirt_skewed(null, icons, xform_main, FaceRenderer.stdBrightness, true);
-    FaceRenderer.renderSkirt_skewed(bb_cross1, icons, xform_cross1, FaceRenderer.stdBrightness, false);
+    FaceRenderer.renderSkirt_skewed(bb_hati, icons, xform_main, FaceRenderer.stdBrightnessInside, 0f, 1f, true);
+    FaceRenderer.renderSkirt_skewed(bb_cross1, icons, xform_cross1, FaceRenderer.stdBrightness, 1f, 0.8f, false);
     if (!active) {
-      FaceRenderer.renderSingleFace_skewed(UP, icons, xform_cross1, FaceRenderer.stdBrightness, false);
+      FaceRenderer.renderSingleFace_skewed(UP, icons, xform_cross1, FaceRenderer.stdBrightness, 0.8f, 0.8f, false);
     }
-    FaceRenderer.renderSkirt_skewed(bb_cross2, icons, xform_cross2, FaceRenderer.stdBrightness, false);
+    FaceRenderer.renderSkirt_skewed(bb_cross2, icons, xform_cross2, FaceRenderer.stdBrightness, 1f, 0.8f, false);
     if (!active) {
-      FaceRenderer.renderSingleFace_skewed(UP, icons, xform_cross2, FaceRenderer.stdBrightness, false);
+      FaceRenderer.renderSingleFace_skewed(UP, icons, xform_cross2, FaceRenderer.stdBrightness, 0.8f, 0.8f, false);
     }
 
     FaceRenderer.clearLightingReference();
 
     if (active) {
       OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-      //      final IIcon icon_light = Blocks.portal.getBlockTextureFromSide(1);
       FaceRenderer.renderSkirt_skewed(bb_light1, farmlight, xform_cross1, null, false);
       FaceRenderer.renderSkirt_skewed(bb_light2, farmlight, xform_cross2, null, false);
     }

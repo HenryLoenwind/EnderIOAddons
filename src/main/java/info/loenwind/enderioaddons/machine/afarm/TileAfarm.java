@@ -37,6 +37,7 @@ import info.loenwind.enderioaddons.machine.afarm.module.execute.ExecuteWeedModul
 import info.loenwind.enderioaddons.machine.niard.RadiusIterator;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
+import info.loenwind.enderioaddons.network.INetworkUpdatable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,11 +48,12 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.InfinityRaider.AgriCraft.api.API;
@@ -60,6 +62,7 @@ import com.InfinityRaider.AgriCraft.api.v1.APIv1;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.ItemUtil;
 
+import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 import crazypants.enderio.machine.ContinuousTask;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
@@ -69,7 +72,12 @@ import crazypants.enderio.machine.farm.TileFarmStation.ToolType;
 import crazypants.enderio.power.BasicCapacitor;
 
 @Storable
-public class TileAfarm extends TileEnderIOAddons {
+public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
+
+  @ItemStackHolder(value = "AgriCraft:handRake", meta = 0)
+  public static final ItemStack handRake_wood = null;
+  @ItemStackHolder(value = "AgriCraft:handRake", meta = 1)
+  public static final ItemStack handRake_iron = null;
 
   public static final int NUM_CONTROL_SLOTS = 6;
   public static final int NUM_CONTROL_STORAGE_SLOTS = 12;
@@ -78,7 +86,7 @@ public class TileAfarm extends TileEnderIOAddons {
   public static final int NUM_OUTPUT_SLOTS = 18;
   public static final int NUM_TOOL_SLOTS = 2;
   public static final int NUM_FERTILIZER_SLOTS = 3;
-  public static final int NUM_CROPSTICK_SLOTS = 4;
+  public static final int NUM_CROPSTICK_SLOTS = 6;
 
   private EntityPlayerMP farmerJoe;
 
@@ -91,6 +99,8 @@ public class TileAfarm extends TileEnderIOAddons {
 
   @Store({ CLIENT })
   public NotifSet notifications = new NotifSet();
+  @Store
+  public boolean tillAggresively = false;
 
   public TileAfarm() {
     super(new SlotDefinitionAfarm(NUM_CONTROL_SLOTS, NUM_CONTROL_STORAGE_SLOTS, NUM_SEED_GHOST_SLOTS, NUM_SEED_STORAGE_SLOTS, NUM_OUTPUT_SLOTS, NUM_TOOL_SLOTS,
@@ -117,10 +127,11 @@ public class TileAfarm extends TileEnderIOAddons {
     currentTask = createTask(null);
   }
 
-  @Override
-  public void setWorldObj(World p_145834_1_) {
-    super.setWorldObj(p_145834_1_);
-    farmerJoe = new FakeFarmPlayer(MinecraftServer.getServer().worldServerForDimension(worldObj.provider.dimensionId));
+  public EntityPlayerMP getFarmerJoe() {
+    if (farmerJoe == null || farmerJoe.worldObj != worldObj) {
+      farmerJoe = new FakeFarmPlayer(MinecraftServer.getServer().worldServerForDimension(worldObj.provider.dimensionId));
+    }
+    return farmerJoe;
   }
 
   @Override
@@ -228,17 +239,16 @@ public class TileAfarm extends TileEnderIOAddons {
   }
 
   private boolean tryToBrakeRake(int i) {
-    String itemName = inventory[i].getItem().getUnlocalizedName(inventory[i]);
-    if ("item.agricraft:handRake.wood".equals(itemName) && farmBreaksWoodenRakesEnabled.getBoolean()
-        && random.nextDouble() < farmBreaksWoodenRakesChance.getDouble()) {
+    if (handRake_wood != null && inventory[i].getItem() == handRake_wood.getItem() && inventory[i].getItemDamage() == handRake_wood.getItemDamage()
+        && farmBreaksWoodenRakesEnabled.getBoolean() && random.nextDouble() < farmBreaksWoodenRakesChance.getDouble()) {
       if (inventory[i].stackSize > 1) {
         inventory[i].stackSize--;
       } else {
         inventory[i] = null;
       }
       putIntoOutputOrWorld(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal()));
-    } else if ("item.agricraft:handRake.iron".equals(itemName) && farmBreaksIronRakesEnabled.getBoolean()
-        && random.nextDouble() < farmBreaksIronRakesChance.getDouble()) {
+    } else if (handRake_iron != null && inventory[i].getItem() == handRake_iron.getItem() && inventory[i].getItemDamage() == handRake_iron.getItemDamage()
+        && farmBreaksIronRakesEnabled.getBoolean() && random.nextDouble() < farmBreaksIronRakesChance.getDouble()) {
       if (inventory[i].stackSize > 1) {
         inventory[i].stackSize--;
       } else {
@@ -379,7 +389,7 @@ public class TileAfarm extends TileEnderIOAddons {
     if (canTick()) {
       return doTick();
     }
-    return false;
+    return notifications.isChanged();
   }
 
   protected boolean canTick() {
@@ -394,12 +404,16 @@ public class TileAfarm extends TileEnderIOAddons {
   }
 
   protected boolean doTick() {
-    if (agricraft != null && farmerJoe != null && shouldDoWorkThisTick(getDelay())) {
+    if (agricraft != null && getFarmerJoe() != null && shouldDoWorkThisTick(getDelay())) {
       if (itr == null) {
         itr = new RadiusIterator(getLocation(), getFarmSize());
       }
-      while (currentTile == null || currentTile.equals(getLocation())) {
+      int loop = 0;
+      while (currentTile == null || currentTile.equals(getLocation()) || !isTileViable(currentTile)) {
         currentTile = itr.next();
+        if (loop++ > 20) {
+          return notifications.isChanged();
+        }
       }
       WorkTile tile = new WorkTile(currentTile, this, agricraft, farmerJoe);
       List<IAfarmControlModule> controls = getControlModules();
@@ -417,6 +431,24 @@ public class TileAfarm extends TileEnderIOAddons {
       notifications.clear();
     }
     return notifications.isChanged();
+  }
+
+  private boolean isTileViable(BlockCoord bc) {
+    if (!worldObj.getChunkProvider().chunkExists(bc.x >> 4, bc.z >> 4)) {
+      return false;
+    }
+    if (worldObj.isAirBlock(bc.x, bc.y - 1, bc.z) || !worldObj.isAirBlock(bc.x, bc.y + 1, bc.z)) {
+      return false;
+    }
+    if (worldObj.isAirBlock(bc.x, bc.y, bc.z) || agricraft.isCrops(worldObj, bc.x, bc.y, bc.z)) {
+      return true;
+    }
+    if (tillAggresively && worldObj.getBlock(bc.x, bc.y, bc.z).isReplaceable(worldObj, bc.x, bc.y, bc.z)
+        && (worldObj.getBlock(bc.x, bc.y - 1, bc.z) == Blocks.dirt || worldObj.getBlock(bc.x, bc.y - 1, bc.z) == Blocks.grass)
+        && FluidRegistry.lookupFluidForBlock(worldObj.getBlock(bc.x, bc.y, bc.z)) == null) {
+      return true;
+    }
+    return false;
   }
 
   private static final IAfarmControlModuleComparator moduleComperator = new IAfarmControlModuleComparator();
@@ -501,6 +533,30 @@ public class TileAfarm extends TileEnderIOAddons {
       return;
     }
     super.setIoMode(faceHit, mode);
+  }
+
+  @Override
+  public void networkUpdate(int id, int data) {
+    if (id == 0) {
+      tillAggresively = data == 1;
+    }
+    markDirty();
+    notifications.setChanged();
+  }
+
+  @Override
+  public int getNetworkUpdate(int id) {
+    return 0;
+  }
+
+  @Override
+  public int getNetworkUpdateCount() {
+    return 0;
+  }
+
+  @Override
+  public int getNetworkUpdateCheckInterval() {
+    return 0;
   }
 
 }

@@ -333,6 +333,11 @@ public class FaceRenderer {
   }
 
   public static void renderCube_skewed(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    renderCube_skewed(bb, icons, xForm, brightnessPerSide, 1f, 1f, inside);
+  }
+
+  public static void renderCube_skewed(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, float brightness_top,
+      float brightness_bottom, boolean inside) {
     if (bb != null) {
       setupVertices(bb, xForm);
     }
@@ -344,7 +349,7 @@ public class FaceRenderer {
         float minV = tex.getMinV();
         float maxV = tex.getMaxV();
 
-        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, brightness_top, brightness_bottom, inside);
       }
     }
   }
@@ -359,12 +364,17 @@ public class FaceRenderer {
       float minV = tex.getMinV();
       float maxV = tex.getMaxV();
       for (ForgeDirection face : ForgeDirection.VALID_DIRECTIONS) {
-        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, 1f, 1f, inside);
       }
     }
   }
 
   public static void renderSkirt_skewed(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    renderSkirt_skewed(bb, icons, xForm, brightnessPerSide, 1f, 1f, inside);
+  }
+
+  public static void renderSkirt_skewed(BoundingBox bb, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, float brightness_top,
+      float brightness_bottom, boolean inside) {
     if (bb != null) {
       setupVertices(bb, xForm);
     }
@@ -376,7 +386,7 @@ public class FaceRenderer {
         float minV = tex.getMinV();
         float maxV = tex.getMaxV();
 
-        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, brightness_top, brightness_bottom, inside);
       }
     }
   }
@@ -391,12 +401,17 @@ public class FaceRenderer {
       float minV = tex.getMinV();
       float maxV = tex.getMaxV();
       for (ForgeDirection face : AROUND) {
-        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+        renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, 1f, 1f, inside);
       }
     }
   }
 
   public static void renderSingleFace_skewed(ForgeDirection face, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, boolean inside) {
+    renderSingleFace_skewed(face, icons, xForm, brightnessPerSide, 1f, 1f, inside);
+  }
+
+  public static void renderSingleFace_skewed(ForgeDirection face, IIcon[] icons, VertexTransform xForm, float[] brightnessPerSide, float brightness_top,
+      float brightness_bottom, boolean inside) {
     IIcon tex = icons[face.ordinal()];
     if (tex != null) {
       float minU = tex.getMinU();
@@ -404,7 +419,7 @@ public class FaceRenderer {
       float minV = tex.getMinV();
       float maxV = tex.getMaxV();
 
-      renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, inside);
+      renderSingleFace_skewed(face, minU, maxU, minV, maxV, xForm, brightnessPerSide, brightness_top, brightness_bottom, inside);
     }
   }
 
@@ -427,7 +442,7 @@ public class FaceRenderer {
   }
 
   public static void renderSingleFace_skewed(ForgeDirection face, float minU, float maxU, float minV, float maxV, VertexTransform xForm,
-      float[] brightnessPerSide, boolean inside) {
+      float[] brightnessPerSide, float brightness_top, float brightness_bottom, boolean inside) {
     ForgeDirection normal = rotate(xForm, inside ? face.getOpposite() : face);
     GL11.glNormal3i(normal.offsetX, normal.offsetY, normal.offsetZ);
 
@@ -443,10 +458,14 @@ public class FaceRenderer {
       OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, blockLight, skyLight);
     }
 
+    byte color1, color2;
+
     if (brightnessPerSide != null) {
-      byte color = (byte) (brightnessPerSide[normal.ordinal()] * 255);
-      GL11.glColor4ub(color, color, color, (byte) 255);
+      color1 = (byte) (brightnessPerSide[normal.ordinal()] * brightness_top * 255);
+      color2 = (byte) (brightnessPerSide[normal.ordinal()] * brightness_bottom * 255);
     } else {
+      color1 = (byte) (brightness_top * 255);
+      color2 = (byte) (brightness_bottom * 255);
       GL11.glColor4ub((byte) 255, (byte) 255, (byte) 255, (byte) 255);
     }
 
@@ -454,45 +473,55 @@ public class FaceRenderer {
     if (inside) {
       switch (face) {
       case NORTH:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[1].distance(verts[0]);
         addVecWithUVW(verts[0], maxU, maxV, w);
         addVecWithUVW(verts[1], minU, maxV, w);
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[3].distance(verts[2]);
         addVecWithUVW(verts[2], minU, minV, w);
         addVecWithUVW(verts[3], maxU, minV, w);
         break;
       case SOUTH:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[4].distance(verts[5]);
         addVecWithUVW(verts[5], maxU, maxV, w);
         addVecWithUVW(verts[4], minU, maxV, w);
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[6].distance(verts[7]);
         addVecWithUVW(verts[7], minU, minV, w);
         addVecWithUVW(verts[6], maxU, minV, w);
         break;
       case UP:
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         addVecWithUVW(verts[2], maxU, minV, w);
         addVecWithUVW(verts[6], maxU, maxV, w);
         addVecWithUVW(verts[7], minU, maxV, w);
         addVecWithUVW(verts[3], minU, minV, w);
         break;
       case DOWN:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         addVecWithUVW(verts[1], maxU, minV, w);
         addVecWithUVW(verts[0], minU, minV, w);
         addVecWithUVW(verts[4], minU, maxV, w);
         addVecWithUVW(verts[5], maxU, maxV, w);
         break;
       case EAST:
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[2].distance(verts[6]);
         addVecWithUVW(verts[6], minU, minV, w);
         addVecWithUVW(verts[2], maxU, minV, w);
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[5].distance(verts[1]);
         addVecWithUVW(verts[1], maxU, maxV, w);
         addVecWithUVW(verts[5], minU, maxV, w);
         break;
       case WEST:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[0].distance(verts[4]);
         addVecWithUVW(verts[4], maxU, maxV, w);
         addVecWithUVW(verts[0], minU, maxV, w);
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[7].distance(verts[3]);
         addVecWithUVW(verts[3], minU, minV, w);
         addVecWithUVW(verts[7], maxU, minV, w);
@@ -503,45 +532,55 @@ public class FaceRenderer {
     } else {
       switch (face) {
       case NORTH:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[1].distance(verts[0]);
         addVecWithUVW(verts[1], minU, maxV, w); // bottom left
         addVecWithUVW(verts[0], maxU, maxV, w); // bottom right
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[3].distance(verts[2]);
         addVecWithUVW(verts[3], maxU, minV, w); // top right
         addVecWithUVW(verts[2], minU, minV, w); // top left
         break;
       case SOUTH:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[4].distance(verts[5]);
         addVecWithUVW(verts[4], minU, maxV, w);
         addVecWithUVW(verts[5], maxU, maxV, w);
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[6].distance(verts[7]);
         addVecWithUVW(verts[6], maxU, minV, w);
         addVecWithUVW(verts[7], minU, minV, w);
         break;
       case UP:
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         addVecWithUVW(verts[6], maxU, maxV, w);
         addVecWithUVW(verts[2], maxU, minV, w);
         addVecWithUVW(verts[3], minU, minV, w);
         addVecWithUVW(verts[7], minU, maxV, w);
         break;
       case DOWN:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         addVecWithUVW(verts[0], minU, minV, w);
         addVecWithUVW(verts[1], maxU, minV, w);
         addVecWithUVW(verts[5], maxU, maxV, w);
         addVecWithUVW(verts[4], minU, maxV, w);
         break;
       case EAST:
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[2].distance(verts[6]);
         addVecWithUVW(verts[2], maxU, minV, w);
         addVecWithUVW(verts[6], minU, minV, w);
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[5].distance(verts[1]);
         addVecWithUVW(verts[5], minU, maxV, w);
         addVecWithUVW(verts[1], maxU, maxV, w);
         break;
       case WEST:
+        GL11.glColor4ub(color2, color2, color2, (byte) 255);
         w = verts[0].distance(verts[4]);
         addVecWithUVW(verts[0], minU, maxV, w);
         addVecWithUVW(verts[4], maxU, maxV, w);
+        GL11.glColor4ub(color1, color1, color1, (byte) 255);
         w = verts[7].distance(verts[3]);
         addVecWithUVW(verts[7], maxU, minV, w);
         addVecWithUVW(verts[3], minU, minV, w);

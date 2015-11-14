@@ -16,7 +16,7 @@ public enum Section {
   MAGCHARGER("magnetic charger"),
   FLAG("magnetic flag"),
   DECO("decoration block"),
-  FARM("AgriCraft farming station"),
+  FARM("agricraft farming station"),
   FARM_NOTIF("farming station notifications", false);
 
   @Nonnull

@@ -22,13 +22,15 @@ public class CropModule implements IAfarmControlModule {
           return;
         }
       }
-      for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {
-        final ItemStack stack = workTile.farm.getStackInSlot(slot);
-        if (stack != null && stack.getItem() != null
-            && !workTile.agricraft.canPlaceCrops(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z, stack)) {
-          workTile.doTill = true; // TODO: This is guesswork
-          workTile.farm.notifications.remove(Notif.NO_CROPS);
-          return;
+      if (workTile.farm.tillAggresively) {
+        for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {
+          final ItemStack stack = workTile.farm.getStackInSlot(slot);
+          if (stack != null && stack.getItem() != null
+              && !workTile.agricraft.canPlaceCrops(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z, stack)) {
+            workTile.doTill = true; // This is guess work, but based on user input
+            workTile.farm.notifications.remove(Notif.NO_CROPS);
+            return;
+          }
         }
       }
       for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {

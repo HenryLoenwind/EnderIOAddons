@@ -37,10 +37,6 @@ import info.loenwind.enderioaddons.machine.afarm.WorkTile;
  * one in storage</li>
  * </ul>
  *
- * Modules TODO:
- *
- * <ul>
- * </ul>
  */
 public interface IAfarmControlModule {
 

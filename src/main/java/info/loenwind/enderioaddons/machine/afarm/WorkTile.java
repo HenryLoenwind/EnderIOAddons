@@ -109,7 +109,7 @@ public class WorkTile {
 
   @Override
   public String toString() {
-    return "WorkTile [bc=" + bc + ", isWeeds=" + isWeeds + ", isAnalyzed=" + isAnalyzed + ", stats=" + stats + ", seed=" + seed + ", isEmpty=" + isEmpty
+    return "WorkTile [bc=" + bc + ", isWeeds=" + isWeeds + ", isAnalyzed=" + isAnalyzed + ", seed=" + seed + ", isEmpty=" + isEmpty
         + ", isMature=" + isMature + ", isCrops=" + isCrops + ", isCrossCrops=" + isCrossCrops + ", seedSlot=" + seedSlot + ", seedStorageSlot="
         + seedStorageSlot + ", cropsSlot=" + cropsSlot + ", fertilizerSlot=" + fertilizerSlot + ", allowPlanting=" + allowPlanting + ", allowHarvesting="
         + allowHarvesting + ", allowCrossCrops=" + allowCrossCrops + ", doPlanting=" + doPlanting + ", doHarvesting=" + doHarvesting + ", doDestroy="

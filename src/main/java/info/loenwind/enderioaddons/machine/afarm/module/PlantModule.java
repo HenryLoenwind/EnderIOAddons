@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import info.loenwind.enderioaddons.common.Log;
+import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
@@ -32,6 +34,8 @@ public class PlantModule implements IAfarmControlModule {
             workTile.doPlanting = true;
             workTile.seedStorageSlot = slot;
             return;
+          } else if (Config.farmDebugLoggingEnabled.getBoolean()) {
+            Log.info(status + " when trying " + stack + " at " + workTile.bc);
           }
         }
       }

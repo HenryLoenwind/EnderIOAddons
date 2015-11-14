@@ -44,12 +44,12 @@ public class ItemRendererAfarm implements IItemRenderer {
   }
 
   private static void render() {
-    GL11.glEnable(GL11.GL_ALPHA_TEST);
+    //    GL11.glEnable(GL11.GL_ALPHA_TEST);
     GL11.glDisable(GL11.GL_LIGHTING);
     RenderUtil.bindBlockTexture();
     RendererAfarm.renderBlock(true);
     GL11.glEnable(GL11.GL_LIGHTING);
-    GL11.glDisable(GL11.GL_ALPHA_TEST);
+    //    GL11.glDisable(GL11.GL_ALPHA_TEST);
     }
 
   }

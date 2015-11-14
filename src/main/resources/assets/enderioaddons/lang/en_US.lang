@@ -165,6 +165,9 @@ enderioaddons.afarm.gui.tab2.output=Output
 enderioaddons.afarm.gui.tab3.tools=Tools
 enderioaddons.afarm.gui.tab3.fertilizer=Fertilizer
 enderioaddons.afarm.gui.tab3.cropsticks=Crop Sticks
+enderioaddons.afarm.gui.tab3.till=Aggressively till
+enderioaddons.farm.gui.till.enabled=Tills every plot of land that won't take crop sticks|Use this for dirt/grass and tilled dirt
+enderioaddons.farm.gui.till.disabled=Tills only of seeds ask for it|Use this for seeds that want untilled ground
 
 enderioaddons.afarm.notification.NO_POWER=No Power
 enderioaddons.afarm.notification.NO_HOE=No Hoe
@@ -184,3 +187,4 @@ enderioaddons.nei.teaser.enderioaddons.handRakeWoodBroken=This once was a sturdy
 enderioaddons.nei.teaser.enderioaddons.handRakeIronBroken=This once was a sturdy hand tool. But now the excessive stress of being used as part of a machine has broken it.
 enderioaddons.nei.teaser.enderioaddons.iRake=While much too unwieldy to be used by hand, this rake is perfect for use in a machine. It'll take a bit more power, but this rake won't break.
 
+enderioaddons.config.title=Ender IO Addons Configuration

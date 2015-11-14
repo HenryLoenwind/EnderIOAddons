@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module.execute;
 
+import static info.loenwind.enderioaddons.config.Config.farmRFperPlant;
 import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.WorkTile;
 import net.minecraft.item.ItemStack;
@@ -10,9 +11,9 @@ public class ExecutePlantingModule extends ExecuteModule {
   @Override
   public void doWork(WorkTile workTile) {
     if (workTile.doPlanting) {
-      if (workTile.farm.canUsePower(100)) {
-        if (damageHoe(workTile)) { // TODO: cfg
-          workTile.farm.usePower(100); // TODO cfg
+      if (workTile.farm.canUsePower(farmRFperPlant.getInt())) {
+        if (damageHoe(workTile)) {
+          workTile.farm.usePower(farmRFperPlant.getInt());
           final World world = workTile.farm.getWorldObj();
           final ItemStack stack = workTile.farm.getStackInSlot(workTile.seedStorageSlot);
           workTile.agricraft.applySeeds(world, workTile.bc.x, workTile.bc.y, workTile.bc.z, stack);

@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm.module;
 
+import static info.loenwind.enderioaddons.config.Config.farmRFperAnalyzing;
 import info.loenwind.enderioaddons.machine.afarm.Notif;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
@@ -25,9 +26,9 @@ public class SeedAnalyzerModule implements IAfarmControlModule {
         ISeedStats seedStats = workTile.agricraft.getSeedStats(stack);
         if (seedStats != null) {
           if (!isAnalyzed(stack)) {
-            if (workTile.farm.canUsePower(100)) { // TODO: cfg
+            if (workTile.farm.canUsePower(farmRFperAnalyzing.getInt())) {
               workTile.farm.notifications.remove(Notif.NO_POWER);
-              workTile.farm.usePower(100); // TODO cfg
+              workTile.farm.usePower(farmRFperAnalyzing.getInt());
               analyze(stack);
               reStack(workTile, slotDef, slot, stack);
               workTile.farm.markDirty();

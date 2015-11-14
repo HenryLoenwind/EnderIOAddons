@@ -25,6 +25,10 @@ public class NotifSet extends AbstractSet<Notif> {
     return lastseen != elements;
   }
 
+  public void setChanged() {
+    lastseen = -1L;
+  }
+
   @Override
   public Iterator<Notif> iterator() {
     return new NotifSetIterator();

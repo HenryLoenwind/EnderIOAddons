@@ -41,8 +41,6 @@ public class OverlayRenderer {
       TileEntity tileEntity = world.getTileEntity(x, y, z);
       if (clazz.isInstance(tileEntity)) {
         return renderOverlays(world, x, y, z, bb, overrideTexture, block, (T) tileEntity, addTranslation);
-      } else {
-        System.out.println(clazz + " " + tileEntity + " " + block);
       }
     }
     return false;

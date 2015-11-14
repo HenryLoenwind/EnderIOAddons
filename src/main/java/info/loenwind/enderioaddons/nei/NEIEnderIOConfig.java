@@ -4,6 +4,9 @@ import static info.loenwind.enderioaddons.config.Config.cobbleWorksEnabled;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.fluid.Fluids;
+import info.loenwind.enderioaddons.machine.afarm.AgriDetector;
+import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
+import info.loenwind.enderioaddons.machine.afarm.item.ItemModule;
 import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
@@ -64,7 +67,8 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     if (!Config.pMonEnabled.getBoolean()) {
       API.hideItem(new ItemStack(BlockPMon.blockPMon, 1, OreDictionary.WILDCARD_VALUE));
     }
-    if (!Config.flagEnabled.getBoolean() && !Config.magcEnabled.getBoolean() && !Config.decoBlockEnabled.getBoolean()) {
+    boolean farmEnabled = Config.farmEnabled.getBoolean() && AgriDetector.hasAgri;
+    if (!farmEnabled && !Config.flagEnabled.getBoolean() && !Config.magcEnabled.getBoolean() && !Config.decoBlockEnabled.getBoolean()) {
       API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CHASSIPARTS.ordinal()));
     }
     if (!Config.flagEnabled.getBoolean() && !Config.magcEnabled.getBoolean()) {
@@ -83,6 +87,18 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     }
     if (!Config.decoBlockEnabled.getBoolean()) {
       API.hideItem(new ItemStack(BlockChassis.blockChassis, 1, OreDictionary.WILDCARD_VALUE));
+    }
+    if (!farmEnabled) {
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_BASE.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_IQ.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IRAKE.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal()));
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal()));
+    }
+    if (!Config.farmEnabled.getBoolean() && AgriDetector.hasAgri) {
+      // Note: Only hide items that don't exist when there is no agricraft if there is an agricraft
+      API.hideItem(new ItemStack(BlockAfarm.blockAfarm, 1, OreDictionary.WILDCARD_VALUE));
+      API.hideItem(new ItemStack(ItemModule.itemModule, 1, OreDictionary.WILDCARD_VALUE));
     }
   }
 

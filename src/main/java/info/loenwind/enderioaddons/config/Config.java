@@ -126,13 +126,19 @@ public enum Config {
   farmBreaksWoodenRakesChance(Section.FARM, 1d / 300d, "Chance that a farming station breaks a wooden hand rake (0-1)"), //
   farmBreaksIronRakesChance(Section.FARM, 1d / 900d, "Chance that a farming station breaks a wooden hand rake (0-1)"), //
 
-  farmRFperRaking(Section.FARM, 100, "RF used when raking with a hand rake"), //
-  farmRFperRakingIndustrial(Section.FARM, 200, "RF used when raking with an industrial rake"), //
-
-  farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
-
   farmRFperTickPerArea(Section.FARM, 2.5d, "RF used per tick per 'ring' of farmland"), //
   farmRFperTickPerModule(Section.FARM, 5d, "RF used per tick per installed module"), //
+
+  farmRFperAnalyzing(Section.FARM, 1000, "RF used when analyzing a seed"), //
+  farmRFperCrops(Section.FARM, 100, "RF used when placing down crop sticks"), //
+  farmRFperCrossCrops(Section.FARM, 100, "RF used when placing down cross crop sticks"), //
+  farmRFperFertilize(Section.FARM, 750, "RF used when fertilizing a plant"), //
+  farmRFperHarvest(Section.FARM, 200, "RF used when harvest produce"), //
+  farmRFperPlant(Section.FARM, 2000, "RF used when planting a seed"), //
+  farmRFperRaking(Section.FARM, 100, "RF used when raking with a hand rake"), //
+  farmRFperRakingIndustrial(Section.FARM, 200, "RF used when raking with an industrial rake"), //
+  farmRFperSeedHarvest(Section.FARM, 500, "RF used when removing a plant to get back seeds, crop sticks and potentially harvest"), //
+  farmRFperTill(Section.FARM, 2000, "RF used when tilling a block"), //
 
   /*
    * The default values will give fields of 48/120/360 blocks. It will take
@@ -147,6 +153,8 @@ public enum Config {
   farmDelay1(Section.FARM, 20, "number of ticks it takes a farm with no capacitor upgrades to work one tile of land"), //
   farmDelay2(Section.FARM, 10, "number of ticks it takes a farm with first capacitor upgrade to work one tile of land"), //
   farmDelay3(Section.FARM, 3, "number of ticks it takes a farm with second capacitor upgrade to work one tile of land"), //
+
+  farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
 
   farmEnabled(Section.RECIPES, true, "Enable the crafting recipe for the AgriCraft farming station (will only work if AgriCraft is installed)"), //
   ;

@@ -103,7 +103,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     }
 
     x = 1;
-    y = ROW1;
+    y = ROW25;
     for (int slot = slotDef.getMinSlot(SLOT.TOOL); slot <= slotDef
         .getMaxSlot(SLOT.TOOL); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
@@ -112,7 +112,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     }
 
     x = 4;
-    y = ROW1;
+    y = ROW25;
     for (int slot = slotDef.getMinSlot(SLOT.FERTILIZER); slot <= slotDef.getMaxSlot(SLOT.FERTILIZER); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
@@ -120,7 +120,7 @@ public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> impleme
     }
 
     x = 1;
-    y = ROW25;
+    y = ROW1;
     for (int slot = slotDef.getMinSlot(SLOT.CROPSTICK); slot <= slotDef.getMaxSlot(SLOT.CROPSTICK); slot++) {
       final StdSlot theSlot = new StdSlot(getInv(), slot, COL + x++ * D, y);
       addSlotToContainer(theSlot);
