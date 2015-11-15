@@ -56,6 +56,7 @@ public class GuiNiard extends GuiPoweredMachineBase<TileNiard> {
     drawTexturedModalRect(sx, sy, 0, 0, xSize, ySize);
 
     super.drawGuiContainerBackgroundLayer(par1, par2, par3);
+    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
     RenderUtil.bindBlockTexture();
     RenderUtil.renderGuiTank(getTileEntity().tank, guiLeft + 80, guiTop + 21, zLevel, 16, 47);
