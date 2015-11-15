@@ -160,6 +160,8 @@ public enum Config {
   farmDelay2(Section.FARM, 10, "number of ticks it takes a farm with first capacitor upgrade to work one tile of land"), //
   farmDelay3(Section.FARM, 3, "number of ticks it takes a farm with second capacitor upgrade to work one tile of land"), //
 
+  farmAggressiveTillingDefault(Section.FARM, true, "The initial value of 'till gressively' for newly placed farms"), //
+
   farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
 
   farmEnabled(Section.RECIPES, true, "Enable the crafting recipe for the AgriCraft farming station (will only work if AgriCraft is installed)", true, true), //

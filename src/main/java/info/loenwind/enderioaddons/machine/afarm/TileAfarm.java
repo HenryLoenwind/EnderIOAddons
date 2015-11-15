@@ -112,6 +112,7 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
       throw new RuntimeException(
           "Agricraft not installed but trying to create Agricraft Farmer. This is a coding error in Ender IO Addons. Please report this.");
     }
+    tillAggresively = Config.farmAggressiveTillingDefault.getBoolean();
   }
 
   public static void detectAgri() {
