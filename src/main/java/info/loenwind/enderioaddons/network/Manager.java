@@ -26,7 +26,8 @@ public class Manager implements InitAware {
   public void init(FMLPreInitializationEvent event) {
     PacketHandler.INSTANCE.registerMessage(PacketParticles.class, PacketParticles.class, PacketHandler.nextID(), Side.CLIENT);
     PacketHandler.INSTANCE.registerMessage(PacketSlotVisibility.class, PacketSlotVisibility.class, PacketHandler.nextID(), Side.SERVER);
-    PacketHandler.INSTANCE.registerMessage(PacketNetworkUpdate.class, PacketNetworkUpdate.class, PacketHandler.nextID(), Side.CLIENT);
+    PacketHandler.INSTANCE.registerMessage(PacketNetworkUpdate.HandleNetworkUpdateClient.class, PacketNetworkUpdate.class, PacketHandler.nextID(), Side.CLIENT);
+    PacketHandler.INSTANCE.registerMessage(PacketNetworkUpdate.HandleNetworkUpdateServer.class, PacketNetworkUpdate.class, PacketHandler.nextID(), Side.SERVER);
   }
 
   @Override
@@ -74,6 +75,12 @@ public class Manager implements InitAware {
           }
         }
       }
+    }
+  }
+
+  public static void sendUpdateToServer(INetworkUpdatable te, int... data) {
+    if (te instanceof TileEntity) {
+      PacketHandler.INSTANCE.sendToServer(new PacketNetworkUpdate((TileEntity) te, data));
     }
   }
 

@@ -1,11 +1,11 @@
 package info.loenwind.enderioaddons.machine.niard;
 
 import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.client.render.BoundingBox;
 import com.enderio.core.client.render.RenderUtil;
@@ -20,22 +20,20 @@ public class BlockRendererNiard implements ISimpleBlockRenderingHandler {
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-
-    float[] brightnessPerSide = new float[6];
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir) * .75f;
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockNiard.blockNiard, TileNiard.class, true)) {
+      return true;
     }
 
     FaceRenderer.setLightingReference(world, BlockNiard.blockNiard, x, y, z);
 
     BoundingBox bb = BoundingBox.UNIT_CUBE.scale(.99, .99, .99).translate(x, y, z);
     IIcon[] icons = RenderUtil.getBlockTextures(BlockNiard.blockNiard, 0);
-    FaceRenderer.renderCube(bb, icons, null, brightnessPerSide, true);
+    FaceRenderer.renderCube(bb, icons, null, FaceRenderer.stdBrightnessInside, true);
 
     BoundingBox bb2 = BoundingBox.UNIT_CUBE.scale(13 / 16f, 13 / 16f, 13 / 16f).translate(x, y, z);
     icons = RenderUtil.getBlockTextures(BlockNiard.blockNiard, 1);
-    FaceRenderer.renderCube(bb2, icons, null, brightnessPerSide, false);
-    FaceRenderer.renderCube(bb2, icons, null, brightnessPerSide, true);
+    FaceRenderer.renderCube(bb2, icons, null, FaceRenderer.stdBrightnessInside, false);
+    FaceRenderer.renderCube(bb2, icons, null, FaceRenderer.stdBrightnessInside, true);
 
     FaceRenderer.clearLightingReference();
 

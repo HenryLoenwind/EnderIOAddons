@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.pmon;
 
 import static info.loenwind.enderioaddons.config.Config.pMonEnableDynamicTextures;
 import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -29,13 +30,6 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
   private static BoundingBox bb1 = BoundingBox.UNIT_CUBE.translate(0f, 0f, -.1f); // screen
   private static BoundingBox bbi = BoundingBox.UNIT_CUBE.scale(.99, .99, .99); // inner shell
 
-  private static float[] brightnessPerSide = new float[6];
-  static {
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-    }
-  }
-
   private static final VertexRotationFacing xform = new VertexRotationFacing(ForgeDirection.SOUTH);
   static {
     xform.setCenter(new Vector3d(0.5, 0.5, 0.5));
@@ -47,12 +41,12 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
       te.bindTexture();
       FaceRenderer.setupVertices(bb1, xform);
       GL11.glColor4f(1F, 1F, 1F, 1F);
-      FaceRenderer.renderSingleFace(ForgeDirection.SOUTH, 0f, 1f, 0f, 1f, xform, brightnessPerSide, false);
+      FaceRenderer.renderSingleFace(ForgeDirection.SOUTH, 0f, 1f, 0f, 1f, xform, FaceRenderer.stdBrightness, false);
     } else {
       xform.setRotation(ForgeDirection.SOUTH);
       RenderUtil.bindBlockTexture();
       IIcon[] icons = RenderUtil.getBlockTextures(BlockPMon.blockPMon, 0);
-      FaceRenderer.renderSingleFace(bb1, ForgeDirection.SOUTH, icons, xform, brightnessPerSide, false);
+      FaceRenderer.renderSingleFace(bb1, ForgeDirection.SOUTH, icons, xform, FaceRenderer.stdBrightness, false);
     }
   }
 
@@ -65,6 +59,10 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
       xform.setRotation(me.getFacingDir());
     }
 
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockPMon.blockPMon, me, true)) {
+      return true;
+    }
+
     FaceRenderer.setLightingReference(world, BlockPMon.blockPMon, x, y, z);
 
     Tessellator.instance.addTranslation(x, y, z);
@@ -73,9 +71,9 @@ public class RendererPMon implements ISimpleBlockRenderingHandler {
     if (me != null && pMonEnableDynamicTextures.getBoolean()) {
       icons[ForgeDirection.SOUTH.ordinal()] = BlockPMon.blockPMon.getIcon(ForgeDirection.SOUTH.ordinal() + 6, 0);
     }
-    FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+    FaceRenderer.renderCube(bb0, icons, xform, FaceRenderer.stdBrightness, false);
 
-    FaceRenderer.renderCube(bbi, BlockPMon.blockPMon.getIcon(ForgeDirection.UP.ordinal() + 6, 0), xform, brightnessPerSide, true);
+    FaceRenderer.renderCube(bbi, BlockPMon.blockPMon.getIcon(ForgeDirection.UP.ordinal() + 6, 0), xform, FaceRenderer.stdBrightnessInside, true);
 
     Tessellator.instance.addTranslation(-x, -y, -z);
 

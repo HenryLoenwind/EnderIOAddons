@@ -4,6 +4,7 @@ import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullJ;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
+import info.loenwind.enderioaddons.render.FaceRenderer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.client.render.BoundingBox;
 import com.enderio.core.client.render.CubeRenderer;
-import com.enderio.core.client.render.RenderUtil;
 
 import crazypants.enderio.ClientProxy;
 import crazypants.enderio.machine.AbstractMachineEntity;
@@ -80,15 +80,10 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     AbstractMachineEntity machineEntity = te instanceof AbstractMachineEntity ? (AbstractMachineEntity) te : null;
 
     if (frameworkMachine != null && machineEntity != null) {
-      float[] brightnessPerSide = new float[6];
-      for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-        brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-      }
-
       for (TankSlot tankSlot : TankSlot.values()) {
         tankSlot = notnullJ(tankSlot, "enum.values()[i]");
         if (frameworkMachine.renderSlot(tankSlot)) {
-          renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
+          renderSubBlock(x, y, z, machineEntity, tankSlot);
         }
       }
     }
@@ -96,7 +91,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     return super.renderWorldBlock(world, x, y, z, block, modelId, renderer);
   }
 
-  private static void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, float[] brightnessPerSide, @Nonnull TankSlot tankSlot) {
+  private static void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, @Nonnull TankSlot tankSlot) {
     BoundingBox bb = BoundingBox.UNIT_CUBE;
 
     int[] pos = translateToSlotPosition(notnull(te.getFacingDir(), "Internal state error: Block is not facing any direction"), tankSlot);
@@ -105,7 +100,7 @@ public class RendererFrameworkMachine extends TechneMachineRenderer<AbstractTile
     bb = bb.translate(x, y, z);
 
     IIcon[] icons = getBlockTextures(te, tankSlot);
-    CubeRenderer.render(bb, icons, null, brightnessPerSide);
+    CubeRenderer.render(bb, icons, null, FaceRenderer.stdBrightness);
   }
 
   private static ForgeDirection turn(@Nonnull ForgeDirection dir, @Nonnull TankSlot tankSlot) {

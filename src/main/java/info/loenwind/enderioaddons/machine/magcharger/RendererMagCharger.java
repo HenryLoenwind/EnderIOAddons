@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.magcharger;
 
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
 import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -10,7 +11,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.client.render.BoundingBox;
-import com.enderio.core.client.render.RenderUtil;
 import com.enderio.core.client.render.VertexRotationFacing;
 import com.enderio.core.common.vecmath.Vector3d;
 
@@ -30,15 +30,6 @@ public class RendererMagCharger implements ISimpleBlockRenderingHandler {
   private static BoundingBox bb2 = makePartialBB(7, 5, 7, 9, 14, 9); // pole
   private static BoundingBox bb3 = makePartialBB(0, 7, 0, 16, 12, 16); // rim
 
-  private static float[] brightnessPerSide = new float[6];
-  private static float[] brightnessPerInSide = new float[6];
-  static {
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-      brightnessPerInSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir) * .75f;
-    }
-  }
-
   private static final VertexRotationFacing xform = new VertexRotationFacing(SOUTH);
   static {
     xform.setCenter(new Vector3d(0.5, 0.5, 0.5));
@@ -46,6 +37,10 @@ public class RendererMagCharger implements ISimpleBlockRenderingHandler {
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockMagCharger.blockMagCharger, TileMagCharger.class, true)) {
+      return true;
+    }
+
     xform.setRotation(SOUTH);
 
     FaceRenderer.setLightingReference(world, BlockMagCharger.blockMagCharger, x, y, z);
@@ -75,12 +70,12 @@ public class RendererMagCharger implements ISimpleBlockRenderingHandler {
     IIcon[] icons2 = { icons[6], icons[7], null, null, null, null };
     IIcon[] icons3 = { icons[9], icons[9], null, null, null, null };
 
-    FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
-    FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, true);
-    FaceRenderer.renderSkirt(bbi, icons[3], xform, brightnessPerInSide, true);
+    FaceRenderer.renderCube(bb0, icons, xform, FaceRenderer.stdBrightness, false);
+    FaceRenderer.renderCube(bb0, icons, xform, FaceRenderer.stdBrightness, true);
+    FaceRenderer.renderSkirt(bbi, icons[3], xform, FaceRenderer.stdBrightnessInside, true);
 
-    FaceRenderer.renderCube(bb1, icons2, xform, brightnessPerInSide, true);
-    FaceRenderer.renderCube(bb3, icons3, xform, brightnessPerSide, true);
+    FaceRenderer.renderCube(bb1, icons2, xform, FaceRenderer.stdBrightnessInside, true);
+    FaceRenderer.renderCube(bb3, icons3, xform, FaceRenderer.stdBrightness, true);
 
     FaceRenderer.setupVertices(bb2, xform);
 
@@ -88,19 +83,19 @@ public class RendererMagCharger implements ISimpleBlockRenderingHandler {
     float maxU = icons[8].getInterpolatedU(2);
     float minV = icons[8].getMinV();
     float maxV = icons[8].getInterpolatedV(9);
-    FaceRenderer.renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, brightnessPerInSide, false);
+    FaceRenderer.renderSingleFace(ForgeDirection.SOUTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
 
     minU = maxU;
     maxU = icons[8].getInterpolatedU(4);
-    FaceRenderer.renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, brightnessPerInSide, false);
+    FaceRenderer.renderSingleFace(ForgeDirection.EAST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
 
     minU = maxU;
     maxU = icons[8].getInterpolatedU(6);
-    FaceRenderer.renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, brightnessPerInSide, false);
+    FaceRenderer.renderSingleFace(ForgeDirection.NORTH, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
 
     minU = maxU;
     maxU = icons[8].getInterpolatedU(8);
-    FaceRenderer.renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, brightnessPerInSide, false);
+    FaceRenderer.renderSingleFace(ForgeDirection.WEST, minU, maxU, minV, maxV, xform, FaceRenderer.stdBrightness, false);
   }
 
   @Override

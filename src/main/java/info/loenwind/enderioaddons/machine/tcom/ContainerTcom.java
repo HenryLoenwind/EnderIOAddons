@@ -29,8 +29,6 @@ public class ContainerTcom extends AbstractMachineContainerA<TileTcom> implement
       if (((Slot) slot).getSlotIndex() == slotno) {
         if (slot instanceof StdSlot) {
           ((StdSlot) slot).enable(!hide);
-        } else if (slot instanceof StdOutputSlot) {
-          ((StdOutputSlot) slot).enable(!hide);
         }
       }
     }

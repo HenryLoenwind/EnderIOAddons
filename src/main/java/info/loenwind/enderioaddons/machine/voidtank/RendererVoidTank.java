@@ -8,6 +8,7 @@ import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.util.ForgeDirection.UP;
 import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -70,15 +71,6 @@ public class RendererVoidTank implements ISimpleBlockRenderingHandler {
   private static BoundingBox bb6 = makePartialBB(0, d3, 0, 16, 16 - t3, 16); // top/bottom layer 3
   private static BoundingBox bbu = BoundingBox.UNIT_CUBE.scale(.5, .5, .5); // tamed portal
 
-  private static float[] brightnessPerSide = new float[6];
-  private static float[] brightnessPerInSide = new float[6];
-  static {
-    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-      brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-      brightnessPerInSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir) * .75f;
-    }
-  }
-
   private static final VertexRotationFacing xform = new VertexRotationFacing(SOUTH);
   static {
     xform.setCenter(new Vector3d(0.5, 0.5, 0.5));
@@ -101,55 +93,55 @@ public class RendererVoidTank implements ISimpleBlockRenderingHandler {
     if (isBroken) {
       if (RenderPassHelper.getBlockRenderPass() == 0) {
         IIcon[] icons = RenderUtil.getBlockTextures(BlockVoidTank.blockVoidTank, 0);
-        FaceRenderer.renderCube(bbi, icons, xform, brightnessPerInSide, true);
-        FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+        FaceRenderer.renderCube(bbi, icons, xform, FaceRenderer.stdBrightnessInside, true);
+        FaceRenderer.renderCube(bb0, icons, xform, FaceRenderer.stdBrightness, false);
       } else {
         for (ForgeDirection dir : EAST_WEST) {
           final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
           if (icon1 != null) {
-            renderSingleFace(bb1, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb1, dir, icon1, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
 
           final IIcon icon2 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 12, 0);
           if (icon2 != null) {
-            renderSingleFace(bb2, dir, icon2, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb2, dir, icon2, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
 
           final IIcon icon3 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 18, 0);
           if (icon3 != null) {
-            renderSingleFace(bb3, dir, icon3, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb3, dir, icon3, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
         }
 
         for (ForgeDirection dir : NORTH_SOUTH) {
           final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
           if (icon1 != null) {
-            renderSingleFace(bb0, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb0, dir, icon1, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
         }
 
         for (ForgeDirection dir : UP_DOWN) {
           final IIcon icon1 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 6, 0);
           if (icon1 != null) {
-            renderSingleFace(bb4, dir, icon1, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb4, dir, icon1, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
 
           final IIcon icon2 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 12, 0);
           if (icon2 != null) {
-            renderSingleFace(bb5, dir, icon2, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb5, dir, icon2, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
 
           final IIcon icon3 = BlockVoidTank.blockVoidTank.getIcon(dir.ordinal() + 18, 0);
           if (icon3 != null) {
-            renderSingleFace(bb6, dir, icon3, 0, 16, 0, 16, xform, brightnessPerSide, false);
+            renderSingleFace(bb6, dir, icon3, 0, 16, 0, 16, xform, FaceRenderer.stdBrightness, false);
           }
         }
       }
     } else {
       if (RenderPassHelper.getBlockRenderPass() == 0) {
         IIcon[] icons = makeBlockTextureList(EnderIO.blockTank.getIcon(SOUTH.ordinal(), 1));
-        FaceRenderer.renderCube(bbi, icons, xform, brightnessPerInSide, true);
-        FaceRenderer.renderCube(bb0, icons, xform, brightnessPerSide, false);
+        FaceRenderer.renderCube(bbi, icons, xform, FaceRenderer.stdBrightnessInside, true);
+        FaceRenderer.renderCube(bb0, icons, xform, FaceRenderer.stdBrightness, false);
       } else {
         IIcon[] icon4 = RenderUtil.getBlockTextures(Blocks.portal, 0);
         FaceRenderer.renderCube(bbu, icon4, null, RenderUtil.getDefaultPerSideBrightness(), false);
@@ -159,6 +151,9 @@ public class RendererVoidTank implements ISimpleBlockRenderingHandler {
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockVoidTank.blockVoidTank, TileVoidTank.class, true)) {
+      return true;
+    }
     FaceRenderer.setLightingReference(world, BlockVoidTank.blockVoidTank, x, y, z);
     Tessellator.instance.addTranslation(x, y, z);
     renderBlockFromTileEntityAt(world.getTileEntity(x, y, z));

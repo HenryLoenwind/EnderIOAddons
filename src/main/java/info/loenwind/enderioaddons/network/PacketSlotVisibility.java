@@ -10,48 +10,37 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketSlotVisibility implements IMessage, IMessageHandler<PacketSlotVisibility, IMessage> {
 
-  private int mask = 0;
-  private int hide = 0;
+  private int slotno = 0;
+  private boolean hide = true;
 
   public PacketSlotVisibility() {
   }
 
-  public PacketSlotVisibility(int hide) {
-    this.mask = 0b11111111;
-    this.hide = hide;
-  }
-
   public PacketSlotVisibility(int slotNo, boolean hide) {
-    this.mask |= 1 << slotNo;
-    if (hide) {
-      this.hide |= 1 << slotNo;
-    } else {
-      this.hide &= ~(1 << slotNo);
+    this.slotno = slotNo;
+    this.hide = hide;
+    if (slotno > Byte.MAX_VALUE) {
+      throw new RuntimeException("More than " + Byte.MAX_VALUE + " slots in one GUI? Update the packet!");
     }
   }
 
   @Override
   public void fromBytes(ByteBuf bb) {
-    mask = bb.readUnsignedByte();
-    hide = bb.readUnsignedByte();
+    slotno = bb.readByte();
+    hide = bb.readBoolean();
   }
 
   @Override
   public void toBytes(ByteBuf bb) {
-    bb.writeByte(mask);
-    bb.writeByte(hide);
+    bb.writeByte(slotno);
+    bb.writeBoolean(hide);
   }
 
   @Override
   public IMessage onMessage(PacketSlotVisibility message, MessageContext ctx) {
     EntityPlayerMP player = ctx.getServerHandler().playerEntity;
     if (player.openContainer instanceof IHidableSlotsContainer) {
-      IHidableSlotsContainer c = (IHidableSlotsContainer) player.openContainer;
-      for (int i = 0; i < 8; i++) {
-        if ((message.mask & (1 << i)) != 0) {
-          c.hideSlot(i, (message.hide & (1 << i)) != 0);
-        }
-      }
+      ((IHidableSlotsContainer) player.openContainer).hideSlot(message.slotno, message.hide);
     } else {
       Log.warn("Recieved PacketSlotVisibility but current GUI isn't compatible");
     }

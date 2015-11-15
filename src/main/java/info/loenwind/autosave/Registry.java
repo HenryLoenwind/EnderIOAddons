@@ -4,6 +4,7 @@ import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.handlers.endercore.HandleBlockCoord;
 import info.loenwind.autosave.handlers.enderio.HandleIMachineRecipe;
 import info.loenwind.autosave.handlers.enderio.HandleSmartTank;
+import info.loenwind.autosave.handlers.enderioaddons.HandleNotifSet;
 import info.loenwind.autosave.handlers.enderioaddons.HandleStash;
 import info.loenwind.autosave.handlers.enderioaddons.HandleStatCollector;
 import info.loenwind.autosave.handlers.forge.HandleFluid;
@@ -49,6 +50,7 @@ public class Registry {
     // TODO: move to an eioa registry
     GLOBAL_REGISTRY.register(new HandleStash());
     GLOBAL_REGISTRY.register(new HandleStatCollector());
+    GLOBAL_REGISTRY.register(new HandleNotifSet());
 
     // TODO: move to an eio registry
     GLOBAL_REGISTRY.register(new HandleSmartTank());

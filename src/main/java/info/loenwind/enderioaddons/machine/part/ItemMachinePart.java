@@ -1,5 +1,7 @@
 package info.loenwind.enderioaddons.machine.part;
 
+import info.loenwind.enderioaddons.machine.afarm.AgriDetector;
+
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -53,7 +55,11 @@ public class ItemMachinePart extends Item {
     int numParts = MachinePart.values().length;
     for (int i = 0; i < numParts; i++) {
       if (!MachinePart.values()[i].renderAsFrameMachine) {
-        icons[i] = IIconRegister.registerIcon(MachinePart.values()[i].iconKey);
+        if (i != MachinePart.AFARMINFO.ordinal() || !AgriDetector.hasAgri) {
+          icons[i] = IIconRegister.registerIcon(MachinePart.values()[i].iconKey);
+        } else {
+          icons[i] = icons[MachinePart.SIMPLEMAGNET.ordinal()];
+        }
       }
     }
   }
@@ -69,6 +75,9 @@ public class ItemMachinePart extends Item {
   @SideOnly(Side.CLIENT)
   public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
     for (int j = 0; j < MachinePart.values().length; ++j) {
+      if ((AgriDetector.hasAgri && j == MachinePart.AFARMINFO.ordinal()) || (!AgriDetector.hasAgri && MachinePart.isAgri(j))) {
+        continue;
+      }
       par3List.add(new ItemStack(par1, 1, j));
     }
   }

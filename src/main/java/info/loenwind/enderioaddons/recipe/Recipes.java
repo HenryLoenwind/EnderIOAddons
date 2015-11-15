@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.recipe;
 
 import static crazypants.util.RecipeUtil.addShaped;
+import static crazypants.util.RecipeUtil.addShapeless;
 import static info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks.blockCobbleworks;
 import static info.loenwind.enderioaddons.machine.drain.BlockDrain.blockDrain;
 import static info.loenwind.enderioaddons.machine.ihopper.BlockIHopper.blockIHopper;
@@ -12,20 +13,21 @@ import static info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank.blockVo
 import static info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks.blockWaterworks;
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.machine.afarm.AgriDetector;
+import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
+import info.loenwind.enderioaddons.machine.afarm.item.ItemModule;
+import info.loenwind.enderioaddons.machine.afarm.item.Module;
 import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
-import crazypants.util.RecipeUtil;
 
 public class Recipes implements InitAware {
 
@@ -96,6 +98,20 @@ public class Recipes implements InitAware {
   @ItemStackHolder(value = "EnderIO:item.darkSteel_axe")
   public static final ItemStack darkSteel_axe = null;
 
+  @ItemStackHolder(value = "AgriCraft:handRake", meta = 0)
+  public static final ItemStack handRake_wood = null;
+  @ItemStackHolder(value = "AgriCraft:handRake", meta = 1)
+  public static final ItemStack handRake_iron = null;
+  @ItemStackHolder(value = "AgriCraft:magnifyingGlass")
+  public static final ItemStack magGlass = null;
+  @ItemStackHolder(value = "AgriCraft:cropsItem")
+  public static final ItemStack crops = null;
+  @ItemStackHolder(value = "AgriCraft:seedAnalyzer")
+  public static final ItemStack seeAnalyzer = null;
+
+  @ItemStackHolder(value = "minecraft:tallgrass", meta = 1)
+  public static final ItemStack weeds = null;
+
   public Recipes() {
   }
 
@@ -105,6 +121,19 @@ public class Recipes implements InitAware {
 
   @Override
   public void init(FMLInitializationEvent event) {
+    ItemStack zombieBit;
+    ItemStack crystal;
+    String agriNugget;
+    if (crazypants.enderio.config.Config.useHardRecipes) {
+      zombieBit = frankenZombie;
+      crystal = enderCrystal;
+      agriNugget = "cropFerranium";
+    } else {
+      zombieBit = zombieController;
+      crystal = pulsatingCrystal;
+      agriNugget = "nuggetIron";
+    }
+
     // Drain
     if (Config.drainEnabled.getBoolean()) {
       addShaped(blockDrain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e', electricSteel, 'v',
@@ -126,16 +155,6 @@ public class Recipes implements InitAware {
     if (Config.pMonEnabled.getBoolean()) {
       addShaped(blockPMon, "xxx", "xpx", "123", 'p', blockPowerMonitor, '1', "dyeRed", '2', "dyeYellow", '3', "dyeGreen", 'x',
           new ItemStack(Blocks.wool, 1, 15));
-    }
-
-    ItemStack zombieBit;
-    ItemStack crystal;
-    if (crazypants.enderio.config.Config.useHardRecipes) {
-      zombieBit = frankenZombie;
-      crystal = enderCrystal;
-    } else {
-      zombieBit = zombieController;
-      crystal = pulsatingCrystal;
     }
 
     // Frame parts
@@ -214,7 +233,9 @@ public class Recipes implements InitAware {
 
     }
 
-    if (Config.flagEnabled.getBoolean() || Config.magcEnabled.getBoolean() || Config.decoBlockEnabled.getBoolean()) {
+    boolean farmEnabled = Config.farmEnabled.getBoolean() && AgriDetector.hasAgri;
+    
+    if (farmEnabled || Config.flagEnabled.getBoolean() || Config.magcEnabled.getBoolean() || Config.decoBlockEnabled.getBoolean()) {
       ItemStack chassiParts = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CHASSIPARTS.ordinal());
       addShaped(chassiParts, "iii", "iMi", "iii", 'M', machineChassi, 'i', "ingotIron");
 
@@ -276,6 +297,46 @@ public class Recipes implements InitAware {
         addShaped(deco[15], "ipi", "p p", "ipi", 'p', chassiParts, 'i', clearGlass);
         addShaped(deco[15], "pip", "i i", "pip", 'p', chassiParts, 'i', clearGlass);
       }
+      
+      // Agri Farm
+      if (farmEnabled) {
+        ItemStack moduleBase =  new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_BASE.ordinal());
+        addShaped(moduleBase, " np", "ncn", "pn ", 'n', agriNugget, 'p', chassiParts, 'c', crops);
+        ItemStack moduleIQ =  new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_IQ.ordinal());
+        addShaped(moduleIQ, "bbb", "bzb", "bbb", 'b', moduleBase, 'z', zombieBit);
+        ItemStack farm = new ItemStack(BlockAfarm.blockAfarm);
+        addShaped(farm, "ehe", "eCe", "cMc", 'e', electricSteel, 'h', Items.diamond_hoe, 'C', machineChassi, 'M', moduleIQ, 'c', crystal);
+        ItemStack induRake = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IRAKE.ordinal());
+        addShaped(induRake, "bb", " d", " d", 'b', darkSteelBars, 'd', darkSteel);
+        addShaped(induRake, "bb", "d ", "d ", 'b', darkSteelBars, 'd', darkSteel);
+        ItemStack brokenRakeWood = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal());
+        ItemStack brokenRakeIron = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal());
+        addShapeless(handRake_wood, brokenRakeWood, "stickWood", brokenRakeWood);
+        addShapeless(handRake_wood, brokenRakeWood, "woodStick", brokenRakeWood);
+        addShapeless(handRake_iron, brokenRakeIron, "nuggetIron", brokenRakeIron);
+
+        ItemStack BREED = new ItemStack(ItemModule.itemModule, 1, Module.BREED.ordinal());
+        ItemStack CROSSBREED = new ItemStack(ItemModule.itemModule, 1, Module.CROSSBREED.ordinal());
+        ItemStack HARVESTSEEDS = new ItemStack(ItemModule.itemModule, 1, Module.HARVESTSEEDS.ordinal());
+        ItemStack ANALYZESEEDS = new ItemStack(ItemModule.itemModule, 1, Module.ANALYZESEEDS.ordinal());
+        ItemStack MULTIPLY = new ItemStack(ItemModule.itemModule, 1, Module.MULTIPLY.ordinal());
+        ItemStack HARVESTUNANALYZED = new ItemStack(ItemModule.itemModule, 1, Module.HARVESTUNANALYZED.ordinal());
+        ItemStack REPLACEBETTER = new ItemStack(ItemModule.itemModule, 1, Module.REPLACEBETTER.ordinal());
+        ItemStack WEED = new ItemStack(ItemModule.itemModule, 1, Module.WEED.ordinal());
+        ItemStack EJECTSEEDS = new ItemStack(ItemModule.itemModule, 1, Module.EJECTSEEDS.ordinal());
+        ItemStack BESTONLY = new ItemStack(ItemModule.itemModule, 1, Module.BESTONLY.ordinal());
+
+        addShapeless(BREED, crops, moduleBase, crops);
+        addShapeless(CROSSBREED, "listAllseed", moduleIQ, crops);
+        addShapeless(HARVESTSEEDS, "listAllseed", moduleBase, Items.diamond_hoe);
+        addShapeless(ANALYZESEEDS, magGlass, moduleIQ, seeAnalyzer);
+        addShapeless(MULTIPLY, crops, moduleIQ, crops);
+        addShapeless(HARVESTUNANALYZED, Items.diamond_shovel, moduleBase, magGlass);
+        addShapeless(REPLACEBETTER, Items.diamond_shovel, moduleIQ, magGlass);
+        addShapeless(WEED, weeds, moduleBase, handRake_wood);
+        addShapeless(EJECTSEEDS, "listAllseed", moduleBase, "blockHopper");
+        addShapeless(BESTONLY, EJECTSEEDS, moduleIQ, magGlass);
+      }
     }
   }
 
@@ -290,21 +351,6 @@ public class Recipes implements InitAware {
 
   @Override
   public void init(FMLPostInitializationEvent event) {
-  }
-
-  // TODO when fixed in eio
-  public static void addShapeless(Item res, Object... recipe) {
-    RecipeUtil.addShapeless(new ItemStack(res), recipe);
-  }
-
-  // TODO when fixed in eio
-  public static void addShapeless(Block res, Object... recipe) {
-    RecipeUtil.addShapeless(new ItemStack(res), recipe);
-  }
-
-  // TODO when fixed in eio
-  public static void addShapeless(ItemStack res, Object... recipe) {
-    RecipeUtil.addShapeless(res, recipe);
   }
 
 }

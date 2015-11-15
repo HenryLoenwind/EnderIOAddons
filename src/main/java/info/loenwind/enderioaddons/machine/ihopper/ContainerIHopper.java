@@ -14,8 +14,6 @@ import net.minecraft.item.ItemStack;
 
 import com.enderio.core.client.gui.widget.GhostSlot;
 
-import crazypants.enderio.network.PacketHandler;
-
 public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
 
   static final int D = 18;
@@ -36,7 +34,6 @@ public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
     for (int slot = 1; slot <= SLOTS; slot++) {
       addSlotToContainer(new StdOutputSlot(getInv(), getInv().outputSlotNo(slot), COL + slot * D, ROW3));
     }
-
   }
 
   public void addGhostSlots(List<GhostSlot> ghostSlots) {
@@ -46,23 +43,21 @@ public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
   }
 
   private class IHopperGhostSlot extends GhostSlot {
-    private final int slotIndex;
 
     public IHopperGhostSlot(int slotIndex, int x, int y) {
-      this.slotIndex = slotIndex;
+      this.slot = slotIndex;
       this.x = x;
       this.y = y;
+      this.displayStdOverlay = true;
+      this.stackSizeLimit = 64;
+      this.te = getInv();
     }
 
     @Override
     public ItemStack getStack() {
-      return getInv().getStackInSlot(slotIndex);
+      return getInv().getStackInSlot(slot);
     }
 
-    @Override
-    public void putStack(ItemStack newstack) {
-      PacketHandler.INSTANCE.sendToServer(PacketIHopper.setGhostSlotContents(getInv(), slotIndex, newstack));
-    }
   }
 
 }

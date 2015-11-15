@@ -13,6 +13,7 @@ import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.IFrameworkMachine.TankSlot;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +28,6 @@ import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.client.render.BoundingBox;
-import com.enderio.core.client.render.RenderUtil;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import crazypants.enderio.machine.AbstractMachineEntity;
@@ -53,21 +53,20 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockIHopper.blockIHopper, (TileIHopper) null, true)) {
+      return true;
+    }
+
     TileEntity te = world != null ? world.getTileEntity(x, y, z) : null;
     IFrameworkMachine frameworkMachine = te instanceof IFrameworkMachine ? (IFrameworkMachine) te : null;
     AbstractMachineEntity machineEntity = te instanceof AbstractMachineEntity ? (AbstractMachineEntity) te : null;
 
     if (frameworkMachine != null && machineEntity != null) {
-      float[] brightnessPerSide = new float[6];
-      for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-        brightnessPerSide[dir.ordinal()] = RenderUtil.getColorMultiplierForFace(dir);
-      }
-
       FaceRenderer.setLightingReference(world, BlockIHopper.blockIHopper, x, y, z);
       for (TankSlot tankSlot : TankSlot.values()) {
         tankSlot = notnullJ(tankSlot, "enum.values()[i]");
         if (tankSlot != TankSlot.FRONT_LEFT) {
-          renderSubBlock(x, y, z, machineEntity, brightnessPerSide, tankSlot);
+          renderSubBlock(x, y, z, machineEntity, tankSlot);
         }
       }
       FaceRenderer.clearLightingReference();
@@ -86,7 +85,7 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
     return BlockIHopper.blockIHopper.getRenderType();
   }
 
-  private void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, float[] brightnessPerSide, @Nonnull TankSlot tankSlot) {
+  private void renderSubBlock(int x, int y, int z, @Nonnull AbstractMachineEntity te, @Nonnull TankSlot tankSlot) {
 
     IIcon icon_outside = BlockHopper.getHopperIcon("hopper_outside");
     IIcon icon_inside = BlockHopper.getHopperIcon("hopper_inside");
@@ -96,19 +95,19 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
 
     // top box
     BoundingBox bb1 = makePartialBBofSlot(0, 10, 0, 16, 16, 16, pos, x, y, z);
-    renderSingleFace(bb1, ForgeDirection.UP, icon_top, 0, 16, 0, 16, null, brightnessPerSide, false);
-    renderSkirt(bb1, icon_outside, 0, 16, 10, 16, null, brightnessPerSide, false);
-    renderSingleFace(bb1, ForgeDirection.DOWN, icon_outside, 0, 16, 0, 16, null, brightnessPerSide, false);
+    renderSingleFace(bb1, ForgeDirection.UP, icon_top, 0, 16, 0, 16, null, FaceRenderer.stdBrightness, false);
+    renderSkirt(bb1, icon_outside, 0, 16, 10, 16, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb1, ForgeDirection.DOWN, icon_outside, 0, 16, 0, 16, null, FaceRenderer.stdBrightness, false);
 
     // inside
     BoundingBox bb2 = makePartialBBofSlot(2, 10, 2, 14, 16, 14, pos, x, y, z);
-    renderSkirt(bb2, icon_outside, 2, 14, 10, 16, null, brightnessPerSide, true);
-    renderSingleFace(bb2, ForgeDirection.DOWN, icon_inside, 2, 14, 2, 14, null, brightnessPerSide, true);
+    renderSkirt(bb2, icon_outside, 2, 14, 10, 16, null, FaceRenderer.stdBrightnessInside, true);
+    renderSingleFace(bb2, ForgeDirection.DOWN, icon_inside, 2, 14, 2, 14, null, FaceRenderer.stdBrightnessInside, true);
 
     // center box
     BoundingBox bb3 = makePartialBBofSlot(4, 4, 4, 12, 10, 12, pos, x, y, z);
-    renderSkirt(bb3, icon_outside, 4, 12, 4, 10, null, brightnessPerSide, false);
-    renderSingleFace(bb3, ForgeDirection.DOWN, icon_outside, 4, 12, 4, 12, null, brightnessPerSide, false);
+    renderSkirt(bb3, icon_outside, 4, 12, 4, 10, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb3, ForgeDirection.DOWN, icon_outside, 4, 12, 4, 12, null, FaceRenderer.stdBrightness, false);
 
     // connector
     ForgeDirection cdir = getConnectorDirection(notnull(te.getFacingDir(), "Internal state error: Block is not facing any direction"), tankSlot);
@@ -158,12 +157,12 @@ public class RendererIHopper implements ISimpleBlockRenderingHandler {
       return;
     }
     BoundingBox bb4 = makePartialBBofSlot(x0, y0, z0, x1, y1, z1, pos, x, y, z);
-    renderSingleFace(bb4, ForgeDirection.UP, icon_outside, x0, x1, z0, z1, null, brightnessPerSide, false);
-    renderSingleFace(bb4, ForgeDirection.NORTH, icon_outside, x0, x1, y0, y1, null, brightnessPerSide, false);
-    renderSingleFace(bb4, ForgeDirection.SOUTH, icon_outside, x0, x1, y0, y1, null, brightnessPerSide, false);
-    renderSingleFace(bb4, ForgeDirection.EAST, icon_outside, z0, z1, y0, y1, null, brightnessPerSide, false);
-    renderSingleFace(bb4, ForgeDirection.WEST, icon_outside, z0, z1, y0, y1, null, brightnessPerSide, false);
-    renderSingleFace(bb4, ForgeDirection.DOWN, icon_outside, x0, x1, z0, z1, null, brightnessPerSide, false);
+    renderSingleFace(bb4, ForgeDirection.UP, icon_outside, x0, x1, z0, z1, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, ForgeDirection.NORTH, icon_outside, x0, x1, y0, y1, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, ForgeDirection.SOUTH, icon_outside, x0, x1, y0, y1, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, ForgeDirection.EAST, icon_outside, z0, z1, y0, y1, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, ForgeDirection.WEST, icon_outside, z0, z1, y0, y1, null, FaceRenderer.stdBrightness, false);
+    renderSingleFace(bb4, ForgeDirection.DOWN, icon_outside, x0, x1, z0, z1, null, FaceRenderer.stdBrightness, false);
 
   }
 

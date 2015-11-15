@@ -12,18 +12,17 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.client.config.IConfigElement;
-import crazypants.enderio.EnderIO;
 
 @SuppressWarnings({ "rawtypes" })
 public class GuiConfigFactory extends GuiConfig {
 
   public GuiConfigFactory(GuiScreen parentScreen) {
-    super(parentScreen, getConfigElements(parentScreen), EnderIOAddons.MODID, false, false, EnderIO.lang.localize("config.title"));
+    super(parentScreen, getConfigElements(parentScreen), EnderIOAddons.MODID, false, false, EnderIOAddons.lang.localize("config.title"));
   }
 
   private static List<IConfigElement> getConfigElements(@SuppressWarnings("unused") GuiScreen parent) {
     List<IConfigElement> list = new ArrayList<IConfigElement>();
-    String prefix = EnderIO.lang.addPrefix("config.");
+    String prefix = EnderIOAddons.lang.addPrefix("config.");
 
     for (Section section : Section.values()) {
       if (!section.sync || !ConfigHandler.configLockedByServer) {

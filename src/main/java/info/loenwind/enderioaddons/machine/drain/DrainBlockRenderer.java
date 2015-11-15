@@ -1,73 +1,44 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.OverlayRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import com.enderio.core.client.render.BoundingBox;
-import com.enderio.core.client.render.CubeRenderer;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import crazypants.enderio.EnderIO;
 
 public class DrainBlockRenderer implements ISimpleBlockRenderingHandler {
 
   @Override
   public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-    Tessellator.instance.startDrawingQuads();
-    CubeRenderer.render(BoundingBox.UNIT_CUBE.scale(0.6, 0.6, 0.6), EnderIO.blockHyperCube.getIcon(0, 0));
-    CubeRenderer.render(BoundingBox.UNIT_CUBE.scale(0.90, 0.90, 0.90), EnderIO.blockVacuumChest.getIcon(0, 0));
-    Tessellator.instance.draw();
   }
+
+  private static final BoundingBox bb_inside = BoundingBox.UNIT_CUBE.scale(0.98, 0.98, 0.98);
+  private static final BoundingBox bb_innertop = BoundingBox.UNIT_CUBE.scale(0.98, 0.98, 0.98).translate(0f, 0.5f, 0f);
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockDrain.blockDrain, TileDrain.class, true)) {
+      return true;
+    }
 
     final IIcon icon_sides = BlockDrain.blockDrain.getIcon(2, 0);
-    final float minU_sides = icon_sides.getMinU();
-    final float maxV_sides = icon_sides.getMaxV();
-    final float maxU_sides = icon_sides.getMaxU();
-    final float minV_sides = icon_sides.getMinV();
-
     final IIcon icon_bottom = BlockDrain.blockDrain.getIcon(0, 0);
-    final float minU_bottom = icon_bottom.getMinU();
-    final float maxV_bottom = icon_bottom.getMaxV();
-    final float minV_bottom = icon_bottom.getMinV();
-    final float maxU_bottom = icon_bottom.getMaxU();
 
     Tessellator.instance.addTranslation(x, y, z);
 
-    Tessellator.instance.setNormal(0, 0, -1); // NORTH SIDE
-    Tessellator.instance.addVertexWithUV(0.99D, 0.01D, 0.99D, minU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.01D, 0.99D, maxU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.99D, 0.99D, maxU_sides, minV_sides);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.99D, 0.99D, minU_sides, minV_sides);
+    FaceRenderer.setLightingReference(world, BlockDrain.blockDrain, x, y, z);
 
-    Tessellator.instance.setNormal(0, 0, 1); // SOUTH SIDE
-    Tessellator.instance.addVertexWithUV(0.01D, 0.01D, 0.01D, minU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.01D, 0.01D, maxU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.99D, 0.01D, maxU_sides, minV_sides);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.99D, 0.01D, minU_sides, minV_sides);
+    FaceRenderer.renderSkirt(bb_inside, icon_sides, null, FaceRenderer.stdBrightnessInside, true);
+    FaceRenderer.renderSingleFace(bb_innertop, ForgeDirection.DOWN, icon_bottom, null, FaceRenderer.stdBrightnessInside, true);
 
-    Tessellator.instance.setNormal(0, 1, 0); // TOP SIDE
-    Tessellator.instance.addVertexWithUV(0.99D, 0.5D, 0.99D, minU_bottom, maxV_bottom);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.5D, 0.01D, minU_bottom, minV_bottom);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.5D, 0.01D, maxU_bottom, minV_bottom);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.5D, 0.99D, maxU_bottom, maxV_bottom);
-
-    Tessellator.instance.setNormal(1, 0, 0); // EAST SIDE
-    Tessellator.instance.addVertexWithUV(0.01D, 0.99D, 0.01D, minU_sides, minV_sides);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.99D, 0.99D, maxU_sides, minV_sides);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.01D, 0.99D, maxU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.01D, 0.01D, 0.01D, minU_sides, maxV_sides);
-
-    Tessellator.instance.setNormal(-1, 0, 0); // WEST SIDE
-    Tessellator.instance.addVertexWithUV(0.99D, 0.01D, 0.01D, minU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.01D, 0.99D, maxU_sides, maxV_sides);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.99D, 0.99D, maxU_sides, minV_sides);
-    Tessellator.instance.addVertexWithUV(0.99D, 0.99D, 0.01D, minU_sides, minV_sides);
+    FaceRenderer.clearLightingReference();
 
     Tessellator.instance.addTranslation(-x, -y, -z);
 
