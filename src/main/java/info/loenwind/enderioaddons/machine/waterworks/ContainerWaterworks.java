@@ -1,15 +1,14 @@
 package info.loenwind.enderioaddons.machine.waterworks;
 
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerWaterworks extends AbstractMachineContainerA<TileWaterworks> {
+public class ContainerWaterworks extends AbstractMachineContainer<TileWaterworks> {
 
   private static final int D = 18;
   private static final int ROW = 9 - D;

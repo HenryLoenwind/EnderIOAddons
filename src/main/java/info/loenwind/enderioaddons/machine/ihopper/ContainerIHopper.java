@@ -1,7 +1,6 @@
 package info.loenwind.enderioaddons.machine.ihopper;
 
 import static info.loenwind.enderioaddons.machine.ihopper.TileIHopper.SLOTS;
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import info.loenwind.enderioaddons.gui.StdOutputSlot;
 import info.loenwind.enderioaddons.gui.StdSlot;
 
@@ -14,7 +13,9 @@ import net.minecraft.item.ItemStack;
 
 import com.enderio.core.client.gui.widget.GhostSlot;
 
-public class ContainerIHopper extends AbstractMachineContainerA<TileIHopper> {
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
+
+public class ContainerIHopper extends AbstractMachineContainer<TileIHopper> {
 
   static final int D = 18;
   static final int ROW1 = 9;

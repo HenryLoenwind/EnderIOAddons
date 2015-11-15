@@ -1,9 +1,9 @@
 package info.loenwind.enderioaddons.machine.pmon;
 
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import net.minecraft.entity.player.InventoryPlayer;
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerPMon extends AbstractMachineContainerA<TilePMon> {
+class ContainerPMon extends AbstractMachineContainer<TilePMon> {
 
   public ContainerPMon(InventoryPlayer playerInv, TilePMon te) {
     super(playerInv, te);

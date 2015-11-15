@@ -1,7 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
 import static info.loenwind.enderioaddons.config.Config.ghostItemsEnabled;
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import info.loenwind.enderioaddons.gui.IHidableSlotsContainer;
 import info.loenwind.enderioaddons.gui.StdOutputSlot;
 import info.loenwind.enderioaddons.gui.StdSlot;
@@ -20,7 +19,9 @@ import net.minecraft.item.ItemStack;
 import com.enderio.core.client.gui.widget.GhostBackgroundItemSlot;
 import com.enderio.core.client.gui.widget.GhostSlot;
 
-public class ContainerAfarm extends AbstractMachineContainerA<TileAfarm> implements IHidableSlotsContainer {
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
+
+public class ContainerAfarm extends AbstractMachineContainer<TileAfarm> implements IHidableSlotsContainer {
 
   static private final Random rand = new Random();
 

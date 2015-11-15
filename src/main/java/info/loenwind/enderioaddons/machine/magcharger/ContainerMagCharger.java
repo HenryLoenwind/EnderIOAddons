@@ -1,11 +1,11 @@
 package info.loenwind.enderioaddons.machine.magcharger;
 
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import info.loenwind.enderioaddons.gui.StdOutputSlot;
 import info.loenwind.enderioaddons.gui.StdSlot;
 import net.minecraft.entity.player.InventoryPlayer;
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerMagCharger extends AbstractMachineContainerA<TileMagCharger> {
+public class ContainerMagCharger extends AbstractMachineContainer<TileMagCharger> {
 
   public ContainerMagCharger(InventoryPlayer playerInv, TileMagCharger te) {
     super(playerInv, te);

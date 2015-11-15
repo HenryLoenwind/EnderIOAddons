@@ -1,10 +1,10 @@
 package info.loenwind.enderioaddons.machine.voidtank;
 
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import info.loenwind.enderioaddons.gui.StdSlot;
 import net.minecraft.entity.player.InventoryPlayer;
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerVoidTank extends AbstractMachineContainerA<TileVoidTank> {
+public class ContainerVoidTank extends AbstractMachineContainer<TileVoidTank> {
 
   public ContainerVoidTank(InventoryPlayer playerInv, TileVoidTank te) {
     super(playerInv, te);

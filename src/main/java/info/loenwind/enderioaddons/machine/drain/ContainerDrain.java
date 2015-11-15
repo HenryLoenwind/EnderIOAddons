@@ -1,11 +1,11 @@
 package info.loenwind.enderioaddons.machine.drain;
 
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerDrain extends AbstractMachineContainerA<TileDrain> {
+public class ContainerDrain extends AbstractMachineContainer<TileDrain> {
 
   public ContainerDrain(InventoryPlayer playerInv, TileDrain te) {
     super(playerInv, te);

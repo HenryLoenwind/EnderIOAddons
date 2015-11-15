@@ -1,13 +1,13 @@
 package info.loenwind.enderioaddons.machine.tcom;
 
-import info.loenwind.enderioaddons.baseclass.AbstractMachineContainerA;
 import info.loenwind.enderioaddons.gui.IHidableSlotsContainer;
 import info.loenwind.enderioaddons.gui.StdOutputSlot;
 import info.loenwind.enderioaddons.gui.StdSlot;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
+import crazypants.enderio.machine.gui.AbstractMachineContainer;
 
-public class ContainerTcom extends AbstractMachineContainerA<TileTcom> implements IHidableSlotsContainer {
+public class ContainerTcom extends AbstractMachineContainer<TileTcom> implements IHidableSlotsContainer {
 
   public ContainerTcom(InventoryPlayer playerInv, TileTcom te) {
     super(playerInv, te);
