@@ -93,14 +93,14 @@ sourceSets {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", mod_version
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include '**/*.info'
         include '**/*.properties'
 
-        expand 'version': project.version, 'mcversion': project.minecraft.version
+        expand 'version': mod_version, 'mcversion': project.minecraft.version
     }
 
     from(sourceSets.main.resources.srcDirs) {
