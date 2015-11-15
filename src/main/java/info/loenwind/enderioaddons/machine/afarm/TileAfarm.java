@@ -10,6 +10,7 @@ import static info.loenwind.enderioaddons.config.Config.farmBreaksWoodenRakesCha
 import static info.loenwind.enderioaddons.config.Config.farmBreaksWoodenRakesEnabled;
 import static info.loenwind.enderioaddons.config.Config.farmDelay1;
 import static info.loenwind.enderioaddons.config.Config.farmDelay2;
+import static info.loenwind.enderioaddons.config.Config.farmDelay3;
 import static info.loenwind.enderioaddons.config.Config.farmRFperTickPerArea;
 import static info.loenwind.enderioaddons.config.Config.farmRFperTickPerModule;
 import info.loenwind.autosave.annotations.Storable;
@@ -357,7 +358,7 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
     case ACTIVATED_CAPACITOR:
       return farmDelay2.getInt();
     case ENDER_CAPACITOR:
-      return farmDelay2.getInt();
+      return farmDelay3.getInt();
     }
     return Integer.MAX_VALUE;
   }

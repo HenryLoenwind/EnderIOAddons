@@ -18,7 +18,7 @@ public class AgriDetector {
           + "installed. AgriCarft Farming station is " + (hasAgri ? "" : "not ") + "available.");
     } catch (Throwable t) {
       hasAgriAPI = hasAgri = false;
-      Log.info("Crashed while trying to find out if AgriCraft is installed. AgriCarft Farming station is not available.");
+      Log.info("Crashed while trying to find out if AgriCraft is installed. AgriCraft Farming station is not available.");
     }
   }
 
