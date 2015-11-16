@@ -336,6 +336,7 @@ public class CacheRenderer {
   private static class CRS_start implements CachableRenderStatement {
     @Override
     public void execute(RenderingContext renderingContext) {
+      GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
       GL11.glShadeModel(GL11.GL_SMOOTH);
       GL11.glBegin(GL11.GL_QUADS);
     }
@@ -360,6 +361,7 @@ public class CacheRenderer {
       } else {
         GL11.glShadeModel(GL11.GL_FLAT);
       }
+      GL11.glPopAttrib();
     }
 
     @Override
