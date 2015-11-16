@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.magcharger;
 
 import static crazypants.enderio.EnderIO.proxy;
+import info.loenwind.enderioaddons.common.Profiler;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -25,6 +26,7 @@ public class TESRMagCharger extends TileEntitySpecialRenderer {
 
   @Override
   public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTick) {
+    long id = Profiler.client.start();
     if (te instanceof TileMagCharger && ((TileMagCharger) te).isActive()) {
       TileMagCharger mc = ((TileMagCharger) te);
       Render renderItem = RenderManager.instance.getEntityClassRenderObject(EntityItem.class);
@@ -55,6 +57,7 @@ public class TESRMagCharger extends TileEntitySpecialRenderer {
         item = item1;
       }
     }
+    Profiler.client.stop(id, "magcharger tesr");
   }
 
 

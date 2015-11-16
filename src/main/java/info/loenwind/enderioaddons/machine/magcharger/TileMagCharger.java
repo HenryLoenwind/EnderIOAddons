@@ -6,6 +6,7 @@ import static info.loenwind.enderioaddons.config.Config.magcMagnetizingTicksPerI
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.common.Profiler;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.flag.ItemFlag;
@@ -68,6 +69,7 @@ public class TileMagCharger extends AbstractTileFramework implements INetworkUpd
   protected boolean processTasks(boolean rsCheckPassed) {
     boolean needClientUpdate = false;
     if (rsCheckPassed) {
+      long id = Profiler.server.start();
       if (progress > 0 && usePower(magcMagnetizingPowerPerTick.getInt())) {
         progress -= getCapacitorBasedSpeed();
         if (progress < 0) {
@@ -95,6 +97,7 @@ public class TileMagCharger extends AbstractTileFramework implements INetworkUpd
         playSound_in();
         needClientUpdate = true;
       }
+      Profiler.server.stop(id, "magcharger tick");
     }
     itemsInQueue = inputSlotIsNotEmpty() ? inventory[slotDefinition.getMinInputSlot()].stackSize : 0;
     return needClientUpdate;

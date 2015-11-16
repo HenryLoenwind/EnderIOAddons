@@ -126,6 +126,8 @@ public enum Config {
   farmOFFLINEEnabled(Section.FARM_NOTIF, true, "Enable the notification OFFLINE"), //
 
   ghostItemsEnabled(Section.VISUALS, true, "Enable item ghosts in the GUI"), //
+  directDrawingEnabled(Section.VISUALS, true,
+      "Allow openGL drawing without tesselator. Disable this if certain machines don't render. Be prepared for texture mapping errors when this is off."), //
 
   farmBreaksWoodenRakesEnabled(Section.FARM, true, "If enabled, the farming station can break wooden hand rakes"), //
   farmBreaksIronRakesEnabled(Section.FARM, true, "If enabled, the farming station can break iron hand rakes"), //
@@ -165,6 +167,8 @@ public enum Config {
   farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
 
   farmEnabled(Section.RECIPES, true, "Enable the crafting recipe for the AgriCraft farming station (will only work if AgriCraft is installed)", true, true), //
+
+  profilingEnabled(Section.DEV, false, "When enabled, profiling information will be written into the logfile"), //
   ;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

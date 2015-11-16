@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
@@ -25,8 +26,10 @@ public class ItemRendererAfarm implements IItemRenderer {
   @Override
   public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
     GL11.glPushMatrix();
+    GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
     setup(type);
     render();
+    GL11.glPopAttrib();
     GL11.glPopMatrix();
   }
 
@@ -44,12 +47,15 @@ public class ItemRendererAfarm implements IItemRenderer {
   }
 
   private static void render() {
-    //    GL11.glEnable(GL11.GL_ALPHA_TEST);
-    GL11.glDisable(GL11.GL_LIGHTING);
+    GL11.glEnable(GL11.GL_ALPHA_TEST);
+    RenderHelper.enableStandardItemLighting();
+    GL11.glShadeModel(GL11.GL_SMOOTH);
+    GL11.glEnable(GL11.GL_BLEND);
+    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     RenderUtil.bindBlockTexture();
     RendererAfarm.renderBlock(true);
-    GL11.glEnable(GL11.GL_LIGHTING);
-    //    GL11.glDisable(GL11.GL_ALPHA_TEST);
+    RenderHelper.disableStandardItemLighting();
+    GL11.glDisable(GL11.GL_ALPHA_TEST);
     }
 
   }

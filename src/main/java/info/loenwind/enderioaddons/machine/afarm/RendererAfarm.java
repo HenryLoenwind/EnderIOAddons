@@ -3,12 +3,20 @@ package info.loenwind.enderioaddons.machine.afarm;
 import static info.loenwind.enderioaddons.machine.afarm.BlockAfarm.farmlight;
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 import static net.minecraftforge.common.util.ForgeDirection.UP;
+import info.loenwind.enderioaddons.common.Profiler;
+import info.loenwind.enderioaddons.render.CachableRenderStatement;
+import info.loenwind.enderioaddons.render.CacheRenderer;
 import info.loenwind.enderioaddons.render.FaceRenderer;
 import info.loenwind.enderioaddons.render.OverlayRenderer;
+import info.loenwind.enderioaddons.render.RenderingContext;
+
+import java.util.List;
+
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -16,6 +24,7 @@ import net.minecraft.world.IBlockAccess;
 import com.enderio.core.api.client.render.VertexTransform;
 import com.enderio.core.client.render.BoundingBox;
 import com.enderio.core.client.render.RenderUtil;
+import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.vecmath.Vector3d;
 import com.enderio.core.common.vecmath.Vector3f;
 import com.enderio.core.common.vecmath.Vertex;
@@ -42,12 +51,53 @@ public class RendererAfarm implements ISimpleBlockRenderingHandler {
   private static final BoundingBox bb_cross2 = BoundingBox.UNIT_CUBE.scale(1, scale_cross, width_cross).translate(0, -trans_cross, 0);
   private static final BoundingBox bb_light2 = BoundingBox.UNIT_CUBE.scale(1, scale_light, width_cross).translate(0, -trans_light + bb_cross1.maxY, 0);
 
+  private static List<CachableRenderStatement> csr_online, csr_offline;
+  private static boolean reloadHandlerRegistered = false;
+
+  public RendererAfarm() {
+    if (!reloadHandlerRegistered) {
+      RenderUtil.registerReloadListener(new textReload());
+      reloadHandlerRegistered = true;
+    }
+  }
+
+  private static void setup() {
+    if (csr_online == null || csr_offline == null) {
+      long id = Profiler.client.start_always();
+      IIcon[] icons = RenderUtil.getBlockTextures(BlockAfarm.blockAfarm, 0);
+
+      CacheRenderer r = new CacheRenderer().setLighting(true).setBrightnessPerSide(FaceRenderer.stdBrightness);
+
+      r.setBB(bb_body).setXform(xform_main).setBrightness(1f, 0.7f).addSkirt(icons, false);
+      r.setBrightness(1f, 1f).addSide(UP, icons, false).addSide(DOWN, icons, false);
+      r.setBB(bb_hat).setXform(xform_main).addSkirt(icons, false);
+      r.setBB(bb_hati).setXform(xform_main).setBrightness(0f, 1f).addSkirt(icons, true);
+      r.setBB(bb_cross1).setXform(xform_cross1).setBrightness(1f, 0.8f).addSkirt(icons, false);
+      r.setBB(bb_cross2).setXform(xform_cross2).setBrightness(1f, 0.8f).addSkirt(icons, false);
+
+      CacheRenderer r2 = r.copy();
+
+      r2.setBB(bb_cross1).setXform(xform_cross1).setBrightness(0.8f, 0.8f).addSide(UP, icons, false);
+      r2.setBB(bb_cross2).setXform(xform_cross2).setBrightness(0.8f, 0.8f).addSide(UP, icons, false);
+
+      r.setLighting((15 << 20) | (15 << 4), 240, 240).setBrightnessPerSide(null).setBrightness(1f, 1f);
+      r.setBB(bb_light1).setXform(xform_cross1).addSkirt(farmlight, false);
+      r.setBB(bb_light2).setXform(xform_cross2).addSkirt(farmlight, false);
+
+      csr_online = r.finishDrawing();
+      csr_offline = r2.finishDrawing();
+      Profiler.client.stop(id, "farm setup");
+    }
+  }
+
   @Override
   public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
   }
 
   @Override
   public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    setup();
+
     boolean active = false;
     TileAfarm te = null;
     if (world != null) {
@@ -59,14 +109,15 @@ public class RendererAfarm implements ISimpleBlockRenderingHandler {
     }
 
     Tessellator.instance.addTranslation(x, y, z);
-    FaceRenderer.setLightingReference(world, BlockAfarm.blockAfarm, x, y, z);
     if (renderer.overrideBlockTexture != null) {
+      FaceRenderer.setLightingReference(world, BlockAfarm.blockAfarm, x, y, z);
       FaceRenderer.renderCube(bb_body, renderer.overrideBlockTexture, xform_main, null, false);
       FaceRenderer.renderCube(bb_cross1, renderer.overrideBlockTexture, xform_cross1, null, false);
       FaceRenderer.renderCube(bb_cross2, renderer.overrideBlockTexture, xform_cross2, null, false);
+      FaceRenderer.clearLightingReference();
     } else {
       OverlayRenderer.renderOverlays(world, x, y, z, null, null, BlockAfarm.blockAfarm, te);
-      renderBlock(active);
+      new RenderingContext(world, new BlockCoord(x, y, z)).execute(active ? csr_online : csr_offline, "farm world");
     }
     Tessellator.instance.addTranslation(-x, -y, -z);
 
@@ -74,33 +125,9 @@ public class RendererAfarm implements ISimpleBlockRenderingHandler {
   }
 
   public static void renderBlock(boolean active) {
-    IIcon[] icons = RenderUtil.getBlockTextures(BlockAfarm.blockAfarm, 0);
-
-    FaceRenderer.startSkewedDrawing();
-
-    FaceRenderer.renderSkirt_skewed(bb_body, icons, xform_main, FaceRenderer.stdBrightness, 1f, 0.7f, false);
-    FaceRenderer.renderSingleFace_skewed(UP, icons, xform_main, FaceRenderer.stdBrightness, 1f, 1f, false);
-    FaceRenderer.renderSingleFace_skewed(DOWN, icons, xform_main, FaceRenderer.stdBrightness, 1f, 1f, false);
-    FaceRenderer.renderSkirt_skewed(bb_hat, icons, xform_main, FaceRenderer.stdBrightness, false);
-    FaceRenderer.renderSkirt_skewed(bb_hati, icons, xform_main, FaceRenderer.stdBrightnessInside, 0f, 1f, true);
-    FaceRenderer.renderSkirt_skewed(bb_cross1, icons, xform_cross1, FaceRenderer.stdBrightness, 1f, 0.8f, false);
-    if (!active) {
-      FaceRenderer.renderSingleFace_skewed(UP, icons, xform_cross1, FaceRenderer.stdBrightness, 0.8f, 0.8f, false);
-    }
-    FaceRenderer.renderSkirt_skewed(bb_cross2, icons, xform_cross2, FaceRenderer.stdBrightness, 1f, 0.8f, false);
-    if (!active) {
-      FaceRenderer.renderSingleFace_skewed(UP, icons, xform_cross2, FaceRenderer.stdBrightness, 0.8f, 0.8f, false);
-    }
-
-    FaceRenderer.clearLightingReference();
-
-    if (active) {
-      OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-      FaceRenderer.renderSkirt_skewed(bb_light1, farmlight, xform_cross1, null, false);
-      FaceRenderer.renderSkirt_skewed(bb_light2, farmlight, xform_cross2, null, false);
-    }
-
-    FaceRenderer.finishSkewedDrawing();
+    setup();
+    new RenderingContext().execute(active ? csr_online : csr_offline, "farm item");
+    return;
   }
 
   @Override
@@ -156,6 +183,15 @@ public class RendererAfarm implements ISimpleBlockRenderingHandler {
 
     @Override
     public void applyToNormal(Vector3f vec) {
+    }
+
+  }
+
+  private class textReload implements IResourceManagerReloadListener {
+
+    @Override
+    public void onResourceManagerReload(IResourceManager p_110549_1_) {
+      csr_online = csr_offline = null;
     }
 
   }

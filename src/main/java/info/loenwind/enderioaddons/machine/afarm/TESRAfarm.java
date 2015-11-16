@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.common.Profiler;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
@@ -13,6 +14,7 @@ public class TESRAfarm extends TileEntitySpecialRenderer {
 
   @Override
   public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float partialTickTime) {
+    long id = Profiler.client.start();
     if (tile instanceof TileAfarm) {
       TileAfarm te = (TileAfarm) tile;
       if (!te.notifications.isEmpty()) {
@@ -28,6 +30,7 @@ public class TESRAfarm extends TileEntitySpecialRenderer {
         GL11.glEnable(GL11.GL_LIGHTING);
       }
     }
+    Profiler.client.stop(id, "farm tesr");
   }
 
 }

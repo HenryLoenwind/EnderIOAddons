@@ -17,6 +17,7 @@ import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.common.Log;
+import info.loenwind.enderioaddons.common.Profiler;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.afarm.SlotDefinitionAfarm.SLOT;
 import info.loenwind.enderioaddons.machine.afarm.module.CropModule;
@@ -409,7 +410,10 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
   @Override
   protected boolean checkProgress(boolean redstoneChecksPassed) {
     if (canTick()) {
-      return doTick();
+      long id = Profiler.server.start();
+      boolean ret = doTick();
+      Profiler.server.stop(id, "farm tick");
+      return ret;
     }
     return notifications.isChanged();
   }
@@ -427,6 +431,9 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
 
   protected boolean doTick() {
     if (agricraft != null && getFarmerJoe() != null && shouldDoWorkThisTick(getDelay())) {
+      if (shouldDoWorkThisTick(20 * 180)) {
+        notifications.clear();
+      }
       if (itr == null) {
         itr = new RadiusIterator(getLocation(), getFarmSize());
       }
@@ -448,9 +455,6 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
       if (!tile.doneSomething) {
         currentTile = itr.next();
       }
-    }
-    if (shouldDoWorkThisTick(20 * 180)) {
-      notifications.clear();
     }
     return notifications.isChanged();
   }

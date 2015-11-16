@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.magcharger;
 
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import info.loenwind.enderioaddons.common.Profiler;
 import info.loenwind.enderioaddons.render.FaceRenderer;
 import info.loenwind.enderioaddons.render.OverlayRenderer;
 import net.minecraft.block.Block;
@@ -40,6 +41,7 @@ public class RendererMagCharger implements ISimpleBlockRenderingHandler {
     if (OverlayRenderer.renderOverlays(world, x, y, z, null, renderer.overrideBlockTexture, BlockMagCharger.blockMagCharger, TileMagCharger.class, true)) {
       return true;
     }
+    long id = Profiler.client.start();
 
     xform.setRotation(SOUTH);
 
@@ -55,15 +57,18 @@ public class RendererMagCharger implements ISimpleBlockRenderingHandler {
 
     FaceRenderer.clearLightingReference();
 
+    Profiler.client.stop(id, "magcharger world");
     return true;
   }
 
   static public void renderBlock(Block block, int meta) {
+    long id = Profiler.client.start();
     xform.setRotation(SOUTH);
 
     IIcon[] icons = getBlockTextures(block, meta, 4);
 
     renderBlock(icons);
+    Profiler.client.stop(id, "magcharger item");
   }
 
   private static void renderBlock(IIcon[] icons) {
