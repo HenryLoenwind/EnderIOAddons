@@ -24,6 +24,7 @@ import info.loenwind.enderioaddons.machine.part.MachinePart;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -123,15 +124,21 @@ public class Recipes implements InitAware {
   public void init(FMLInitializationEvent event) {
     ItemStack zombieBit;
     ItemStack crystal;
-    String agriNugget;
+    Object agriNugget;
     if (crazypants.enderio.config.Config.useHardRecipes) {
       zombieBit = frankenZombie;
       crystal = enderCrystal;
       agriNugget = "cropFerranium";
+      if (!OreDictionary.doesOreNameExist((String) agriNugget)) {
+        agriNugget = darkSteel;
+      }
     } else {
       zombieBit = zombieController;
       crystal = pulsatingCrystal;
       agriNugget = "nuggetIron";
+      if (!OreDictionary.doesOreNameExist((String) agriNugget)) {
+        agriNugget = "ingotIron";
+      }
     }
 
     // Drain
