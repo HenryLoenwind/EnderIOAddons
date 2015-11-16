@@ -121,9 +121,13 @@ public class RenderingContext {
         statement.execute(this);
       }
       Profiler.client.stop(id, profilerContext + " (direct)");
-      if (hasGLerrors()) {
-        System.out.println(lastError + " " + GLU.gluErrorString(lastError));
-        glErrorCount++;
+      if (hasGLerrors() && glErrorCount++ > 1000) {
+        glErrorCount = -1;
+        Log.warn("Disabled direct drawing after too many OpenGL errors. If you got rendering errors, you can"
+            + " disabled direct drawing completely in the mod options. Last error was: " + lastError + " (" + GLU.gluErrorString(lastError) + ")");
+        Minecraft.getMinecraft().thePlayer
+            .addChatComponentMessage(new ChatComponentText(
+                "Disabled direct drawing after too many OpenGL errors. If you got rendering errors, you can disabled direct drawing completely in the mod options for Ender IO Addons."));
       }
       if (tessIsDrawing) {
         Tessellator.instance.startDrawingQuads();
@@ -131,17 +135,6 @@ public class RenderingContext {
         Tessellator.instance.addVertex(0, 0, 0);
         Tessellator.instance.addVertex(0, 0, 0);
         Tessellator.instance.addVertex(0, 0, 0);
-      }
-      if (glErrorCount > 0) {
-        glErrorCount++;
-        if (glErrorCount > 1000) {
-          glErrorCount = -1;
-          Log.warn("Disabled direct drawing after too many OpenGL errors. If you got rendering errors, you can"
-              + " disabled direct drawing completely in the mod options. Last error was: " + lastError + " (" + GLU.gluErrorString(lastError) + ")");
-          Minecraft.getMinecraft().thePlayer
-              .addChatComponentMessage(new ChatComponentText(
-                  "Disabled direct drawing after too many OpenGL errors. If you got rendering errors, you can disabled direct drawing completely in the mod options for Ender IO Addons."));
-        }
       }
     } else {
       execute_tesselated(csr, profilerContext);
