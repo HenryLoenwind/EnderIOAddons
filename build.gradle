@@ -53,6 +53,7 @@ repositories {
     maven { url = "http://dl.tsr.me/artifactory/libs-release-local" }
     maven { url = "http://maven.tterrag.com" }
     maven { url = "http://maven.ic2.player.to" }
+    maven { url = "http://maven.cil.li/" }
     mavenLocal()
 }
 
