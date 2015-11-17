@@ -35,6 +35,7 @@ public enum MachinePart {
   RAKE_BR1("handRakeWoodBroken", false, false, false, null, false, false), //
   RAKE_BR2("handRakeIronBroken", false, false, false, null, false, false), //
   IRAKE("iRake", false, false, false, null, false, false), //
+  SEED("seed", false, false, false, null, false, false), //
   ;
 
   @Nonnull
@@ -75,6 +76,7 @@ public enum MachinePart {
   }
 
   public static boolean isAgri(int id) {
-    return id == FCM_BASE.ordinal() || id == FCM_IQ.ordinal() || id == RAKE_BR1.ordinal() || id == RAKE_BR2.ordinal() || id == IRAKE.ordinal();
+    return id == FCM_BASE.ordinal() || id == FCM_IQ.ordinal() || id == RAKE_BR1.ordinal() || id == RAKE_BR2.ordinal() || id == IRAKE.ordinal()
+        || id == SEED.ordinal();
   }
 }
