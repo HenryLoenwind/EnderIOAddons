@@ -1,6 +1,13 @@
 package info.loenwind.enderioaddons.plant;
 
+import info.loenwind.enderioaddons.common.Log;
+import info.loenwind.enderioaddons.recipe.Recipes;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -10,45 +17,42 @@ import com.InfinityRaider.AgriCraft.api.v1.BlockWithMeta;
 import com.InfinityRaider.AgriCraft.api.v1.IGrowthRequirement;
 import com.InfinityRaider.AgriCraft.api.v1.RequirementType;
 
-import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 import crazypants.enderio.power.IPowerStorage;
 
 public class EioaGrowthRequirement implements IGrowthRequirement {
 
-  @ItemStackHolder(value = "minecraft:bedrock")
-  public static final ItemStack bedrockStack = null;
-  @ItemStackHolder(value = "EnderIO:blockDarkIronBars", meta = 0)
-  public static final ItemStack darkBarStack = null;
-  @ItemStackHolder(value = "EnderIO:blockCapBank")
-  public static final ItemStack capBankStack = null;
   private BlockWithMeta capBank, bedrock, darkBar;
   private final int[] brightness = { 0, 0 };
 
   public EioaGrowthRequirement() {
-    capBank = new BlockWithMeta(Block.getBlockFromItem(capBankStack.getItem()), OreDictionary.WILDCARD_VALUE, true);
-    bedrock = new BlockWithMeta(Block.getBlockFromItem(bedrockStack.getItem()), OreDictionary.WILDCARD_VALUE, true);
-    darkBar = new BlockWithMeta(Block.getBlockFromItem(darkBarStack.getItem()), OreDictionary.WILDCARD_VALUE, true);
+    System.out.println(Recipes.capBankCreative + "/" + Blocks.bedrock + "/" + Recipes.darkSteelBars);
+    capBank = new BlockWithMeta(Block.getBlockFromItem(Recipes.capBankCreative.getItem()), OreDictionary.WILDCARD_VALUE, true);
+    bedrock = new BlockWithMeta(Blocks.bedrock, OreDictionary.WILDCARD_VALUE, true);
+    darkBar = new BlockWithMeta(Block.getBlockFromItem(Recipes.darkSteelBars.getItem()), OreDictionary.WILDCARD_VALUE, true);
+    try {
+      Class<?> growthRequirementHandler = Class.forName("com.InfinityRaider.AgriCraft.farming.GrowthRequirementHandler");
+      if (growthRequirementHandler != null) {
+        Method addSoil = growthRequirementHandler.getMethod("addSoil", BlockWithMeta.class);
+        if (addSoil != null) {
+          addSoil.invoke(null, capBank);
+        }
+      }
+    } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+      Log.warn("Failed to register soil with AgriCraft. Error:");
+      e.printStackTrace();
+    }
   }
 
   @Override
-  public boolean canGrow(World world, int x, int y, int z) {
-    return isValidSoil(world, x, y, z) && isBaseBlockPresent(world, x, y, z) && areBarsPresent(world, x, y, z) && isPowerPresent(world, x, y, z);
-  }
-
-  public static boolean isPowerPresent(World world, int x, int y, int z) {
-    TileEntity tileEntity = world.getTileEntity(x, y, z);
-    if (tileEntity instanceof IPowerStorage) {
-      IPowerStorage te = (IPowerStorage) tileEntity;
-      return te.getEnergyStoredL() > 100000L; // TODO cfg
-    }
-    return false;
+  public boolean canGrow(World world, int x, int y, int z) { // TODO: light level
+    return isValidSoil(world, x, y - 1, z) && isBaseBlockPresent(world, x, y, z) && areBarsPresent(world, x, y, z);
   }
 
   public static boolean usePower(World world, int x, int y, int z) {
-    TileEntity tileEntity = world.getTileEntity(x, y, z);
+    TileEntity tileEntity = world.getTileEntity(x, y - 1, z);
     if (tileEntity instanceof IPowerStorage) {
       IPowerStorage te = (IPowerStorage) tileEntity;
-      if (te.getEnergyStoredL() > 100000L) { // TODO cfg
+      if (te.getEnergyStoredL() >= 100000L) { // TODO cfg
         te.addEnergy(-100000); // TODO cfg
         return true;
       }
@@ -57,32 +61,32 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
   }
 
   public boolean areBarsPresent(World world, int x, int y, int z) {
+    int count = 0;
     for (int x1 = x - 1; x1 <= x + 1; x1++) {
       for (int z1 = z - 1; z1 <= z + 1; z1++) {
-        if (x1 != 0 || z1 != 0) {
+        if (x1 != x || z1 != z) {
           Block block = world.getBlock(x1, y, z1);
-          if (block != darkBar.getBlock()) {
-            return false;
-          }
-          if (!darkBar.ignoreMeta() && world.getBlockMetadata(x1, y, z1) != darkBar.getMeta()) {
-            return false;
+          if (block == darkBar.getBlock() && (darkBar.ignoreMeta() || world.getBlockMetadata(x1, y, z1) == darkBar.getMeta())) {
+            if (++count >= 6) {
+              return true;
+            }
           }
         }
       }
     }
-    return true;
+    return false;
   }
 
   @Override
   public boolean isBaseBlockPresent(World world, int x, int y, int z) {
-    Block block = world.getBlock(x, y - 1, z);
+    Block block = world.getBlock(x, y - 2, z);
     if (block != bedrock.getBlock()) {
       return false;
     }
     if (bedrock.ignoreMeta()) {
       return true;
     }
-    return world.getBlockMetadata(x, y - 1, z) == bedrock.getMeta();
+    return world.getBlockMetadata(x, y - 2, z) == bedrock.getMeta();
   }
 
   @Override
@@ -104,7 +108,7 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public ItemStack requiredBlockAsItemStack() {
-    return bedrockStack;
+    return bedrock.toStack();
   }
 
   @Override

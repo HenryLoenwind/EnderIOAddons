@@ -56,6 +56,9 @@ public class ClientAndServerProxy implements InitAware {
   public void init(FMLInitializationEvent event) {
     InfiniteWaterSourceStopper.register();
     PacketHandler.INSTANCE.registerMessage(PacketAdvancedRedstoneMode.class, PacketAdvancedRedstoneMode.class, PacketHandler.nextID(), Side.SERVER);
+    if (AgriDetector.hasAgri) {
+      AgriDetector.registerPlants();
+    }
   }
 
   @Override

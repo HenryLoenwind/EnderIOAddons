@@ -73,6 +73,9 @@ public class Recipes implements InitAware {
   @ItemStackHolder(value = "EnderIO:itemMaterial", meta = 8)
   public static final ItemStack enderCrystal = null;
 
+  @ItemStackHolder(value = "EnderIO:blockCapBank", meta = 0)
+  public static final ItemStack capBankCreative = null;
+
   @ItemStackHolder(value = "EnderIO:blockFusedQuartz", meta = 1)
   public static final ItemStack clearGlass = null;
 

@@ -40,6 +40,7 @@ import info.loenwind.enderioaddons.machine.niard.RadiusIterator;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.network.INetworkUpdatable;
+import info.loenwind.enderioaddons.plant.EioaCropPlant;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,6 +129,12 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
       rakes = agricraft.getRakeItems();
       AgriDetector.hasAgri = true;
     }
+  }
+
+  public static void registerPlants() {
+    final EioaCropPlant plant = new EioaCropPlant();
+    agricraft.registerCropPlant(plant);
+    agricraft.registerGrowthRequirement(plant.getSeedIWM(), plant.getGrowthRequirement());
   }
 
   @Override
