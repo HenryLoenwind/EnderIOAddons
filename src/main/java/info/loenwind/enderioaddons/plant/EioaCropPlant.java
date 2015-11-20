@@ -4,6 +4,9 @@ import static info.loenwind.enderioaddons.config.Config.seedsAutomaticHarvesting
 import static info.loenwind.enderioaddons.config.Config.seedsBonemealEnabled;
 import static info.loenwind.enderioaddons.config.Config.seedsTierEasy;
 import static info.loenwind.enderioaddons.config.Config.seedsTierHard;
+import static info.loenwind.enderioaddons.recipe.Recipes.capacitor1;
+import static info.loenwind.enderioaddons.recipe.Recipes.capacitor2;
+import static info.loenwind.enderioaddons.recipe.Recipes.capacitor8;
 import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
@@ -28,18 +31,10 @@ import com.InfinityRaider.AgriCraft.api.v1.ItemWithMeta;
 import com.enderio.core.common.util.BlockCoord;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
-import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 import crazypants.enderio.machine.farm.PacketFarmAction;
 import crazypants.enderio.network.PacketHandler;
 
 public class EioaCropPlant implements ICropPlant {
-
-  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 0)
-  public static final ItemStack capacitor1 = null;
-  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 1)
-  public static final ItemStack capacitor2 = null;
-  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 2)
-  public static final ItemStack capacitor8 = null;
 
   private final List<WeightedItemStack> fruits = new ArrayList<>();
   private final ArrayList<ItemStack> allfruits = new ArrayList<>();

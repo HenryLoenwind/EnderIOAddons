@@ -13,6 +13,8 @@ import static info.loenwind.enderioaddons.config.Config.farmDelay2;
 import static info.loenwind.enderioaddons.config.Config.farmDelay3;
 import static info.loenwind.enderioaddons.config.Config.farmRFperTickPerArea;
 import static info.loenwind.enderioaddons.config.Config.farmRFperTickPerModule;
+import static info.loenwind.enderioaddons.recipe.Recipes.handRake_iron;
+import static info.loenwind.enderioaddons.recipe.Recipes.handRake_wood;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
@@ -71,7 +73,6 @@ import com.InfinityRaider.AgriCraft.api.v1.IMutation;
 import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.ItemUtil;
 
-import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
 import crazypants.enderio.machine.ContinuousTask;
 import crazypants.enderio.machine.IMachineRecipe;
 import crazypants.enderio.machine.IPoweredTask;
@@ -82,11 +83,6 @@ import crazypants.enderio.power.BasicCapacitor;
 
 @Storable
 public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
-
-  @ItemStackHolder(value = "AgriCraft:handRake", meta = 0)
-  public static final ItemStack handRake_wood = null;
-  @ItemStackHolder(value = "AgriCraft:handRake", meta = 1)
-  public static final ItemStack handRake_iron = null;
 
   public static final int NUM_CONTROL_SLOTS = 6;
   public static final int NUM_CONTROL_STORAGE_SLOTS = 12;
