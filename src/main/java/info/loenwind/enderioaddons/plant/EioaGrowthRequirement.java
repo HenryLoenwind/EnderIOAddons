@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -123,9 +124,8 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
   }
 
   public boolean isBrightnessOk(World world, int x, int y, int z) {
-    int mixedBrightness = world.getBlock(x, y, z).getMixedBrightnessForBlock(world, x, y, z);
-    int skyLight = mixedBrightness >>> 20;
-    int blockLight = (mixedBrightness & 0x0000FFFF) >> 4;
+    int skyLight = world.getSavedLightValue(EnumSkyBlock.Sky, x, y, z);
+    int blockLight = world.getSavedLightValue(EnumSkyBlock.Block, x, y, z);
     return skyLight >= brightness[2] && skyLight <= brightness[3] && blockLight >= brightness[0] && blockLight <= brightness[1];
   }
 
