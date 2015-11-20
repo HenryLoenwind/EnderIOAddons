@@ -170,7 +170,7 @@ public enum Config {
       "If enabled there will be recipes for the farm that don't require you to gro capacitor plants. I call it cheat mode"), //
   seedsAutomaticHarvestingEnabled(Section.FARM, false, "If enabled Capacitor Plants can be harvested with machines. I call it couch potato mode"), //
   seedsBonemealEnabled(Section.FARM, false, "If enabled Capacitor Plants can be fertilized with bonemeal."), //
-  farmAggressiveTillingDefault(Section.FARM, true, "The initial value of 'till gressively' for newly placed farms"), //
+  farmAggressiveTillingDefault(Section.FARM, true, "The initial value of 'till agressively' for newly placed farms"), //
 
   farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
 
