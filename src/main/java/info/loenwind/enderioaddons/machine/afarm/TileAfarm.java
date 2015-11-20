@@ -40,6 +40,7 @@ import info.loenwind.enderioaddons.machine.niard.RadiusIterator;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.network.INetworkUpdatable;
+import info.loenwind.enderioaddons.plant.EioaCropPlant;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +49,10 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -125,6 +129,12 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
       rakes = agricraft.getRakeItems();
       AgriDetector.hasAgri = true;
     }
+  }
+
+  public static void registerPlants() {
+    final EioaCropPlant plant = new EioaCropPlant();
+    agricraft.registerCropPlant(plant);
+    agricraft.registerGrowthRequirement(plant.getSeedIWM(), plant.getGrowthRequirement());
   }
 
   @Override
@@ -398,6 +408,20 @@ public class TileAfarm extends TileEnderIOAddons implements INetworkUpdatable {
 
   @Override
   protected boolean processTasks(boolean redstoneChecksPassed) {
+
+    if (shouldDoWorkThisTick(200)) {
+      List entitiesWithinAABB = worldObj.getEntitiesWithinAABB(EntityAnimal.class, getRenderBoundingBox().expand(8, 2, 8));
+      for (EntityCreature entity : (List<EntityCreature>) entitiesWithinAABB) {
+        if (!(entity instanceof EntityTameable)) {
+          if (redstoneChecksPassed) {
+            entity.setHomeArea(xCoord, yCoord, zCoord, 7);
+          } else {
+            entity.detachHome();
+          }
+        }
+      }
+    }
+
     if (redstoneChecksPassed) {
       return super.processTasks(redstoneChecksPassed);
     }

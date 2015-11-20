@@ -162,6 +162,14 @@ public enum Config {
   farmDelay2(Section.FARM, 10, "number of ticks it takes a farm with first capacitor upgrade to work one tile of land"), //
   farmDelay3(Section.FARM, 3, "number of ticks it takes a farm with second capacitor upgrade to work one tile of land"), //
 
+  seedsRFperGrowthTick(Section.FARM, 100000, "RF it takes the Capacitor Plant to try to grow"), //
+  seedsTierEasy(Section.FARM, 3, "tier of the Capacitor seeds when 'easy recipes' are selected"), //
+  seedsTierHard(Section.FARM, 5, "tier of the Capacitor seeds when 'hard recipes' are selected"), //
+
+  farmSeedlessRecipesEnabled(Section.FARM, false,
+      "If enabled there will be recipes for the farm that don't require you to gro capacitor plants. I call it cheat mode"), //
+  seedsAutomaticHarvestingEnabled(Section.FARM, false, "If enabled Capacitor Plants can be harvested with machines. I call it couch potato mode"), //
+  seedsBonemealEnabled(Section.FARM, false, "If enabled Capacitor Plants can be fertilized with bonemeal."), //
   farmAggressiveTillingDefault(Section.FARM, true, "The initial value of 'till gressively' for newly placed farms"), //
 
   farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //

@@ -86,12 +86,21 @@ public class BlockAfarm extends AbstractMachineBlock<TileAfarm> {
   }
 
   public static IIcon farmlight;
+  public static final IIcon[] darkPlantIcons = new IIcon[8];
 
   @Override
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister iIconRegister) {
     super.registerBlockIcons(iIconRegister);
     farmlight = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":farmlight");
+    darkPlantIcons[0] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant0");
+    darkPlantIcons[1] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant0");
+    darkPlantIcons[2] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant0");
+    darkPlantIcons[3] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant1");
+    darkPlantIcons[4] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant2");
+    darkPlantIcons[5] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant3");
+    darkPlantIcons[6] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant4");
+    darkPlantIcons[7] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":darkplant5");
   }
 
   @Override

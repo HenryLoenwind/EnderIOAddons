@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.recipe;
 
 import static crazypants.util.RecipeUtil.addShaped;
 import static crazypants.util.RecipeUtil.addShapeless;
+import static info.loenwind.enderioaddons.config.Config.farmSeedlessRecipesEnabled;
 import static info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks.blockCobbleworks;
 import static info.loenwind.enderioaddons.machine.drain.BlockDrain.blockDrain;
 import static info.loenwind.enderioaddons.machine.ihopper.BlockIHopper.blockIHopper;
@@ -73,6 +74,9 @@ public class Recipes implements InitAware {
   @ItemStackHolder(value = "EnderIO:itemMaterial", meta = 8)
   public static final ItemStack enderCrystal = null;
 
+  @ItemStackHolder(value = "EnderIO:blockCapBank", meta = 0)
+  public static final ItemStack capBankCreative = null;
+
   @ItemStackHolder(value = "EnderIO:blockFusedQuartz", meta = 1)
   public static final ItemStack clearGlass = null;
 
@@ -80,6 +84,16 @@ public class Recipes implements InitAware {
   public static final ItemStack zombieController = null;
   @ItemStackHolder(value = "EnderIO:itemFrankenSkull", meta = 2)
   public static final ItemStack frankenZombie = null;
+
+  @ItemStackHolder(value = "EnderIO:blockEndermanSkull", meta = 0)
+  public static final ItemStack endermanSkull = null;
+
+  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 0)
+  public static final ItemStack capacitor1 = null;
+  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 1)
+  public static final ItemStack capacitor2 = null;
+  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 2)
+  public static final ItemStack capacitor8 = null;
 
   @ItemStackHolder(value = "EnderIO:blockPowerMonitor", meta = 0)
   public static final ItemStack blockPowerMonitor = null;
@@ -307,17 +321,41 @@ public class Recipes implements InitAware {
       
       // Agri Farm
       if (farmEnabled) {
-        ItemStack moduleBase =  new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_BASE.ordinal());
-        addShaped(moduleBase, " np", "ncn", "pn ", 'n', agriNugget, 'p', chassiParts, 'c', crops);
-        ItemStack moduleIQ =  new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_IQ.ordinal());
-        addShaped(moduleIQ, "bbb", "bzb", "bbb", 'b', moduleBase, 'z', zombieBit);
+        ItemStack scs = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal());
+        ItemStack mcs = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MCS.ordinal());
+        ItemStack lcs = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.LCS.ordinal());
+        ItemStack clhp = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.CLHP.ordinal());
+        ItemStack clhp8 = new ItemStack(ItemMachinePart.itemMachinePart, 8, MachinePart.CLHP.ordinal());
+        ItemStack seed = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SEED.ordinal());
+        ItemStack moduleBase = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_BASE.ordinal());
+        ItemStack moduleIQ = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_IQ.ordinal());
         ItemStack farm = new ItemStack(BlockAfarm.blockAfarm);
-        addShaped(farm, "ehe", "eCe", "cMc", 'e', electricSteel, 'h', Items.diamond_hoe, 'C', machineChassi, 'M', moduleIQ, 'c', crystal);
         ItemStack induRake = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IRAKE.ordinal());
-        addShaped(induRake, "bb", " d", " d", 'b', darkSteelBars, 'd', darkSteel);
-        addShaped(induRake, "bb", "d ", "d ", 'b', darkSteelBars, 'd', darkSteel);
         ItemStack brokenRakeWood = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal());
         ItemStack brokenRakeIron = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal());
+
+        addShaped(capacitor1, " s ", "sms", "srs", 's', scs, 'm', mcs, 'r', Items.redstone);
+        addShaped(capacitor2, " s ", "sls", "srs", 's', scs, 'l', lcs, 'r', Items.redstone);
+        addShaped(capacitor8, " s ", "mlm", "srs", 's', scs, 'm', mcs, 'l', lcs, 'r', Items.redstone);
+
+        if (crazypants.enderio.config.Config.useHardRecipes) {
+          addShaped(clhp, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
+          addShaped(seed, "eee", "bcb", "shs", 'e', "listAllseed", 'b', "dyeWhite", 'c', capacitor8, 's', Blocks.soul_sand, 'h', endermanSkull);
+        } else {
+          addShaped(clhp8, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
+          addShaped(mcs, "sss", "sss", "sss", 's', scs);
+          addShaped(seed, "eee", "bcb", "shs", 'e', "listAllseed", 'b', "dyeWhite", 'c', capacitor1, 's', Blocks.soul_sand, 'h', Blocks.dirt);
+        }
+
+        if (farmSeedlessRecipesEnabled.getBoolean()) {
+          addShaped(moduleBase, " np", "ncn", "pn ", 'n', agriNugget, 'p', chassiParts, 'c', crops);
+        }
+
+        addShaped(moduleBase, " np", "ncn", "pn ", 'n', clhp, 'p', chassiParts, 'c', crops);
+        addShaped(moduleIQ, "bbb", "bzb", "bbb", 'b', moduleBase, 'z', zombieBit);
+        addShaped(farm, "ehe", "eCe", "cMc", 'e', electricSteel, 'h', Items.diamond_hoe, 'C', machineChassi, 'M', moduleIQ, 'c', crystal);
+        addShaped(induRake, "bb", " d", " d", 'b', darkSteelBars, 'd', darkSteel);
+        addShaped(induRake, "bb", "d ", "d ", 'b', darkSteelBars, 'd', darkSteel);
         addShapeless(handRake_wood, brokenRakeWood, "stickWood", brokenRakeWood);
         addShapeless(handRake_wood, brokenRakeWood, "woodStick", brokenRakeWood);
         addShapeless(handRake_iron, brokenRakeIron, "nuggetIron", brokenRakeIron);

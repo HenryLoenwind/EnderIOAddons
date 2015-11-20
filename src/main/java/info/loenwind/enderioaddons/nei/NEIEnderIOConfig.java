@@ -89,16 +89,19 @@ public class NEIEnderIOConfig implements IConfigureNEI {
       API.hideItem(new ItemStack(BlockChassis.blockChassis, 1, OreDictionary.WILDCARD_VALUE));
     }
     if (!farmEnabled) {
-      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_BASE.ordinal()));
-      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FCM_IQ.ordinal()));
-      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.IRAKE.ordinal()));
-      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal()));
-      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal()));
+      for (MachinePart part : MachinePart.values()) {
+        if (part.isAgri(part.ordinal())) {
+          API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, part.ordinal()));
+        }
+      }
     }
     if (!Config.farmEnabled.getBoolean() && AgriDetector.hasAgri) {
       // Note: Only hide items that don't exist when there is no agricraft if there is an agricraft
       API.hideItem(new ItemStack(BlockAfarm.blockAfarm, 1, OreDictionary.WILDCARD_VALUE));
       API.hideItem(new ItemStack(ItemModule.itemModule, 1, OreDictionary.WILDCARD_VALUE));
+    }
+    if (AgriDetector.hasAgri) {
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.AFARMINFO.ordinal()));
     }
   }
 

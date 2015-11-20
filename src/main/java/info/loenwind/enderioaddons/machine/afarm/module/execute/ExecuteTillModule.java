@@ -46,7 +46,6 @@ public class ExecuteTillModule extends ExecuteModule {
     if (!workTile.farm.getWorldObj().isAirBlock(workTile.bc.x, workTile.bc.y, workTile.bc.z)
         && workTile.farm.getWorldObj().getBlock(workTile.bc.x, workTile.bc.y, workTile.bc.z)
             .isReplaceable(workTile.farm.getWorldObj(), workTile.bc.x, workTile.bc.y, workTile.bc.z)) {
-      System.out.println(workTile.farm.getWorldObj().getBlock(workTile.bc.x, workTile.bc.y, workTile.bc.z));
       workTile.farm.getWorldObj().setBlock(dirtLoc.x, dirtLoc.y, dirtLoc.z, Blocks.air, 0, 1);
       workTile.farm.getWorldObj().setBlock(dirtLoc.x, dirtLoc.y, dirtLoc.z, origBlock, origMeta, 0);
     }

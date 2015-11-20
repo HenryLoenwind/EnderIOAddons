@@ -19,7 +19,12 @@ public class AgriDetector {
     } catch (Throwable t) {
       hasAgriAPI = hasAgri = false;
       Log.info("Crashed while trying to find out if AgriCraft is installed. AgriCraft Farming station is not available.");
+      t.printStackTrace();
     }
+  }
+
+  public static void registerPlants() {
+    TileAfarm.registerPlants();
   }
 
 }
