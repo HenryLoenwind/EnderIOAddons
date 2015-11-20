@@ -8,7 +8,11 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
+
+import org.lwjgl.opengl.GL11;
+
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
@@ -53,11 +57,33 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
     return null;
   }
 
+  private TeaserRecipe tryToMakeImageRecipe(ItemStack itemstack) {
+    if (itemstack != null && itemstack.getItem() != null) {
+      final String unlocalizedName = itemstack.getItem().getUnlocalizedName(itemstack);
+      if (unlocalizedName != null && unlocalizedName.startsWith("enderioaddons.")) {
+        String key = "nei.teaser." + unlocalizedName + ".image";
+        final String text = EnderIOAddons.lang.localize(key);
+        if (text != null && !text.startsWith("enderioaddons.")) {
+          final ItemStack copy = itemstack.copy();
+          copy.stackSize = 1;
+          final TeaserRecipe teaserRecipe = new TeaserRecipe(copy, null);
+          teaserRecipe.texture = text;
+          return teaserRecipe;
+        }
+      }
+    }
+    return null;
+  }
+
   @Override
   public void loadCraftingRecipes(ItemStack itemstack) {
     TeaserRecipe maybe = tryToMakeARecipe(itemstack);
     if (maybe != null) {
       arecipes.add(maybe);
+      maybe = tryToMakeImageRecipe(itemstack);
+      if (maybe != null) {
+        arecipes.add(maybe);
+      }
     }
   }
 
@@ -66,17 +92,44 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
     TeaserRecipe maybe = tryToMakeARecipe(itemstack);
     if (maybe != null) {
       arecipes.add(maybe);
+      maybe = tryToMakeImageRecipe(itemstack);
+      if (maybe != null) {
+        arecipes.add(maybe);
+      }
     }
   }
 
   @Override
   public void drawBackground(int recipe) {
+    if (((TeaserRecipe) arecipes.get(recipe)).texture != null) {
+      String texture = EnderIOAddons.DOMAIN + ":textures/gui/" + ((TeaserRecipe) arecipes.get(recipe)).texture + ".png";
+      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+      GuiDraw.changeTexture(texture);
+      drawTexturedModalRect(0, 0, 166, 166);
+    }
+  }
+
+  private static void drawTexturedModalRect(int x, int y, int w, int h) {
+    Tessellator tessellator = Tessellator.instance;
+    tessellator.startDrawingQuads();
+    tessellator.addVertexWithUV(x + 0, y + h, GuiDraw.gui.getZLevel(), 0, 1);
+    tessellator.addVertexWithUV(x + w, y + h, GuiDraw.gui.getZLevel(), 1, 1);
+    tessellator.addVertexWithUV(x + w, y + 0, GuiDraw.gui.getZLevel(), 1, 0);
+    tessellator.addVertexWithUV(x + 0, y + 0, GuiDraw.gui.getZLevel(), 0, 0);
+    tessellator.draw();
   }
 
   @Override
   public void drawExtras(int recipeIndex) {
-    GuiDraw.fontRenderer.drawSplitString(EnderIOAddons.lang.localize(((TeaserRecipe) arecipes.get(recipeIndex)).textKey), 5, 16 + 18 + 6 - yOff, 160,
-        ColorUtil.getRGB(Color.darkGray));
+    if (((TeaserRecipe) arecipes.get(recipeIndex)).textKey != null) {
+      GuiDraw.fontRenderer.drawSplitString(EnderIOAddons.lang.localize(((TeaserRecipe) arecipes.get(recipeIndex)).textKey), 5, 16 + 18 + 6 - yOff, 160,
+          ColorUtil.getRGB(Color.darkGray));
+    }
+  }
+
+  @Override
+  public int recipiesPerPage() {
+    return 1;
   }
 
   protected static final int xOff = 13;
@@ -86,6 +139,7 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
 
     private PositionedStack output;
     private String textKey;
+    private String texture = null;
 
     @Override
     public List<PositionedStack> getIngredients() {

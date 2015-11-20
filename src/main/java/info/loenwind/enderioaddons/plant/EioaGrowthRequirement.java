@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.plant;
 
+import static info.loenwind.enderioaddons.config.Config.seedsRFperGrowthTick;
 import info.loenwind.enderioaddons.common.Log;
 import info.loenwind.enderioaddons.recipe.Recipes;
 
@@ -22,11 +23,10 @@ import crazypants.enderio.power.IPowerStorage;
 public class EioaGrowthRequirement implements IGrowthRequirement {
 
   private BlockWithMeta capBank, bedrock, darkBar;
-  private final int[] brightness = { 0, 0 };
+  private final int[] brightness = { 13, 15, 0, 0 };
 
   public EioaGrowthRequirement() {
-    System.out.println(Recipes.capBankCreative + "/" + Blocks.bedrock + "/" + Recipes.darkSteelBars);
-    capBank = new BlockWithMeta(Block.getBlockFromItem(Recipes.capBankCreative.getItem()), OreDictionary.WILDCARD_VALUE, true);
+    capBank = new BlockWithMeta(Block.getBlockFromItem(Recipes.capBankCreative.getItem()), 1, true);
     bedrock = new BlockWithMeta(Blocks.bedrock, OreDictionary.WILDCARD_VALUE, true);
     darkBar = new BlockWithMeta(Block.getBlockFromItem(Recipes.darkSteelBars.getItem()), OreDictionary.WILDCARD_VALUE, true);
     try {
@@ -44,17 +44,35 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
   }
 
   @Override
-  public boolean canGrow(World world, int x, int y, int z) { // TODO: light level
-    return isValidSoil(world, x, y - 1, z) && isBaseBlockPresent(world, x, y, z) && areBarsPresent(world, x, y, z);
+  public boolean canGrow(World world, int x, int y, int z) {
+    return isValidSoil(world, x, y - 1, z) && isBaseBlockPresent(world, x, y, z) && areBarsPresent(world, x, y, z) && isBrightnessOk(world, x, y, z)
+        && hasPower(world, x, y, z);
+  }
+
+  public static boolean hasPower(World world, int x, int y, int z) {
+    if (world.isRemote) {
+      return true;
+    }
+    TileEntity tileEntity = world.getTileEntity(x, y - 1, z);
+    if (tileEntity instanceof IPowerStorage) {
+      IPowerStorage te = (IPowerStorage) tileEntity;
+      if (te.getEnergyStoredL() >= seedsRFperGrowthTick.getInt()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static boolean usePower(World world, int x, int y, int z) {
     TileEntity tileEntity = world.getTileEntity(x, y - 1, z);
     if (tileEntity instanceof IPowerStorage) {
       IPowerStorage te = (IPowerStorage) tileEntity;
-      if (te.getEnergyStoredL() >= 100000L) { // TODO cfg
-        te.addEnergy(-100000); // TODO cfg
+      if (te.getEnergyStoredL() >= seedsRFperGrowthTick.getInt()) {
+        te.addEnergy(-seedsRFperGrowthTick.getInt());
         return true;
+      } else {
+        te.addEnergy((int) -te.getEnergyStoredL());
+        return false;
       }
     }
     return false;
@@ -79,6 +97,9 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public boolean isBaseBlockPresent(World world, int x, int y, int z) {
+    if (bedrock == null) {
+      return true;
+    }
     Block block = world.getBlock(x, y - 2, z);
     if (block != bedrock.getBlock()) {
       return false;
@@ -101,6 +122,13 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
     return world.getBlockMetadata(x, y, z) == capBank.getMeta();
   }
 
+  public boolean isBrightnessOk(World world, int x, int y, int z) {
+    int mixedBrightness = world.getBlock(x, y, z).getMixedBrightnessForBlock(world, x, y, z);
+    int skyLight = mixedBrightness >>> 20;
+    int blockLight = (mixedBrightness & 0x0000FFFF) >> 4;
+    return skyLight >= brightness[2] && skyLight <= brightness[3] && blockLight >= brightness[0] && blockLight <= brightness[1];
+  }
+
   @Override
   public boolean isValidSoil(BlockWithMeta soil) {
     return capBank.equals(soil);
@@ -108,7 +136,7 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public ItemStack requiredBlockAsItemStack() {
-    return bedrock.toStack();
+    return bedrock != null ? bedrock.toStack() : null;
   }
 
   @Override
@@ -123,6 +151,7 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public void setSoil(BlockWithMeta soil) {
+    capBank = soil;
   }
 
   @Override
@@ -132,10 +161,15 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public void setBrightnessRange(int min, int max) {
+    brightness[0] = min & 0x0f;
+    brightness[1] = max & 0x0f;
+    brightness[2] = min >> 4;
+    brightness[3] = max >> 4;
   }
 
   @Override
   public void setRequiredBlock(BlockWithMeta requiredBlock, RequirementType requirementType, boolean oreDict) {
+    bedrock = requiredBlock;
   }
 
   @Override

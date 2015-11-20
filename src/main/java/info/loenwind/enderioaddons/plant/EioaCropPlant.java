@@ -1,6 +1,9 @@
 package info.loenwind.enderioaddons.plant;
 
-import info.loenwind.enderioaddons.common.Log;
+import static info.loenwind.enderioaddons.config.Config.seedsAutomaticHarvestingEnabled;
+import static info.loenwind.enderioaddons.config.Config.seedsBonemealEnabled;
+import static info.loenwind.enderioaddons.config.Config.seedsTierEasy;
+import static info.loenwind.enderioaddons.config.Config.seedsTierHard;
 import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
@@ -32,40 +35,38 @@ import crazypants.enderio.network.PacketHandler;
 public class EioaCropPlant implements ICropPlant {
 
   @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 0)
-  public static final ItemStack capacitor = null;
+  public static final ItemStack capacitor1 = null;
+  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 1)
+  public static final ItemStack capacitor2 = null;
+  @ItemStackHolder(value = "EnderIO:itemBasicCapacitor", meta = 2)
+  public static final ItemStack capacitor8 = null;
 
   private final List<WeightedItemStack> fruits = new ArrayList<>();
   private final ArrayList<ItemStack> allfruits = new ArrayList<>();
   private final List<WeightedItemStack> lowfruits = new ArrayList<>();
   private final ItemStack seed;
   public final EioaGrowthRequirement eioaGrowthRequirement = new EioaGrowthRequirement();
-  private static Class<?> blockCrops = null;
-  private static boolean useSecurityMgr = true;
 
   public EioaCropPlant() {
-    lowfruits.add(new WeightedItemStack(1350, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal())));
-    lowfruits.add(new WeightedItemStack(1, capacitor));
-    fruits.add(new WeightedItemStack(1000, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal())));
-    fruits.add(new WeightedItemStack(300, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MCS.ordinal())));
-    fruits.add(new WeightedItemStack(50, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.LCS.ordinal())));
-    fruits.add(new WeightedItemStack(1, capacitor));
+    lowfruits.add(new WeightedItemStack(13500, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal())));
+    lowfruits.add(new WeightedItemStack(10, capacitor1));
+    lowfruits.add(new WeightedItemStack(5, capacitor2));
+    lowfruits.add(new WeightedItemStack(1, capacitor8));
+    fruits.add(new WeightedItemStack(10000, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal())));
+    fruits.add(new WeightedItemStack(3000, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MCS.ordinal())));
+    fruits.add(new WeightedItemStack(500, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.LCS.ordinal())));
+    fruits.add(new WeightedItemStack(10, capacitor1));
+    fruits.add(new WeightedItemStack(5, capacitor2));
+    fruits.add(new WeightedItemStack(1, capacitor8));
     for (WeightedItemStack fruit : fruits) {
       allfruits.add(fruit.stack);
     }
     seed = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SEED.ordinal());
-    if (blockCrops == null) {
-      try {
-        blockCrops = Class.forName("com.InfinityRaider.AgriCraft.blocks.BlockCrop");
-      } catch (ClassNotFoundException | SecurityException | IllegalArgumentException e) {
-        Log.warn("Failed to aquire reference to AgriCraft' crops block. Error:");
-        e.printStackTrace();
-      }
-    }
   }
 
   @Override
   public int tier() {
-    return 5;
+    return crazypants.enderio.config.Config.useHardRecipes ? seedsTierHard.getInt() : seedsTierEasy.getInt();
   }
 
   @Override
@@ -104,7 +105,7 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public boolean onHarvest(World world, int x, int y, int z, EntityPlayer player) {
-    return player != null && !(player instanceof FakePlayer);
+    return (player != null && !(player instanceof FakePlayer)) || seedsAutomaticHarvestingEnabled.getBoolean();
   }
 
   @Override
@@ -119,42 +120,23 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public boolean canBonemeal() {
-    return false;
+    return seedsBonemealEnabled.getBoolean();
   }
 
   @Override
   public boolean onAllowedGrowthTick(World world, int x, int y, int z, int oldGrowthStage) {
-    System.out.println("growing");
-    return true;
+    if (!isMature(world, x, y, z)) {
+      eioaGrowthRequirement.usePower(world, x, y, z);
+      PacketHandler.INSTANCE.sendToAllAround(new PacketFarmAction(new BlockCoord(x, y, z)), new TargetPoint(world.provider.dimensionId, x, y, z, 64));
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
   public boolean isFertile(World world, int x, int y, int z) {
-    if (!isMature(world, x, y, z) && blockCrops != null && getCallerClass(4) == blockCrops && eioaGrowthRequirement.canGrow(world, x, y, z)
-        && eioaGrowthRequirement.usePower(world, x, y, z)) {
-      System.out.println("allowing growth");
-      PacketHandler.INSTANCE.sendToAllAround(new PacketFarmAction(new BlockCoord(x, y, z)), new TargetPoint(world.provider.dimensionId, x, y, z, 64));
-      return true;
-    } else if (!isMature(world, x, y, z) && blockCrops != null) { // TODO delme
-      System.out.println("ignoring " + getCallerClass(1) + "/" + getCallerClass(2) + "/" + getCallerClass(3) + "/" + getCallerClass(4) + "/"
-          + getCallerClass(5) + "/" + getCallerClass(6) + "/" + getCallerClass(7) + "/" + getCallerClass(8) + "/" + getCallerClass(9));
-    }
     return !isMature(world, x, y, z) && eioaGrowthRequirement.canGrow(world, x, y, z);
-  }
-
-  public static Class getCallerClass(final int i) {
-    if (useSecurityMgr) {
-      try {
-        return new SecurityManager() {
-          Class clazz = getClassContext()[i + 1];
-        }.clazz;
-      } catch (Exception e) {
-        Log.warn("Failed reference calling stack without using evil hacks. Error:");
-        e.printStackTrace();
-        useSecurityMgr = false;
-      }
-    }
-    return null;
   }
 
   @Override

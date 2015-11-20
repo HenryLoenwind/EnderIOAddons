@@ -199,6 +199,7 @@ enderioaddons.clhp.name=Capacitor Lined Housing Plate
 enderioaddons.nei.teaser.enderioaddons.clhp=The lining of capacitor parts makes these plates ideal for small but powerful circuits.
 
 enderioaddons.darkseeds.name=Capacitor Seeds
-enderioaddons.nei.teaser.enderioaddons.darkseeds=These seeds need power to grow. Best to plant them onto a capacitor bank. They also need to be grounded; surround them with Dark Iron Bars and anchor them to bedrock.
+enderioaddons.nei.teaser.enderioaddons.darkseeds=These seeds need power to grow. Best to plant them onto a capacitor bank. They need to be grounded; surround them with Dark Iron Bars and anchor those to bedrock. They need very bright artificial light and don't like sunlight at all.
+enderioaddons.nei.teaser.enderioaddons.darkseeds.image=capplant
 enderioaddons.agricraft_journal.darkplant=A funny thing, seeds made from non-living things, grown by the power of RF energy.
 
