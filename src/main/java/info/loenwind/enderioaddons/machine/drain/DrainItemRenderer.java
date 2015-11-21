@@ -1,41 +1,26 @@
 package info.loenwind.enderioaddons.machine.drain;
 
+import info.loenwind.enderioaddons.render.FaceRenderer;
+import info.loenwind.enderioaddons.render.ItemRendererBase;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.client.render.BoundingBox;
-import com.enderio.core.client.render.CubeRenderer;
 import com.enderio.core.client.render.RenderUtil;
 
-public class DrainItemRenderer implements IItemRenderer {
+public class DrainItemRenderer extends ItemRendererBase {
 
   @Override
-  public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-    return true;
-  }
-
-  @Override
-  public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-    return true;
-  }
-
-  @Override
-  public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-    if(data != null && data.length > 0) {
-      renderToInventory(item);
-    }
-  }
-
-  public static void renderToInventory(ItemStack item) {
+  protected void render(ItemStack item, RenderBlocks renderBlocks) {
     if(item.stackTagCompound != null) {
       TileDrain tt = new TileDrain();
       tt.readCommon(item.stackTagCompound);
-      DrainFluidRenderer.renderTankFluid(tt, 0f, -0.1f, 0f);
+      DrainFluidRenderer.renderTankFluid(tt, 0f, 0f, 0f);
     }
 
     GL11.glEnable(GL11.GL_ALPHA_TEST);
@@ -43,9 +28,9 @@ public class DrainItemRenderer implements IItemRenderer {
     int meta = item.getItemDamage();
     
     IIcon[] icons = RenderUtil.getBlockTextures(block, meta);
-    BoundingBox bb = BoundingBox.UNIT_CUBE.translate(0, -0.1f, 0);
+    BoundingBox bb = BoundingBox.UNIT_CUBE;
     Tessellator.instance.startDrawingQuads();
-    CubeRenderer.render(bb, icons, null, RenderUtil.getDefaultPerSideBrightness());
+    FaceRenderer.renderCube(bb, icons, null, FaceRenderer.stdBrightness, false);
     Tessellator.instance.draw();
   }
 

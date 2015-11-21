@@ -21,6 +21,7 @@ public class BlockChassis extends BlockEio {
 
   public static final ModObject ModObject_blockChassis = EnumHelper.addEnum(ModObject.class, "blockChassis", new Class<?>[0], new Object[0]);
   public static BlockChassis blockChassis;
+  public int localRenderId;
 
   private IIcon[] blockIcons = new IIcon[17];
 
@@ -109,6 +110,11 @@ public class BlockChassis extends BlockEio {
     blockIcons[14] = iIconRegister.registerIcon(EnderIOAddons.DOMAIN + ":itemBrokenSpawner");
     blockIcons[15] = iIconRegister.registerIcon("enderio:blank");
     blockIcons[16] = iIconRegister.registerIcon("enderio:fusedGlassFrame");
+  }
+
+  @Override
+  public int getRenderType() {
+    return localRenderId;
   }
 
 }

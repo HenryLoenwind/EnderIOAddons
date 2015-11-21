@@ -6,6 +6,9 @@ import info.loenwind.enderioaddons.machine.afarm.ItemRendererAfarm;
 import info.loenwind.enderioaddons.machine.afarm.RendererAfarm;
 import info.loenwind.enderioaddons.machine.afarm.TESRAfarm;
 import info.loenwind.enderioaddons.machine.afarm.TileAfarm;
+import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
+import info.loenwind.enderioaddons.machine.chassis.ItemRendererChassis;
+import info.loenwind.enderioaddons.machine.chassis.RendererChassis;
 import info.loenwind.enderioaddons.machine.cobbleworks.BlockCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.RendererCobbleworks;
 import info.loenwind.enderioaddons.machine.cobbleworks.TileCobbleworks;
@@ -18,6 +21,7 @@ import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.flag.ItemRendererFlag;
 import info.loenwind.enderioaddons.machine.flag.TESRFlag;
 import info.loenwind.enderioaddons.machine.flag.TileFlag;
+import info.loenwind.enderioaddons.machine.framework.ItemRendererFramework;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.machine.framework.TESRFrameworkMachine;
 import info.loenwind.enderioaddons.machine.ihopper.BlockIHopper;
@@ -92,23 +96,28 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
     MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockPMon.blockPMon), new ItemRendererPMon());
 
     RendererFrameworkMachine rendererFrameworkMachine = new RendererFrameworkMachine();
+    ItemRendererFramework itemRendererFramework = new ItemRendererFramework(rendererFrameworkMachine);
 
     BlockCobbleworks.blockCobbleworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererCobbleworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileCobbleworks.class, new TESRFrameworkMachine());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockCobbleworks.blockCobbleworks), itemRendererFramework);
 
     BlockWaterworks.blockWaterworks.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererWaterworks(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileWaterworks.class, new TESRFrameworkMachine());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockWaterworks.blockWaterworks), itemRendererFramework);
 
     BlockIHopper.blockIHopper.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     RenderingRegistry.registerBlockHandler(new RendererIHopper(rendererFrameworkMachine));
     ClientRegistry.bindTileEntitySpecialRenderer(TileIHopper.class, new TESRFrameworkMachine());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockIHopper.blockIHopper), itemRendererFramework);
 
     BlockTcom.blockTcom.localRenderId = RenderingRegistry.getNextAvailableRenderId();
     final RendererTcom rendererTcom = new RendererTcom(rendererFrameworkMachine);
     RenderingRegistry.registerBlockHandler(rendererTcom);
     ClientRegistry.bindTileEntitySpecialRenderer(TileTcom.class, new TESRTcom(rendererTcom));
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockTcom.blockTcom), itemRendererFramework);
 
     MinecraftForgeClient.registerItemRenderer(ItemMachinePart.itemMachinePart, new MachinePartRenderer(rendererFrameworkMachine));
 
@@ -127,6 +136,9 @@ public class ClientOnlyProxy extends ClientAndServerProxy {
       MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockAfarm.blockAfarm), new ItemRendererAfarm());
     }
 
+    BlockChassis.blockChassis.localRenderId = RenderingRegistry.getNextAvailableRenderId();
+    RenderingRegistry.registerBlockHandler(new RendererChassis());
+    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlockChassis.blockChassis), new ItemRendererChassis());
   }
 
   @Override

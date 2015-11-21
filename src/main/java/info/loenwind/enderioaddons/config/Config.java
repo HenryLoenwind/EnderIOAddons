@@ -128,6 +128,7 @@ public enum Config {
   ghostItemsEnabled(Section.VISUALS, true, "Enable item ghosts in the GUI"), //
   directDrawingEnabled(Section.VISUALS, true,
       "Allow openGL drawing without tesselator. Disable this if certain machines don't render. Be prepared for texture mapping errors when this is off."), //
+  rotationInItemframesEnabled(Section.VISUALS, true, "Blocks rotate when placed in an item frame"), //
 
   farmBreaksWoodenRakesEnabled(Section.FARM, true, "If enabled, the farming station can break wooden hand rakes"), //
   farmBreaksIronRakesEnabled(Section.FARM, true, "If enabled, the farming station can break iron hand rakes"), //

@@ -1,9 +1,11 @@
 package info.loenwind.enderioaddons.machine.part;
 
 import static info.loenwind.enderioaddons.common.NullHelper.notnullM;
+import static info.loenwind.enderioaddons.config.Config.rotationInItemframesEnabled;
 import info.loenwind.enderioaddons.machine.framework.AbstractBlockFramework;
 import info.loenwind.enderioaddons.machine.framework.RendererFrameworkMachine;
 import info.loenwind.enderioaddons.machine.tcom.RendererTcom;
+import info.loenwind.enderioaddons.render.TickRotator;
 
 import javax.annotation.Nonnull;
 
@@ -52,24 +54,26 @@ public class MachinePartRenderer implements IItemRenderer {
     final ItemStack itemToRender = notnullM(item, "Game state error: Missing item to render");
 
     GL11.glPushMatrix();
+    GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
     if (item.getItemDamage() == MachinePart.TRAY.ordinal() || item.getItemDamage() == MachinePart.PYLON.ordinal()
         || item.getItemDamage() == MachinePart.PYLONTANK.ordinal()) {
-      setup(implExplicit, type).render(itemToRender, renderBlocks, frameRenderer);
+      setup(implExplicit, type, itemToRender, renderBlocks).render(itemToRender, renderBlocks, frameRenderer);
     } else if (MachinePart.values()[item.getItemDamage()].renderAsFrameMachine) {
-      setup(implTechne, type).render(itemToRender, renderBlocks, frameRenderer);
+      setup(implTechne, type, itemToRender, renderBlocks).render(itemToRender, renderBlocks, frameRenderer);
     } else if (MachinePart.values()[item.getItemDamage()].render3d) {
-      setup(implBlockAsItem, type).render(itemToRender, renderBlocks, frameRenderer);
+      setup(implBlockAsItem, type, itemToRender, renderBlocks).render(itemToRender, renderBlocks, frameRenderer);
     }
+    GL11.glPopAttrib();
     GL11.glPopMatrix();
   }
 
-  private Impl setup(Impl impl, ItemRenderType type) {
+  private Impl setup(Impl impl, ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
     if(type == ItemRenderType.INVENTORY) {
-      impl.setup_Inventory();
+      impl.setup_Inventory(type, item, renderBlocks);
     } else if(type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-      impl.setup_Equipped();
+      impl.setup_Equipped(type, item, renderBlocks);
     } else if(type == ItemRenderType.ENTITY) {
-      impl.setup_Entity();
+      impl.setup_Entity(type, item, renderBlocks);
     } else if (!loggedError) {
       Log.warn("MachinePartRenderer.renderItem: Unsupported render type");
       loggedError = true;
@@ -78,11 +82,11 @@ public class MachinePartRenderer implements IItemRenderer {
   }
 
   private static interface Impl {
-    void setup_Entity();
+    void setup_Entity(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks);
 
-    void setup_Equipped();
+    void setup_Equipped(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks);
 
-    void setup_Inventory();
+    void setup_Inventory(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks);
 
     void render(@Nonnull ItemStack item, @Nonnull RenderBlocks renderBlocks, RendererFrameworkMachine frameRenderer);
   }
@@ -90,17 +94,47 @@ public class MachinePartRenderer implements IItemRenderer {
   private static class ImplTechne implements Impl {
 
     @Override
-    public void setup_Entity() {
+    public void setup_Entity(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
+      GL11.glRotated(90, 0, 1, 0);
+      if (rotationInItemframesEnabled.getBoolean() && item.isOnItemFrame()) {
+        TickRotator.getInstance().rotateGl(2);
+      }
       GL11.glScalef(0.5F, 0.5F, 0.5F);
+      if (!MachinePart.values()[item.getItemDamage()].hasFrame && !MachinePart.values()[item.getItemDamage()].hasTanks) {
+        if (MachinePart.values()[item.getItemDamage()].hasSingleTank) {
+          GL11.glTranslatef(0.25F, 0.25F, -0.25F);
+        } else {
+          GL11.glTranslatef(0.25F, -0.25F, -0.25F);
+        }
+      }
     }
 
     @Override
-    public void setup_Equipped() {
+    public void setup_Equipped(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
+      if (!MachinePart.values()[item.getItemDamage()].hasFrame && !MachinePart.values()[item.getItemDamage()].hasTanks) {
+        if (MachinePart.values()[item.getItemDamage()].hasSingleTank) {
+          GL11.glTranslatef(0.25F, 0.25F, -0.25F);
+        } else {
+          GL11.glTranslatef(0.25F, -0.25F, -0.25F);
+        }
+        if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+          GL11.glTranslatef(0F, 0.25F, 0F);
+        }
+      }
       GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     }
 
     @Override
-    public void setup_Inventory() {
+    public void setup_Inventory(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
+      if (!MachinePart.values()[item.getItemDamage()].hasFrame && !MachinePart.values()[item.getItemDamage()].hasTanks) {
+        //        GL11.glScalef(1.5F, 1.5F, 1.5F);
+        if (MachinePart.values()[item.getItemDamage()].hasSingleTank) {
+          GL11.glTranslatef(0.25F, 0.25F, -0.25F);
+        } else {
+          GL11.glTranslatef(0.25F, -0.25F, -0.25F);
+        }
+        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+      }
     }
 
     @Override
@@ -115,17 +149,21 @@ public class MachinePartRenderer implements IItemRenderer {
   private static class ImplBlockAsItem implements Impl {
 
     @Override
-    public void setup_Entity() {
+    public void setup_Entity(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
+      GL11.glRotated(90, 0, 1, 0);
+      if (rotationInItemframesEnabled.getBoolean() && item.isOnItemFrame()) {
+        TickRotator.getInstance().rotateGl(2);
+      }
       GL11.glScalef(0.5F, 0.5F, 0.5F);
     }
 
     @Override
-    public void setup_Equipped() {
+    public void setup_Equipped(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
       GL11.glTranslatef(0.5F, 0.5F, 0.5F);
     }
 
     @Override
-    public void setup_Inventory() {
+    public void setup_Inventory(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
     }
 
     @Override
@@ -142,17 +180,21 @@ public class MachinePartRenderer implements IItemRenderer {
   private static class ImplExplicit implements Impl {
 
     @Override
-    public void setup_Entity() {
+    public void setup_Entity(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
+      GL11.glRotated(90, 0, 1, 0);
+      if (rotationInItemframesEnabled.getBoolean() && item.isOnItemFrame()) {
+        TickRotator.getInstance().rotateGl(2);
+      }
       GL11.glScalef(0.5F, 0.5F, 0.5F);
       GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
     }
 
     @Override
-    public void setup_Equipped() {
+    public void setup_Equipped(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
     }
 
     @Override
-    public void setup_Inventory() {
+    public void setup_Inventory(ItemRenderType type, ItemStack item, RenderBlocks renderBlocks) {
       GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
     }
 
