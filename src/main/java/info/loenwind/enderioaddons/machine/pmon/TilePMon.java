@@ -46,7 +46,7 @@ public class TilePMon extends TileEnderIOAddons {
   protected StatCollector[] stats = { stats10s, stats01m, stats10m, stats01h, stats06h, stats24h, stats07d, statsIcn };
 
   public TilePMon() {
-    super(new SlotDefinition(0, 0, 1));
+    super(new SlotDefinition(0, 0, 0));
   }
 
   @Override
@@ -59,13 +59,16 @@ public class TilePMon extends TileEnderIOAddons {
     return false;
   }
 
+  private int slowstart = 100;
+
   // tick goes in here
   @Override
   protected boolean checkProgress(boolean redstoneChecksPassed) {
-    return doTick();
-  }
-
-  protected boolean doTick() {
+    if (slowstart > 0) {
+      // give the network a while to form after the chunk has loaded to prevent bogus readings (all zeros)
+      slowstart--;
+      return false;
+    }
     usePower();
     NetworkPowerManager pm = getPowerManager();
     if (pm != null) {
@@ -133,17 +136,7 @@ public class TilePMon extends TileEnderIOAddons {
 
   @Override
   public void onCapacitorTypeChange() {
-    switch (getCapacitorType()) {
-    case BASIC_CAPACITOR:
-      setCapacitor(new BasicCapacitor(100, 10000, 10));
-      break;
-    case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(200, 50000, 10));
-      break;
-    case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(400, 100000, 10));
-      break;
-    }
+    setCapacitor(new BasicCapacitor(100, 10000, 10));
     currentTask = createTask(null);
   }
 
