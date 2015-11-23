@@ -46,8 +46,8 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public boolean canGrow(World world, int x, int y, int z) {
-    return isValidSoil(world, x, y - 1, z) && isBaseBlockPresent(world, x, y, z) && areBarsPresent(world, x, y, z) && isBrightnessOk(world, x, y, z)
-        && hasPower(world, x, y, z);
+    return isValidSoil(world, x, y - 1, z) && (isBaseBlockPresent(world, x, y, z) || isBaseBlockPresent(world, x, y - 1, z)) && areBarsPresent(world, x, y, z)
+        && isBrightnessOk(world, x, y, z) && hasPower(world, x, y, z);
   }
 
   public static boolean hasPower(World world, int x, int y, int z) {
@@ -84,8 +84,7 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
     for (int x1 = x - 1; x1 <= x + 1; x1++) {
       for (int z1 = z - 1; z1 <= z + 1; z1++) {
         if (x1 != x || z1 != z) {
-          Block block = world.getBlock(x1, y, z1);
-          if (block == darkBar.getBlock() && (darkBar.ignoreMeta() || world.getBlockMetadata(x1, y, z1) == darkBar.getMeta())) {
+          if (isBlock(world, x1, y, z1, darkBar) || isBlock(world, x1, y, z1, bedrock)) {
             if (++count >= 6) {
               return true;
             }
@@ -101,14 +100,11 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
     if (bedrock == null) {
       return true;
     }
-    Block block = world.getBlock(x, y - 2, z);
-    if (block != bedrock.getBlock()) {
-      return false;
-    }
-    if (bedrock.ignoreMeta()) {
-      return true;
-    }
-    return world.getBlockMetadata(x, y - 2, z) == bedrock.getMeta();
+    return isBlock(world, x, y - 2, z, bedrock);
+  }
+
+  private static boolean isBlock(World world, int x, int y, int z, BlockWithMeta bwm) {
+    return world.getBlock(x, y, z) == bwm.getBlock() && (bwm.ignoreMeta() || world.getBlockMetadata(x, y, z) == bwm.getMeta());
   }
 
   @Override

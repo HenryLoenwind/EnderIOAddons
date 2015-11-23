@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.cobbleworks;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.config.Config;
@@ -443,7 +444,9 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   public boolean usePower(int wantToUse) {
-    if (wantToUse > getEnergyStored() || (wantToUse > capTickLimit && capTickLimit < getCapacitor().getMaxEnergyExtracted())) {
+    if (mode24) {
+      return true;
+    } else if (wantToUse > getEnergyStored() || (wantToUse > capTickLimit && capTickLimit < getCapacitor().getMaxEnergyExtracted())) {
       return false;
     } else {
       setEnergyStored(getEnergyStored() - wantToUse);

@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.magcharger;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import static info.loenwind.enderioaddons.config.Config.magcMagnetizingPowerPerTick;
 import static info.loenwind.enderioaddons.config.Config.magcMagnetizingTicksPerItem;
 import info.loenwind.autosave.annotations.Storable;
@@ -132,11 +133,11 @@ public class TileMagCharger extends AbstractTileFramework implements INetworkUpd
 
   public boolean canUsePower(Float wantToUse) {
     int w = wantToUse.intValue();
-    return !((w < 1 ? 1 : w) > getEnergyStored());
+    return mode24 || !((w < 1 ? 1 : w) > getEnergyStored());
   }
 
   public boolean canUsePower(int wantToUse) {
-    return !(wantToUse > getEnergyStored());
+    return mode24 || !(wantToUse > getEnergyStored());
   }
 
   public boolean usePower(Float wantToUse) {
@@ -145,7 +146,9 @@ public class TileMagCharger extends AbstractTileFramework implements INetworkUpd
   }
 
   public boolean usePower(int wantToUse) {
-    if (wantToUse > getEnergyStored()) {
+    if (mode24) {
+      return true;
+    } else if (wantToUse > getEnergyStored()) {
       return false;
     } else {
       setEnergyStored(getEnergyStored() - wantToUse);

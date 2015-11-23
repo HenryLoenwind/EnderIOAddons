@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.machine.waterworks;
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
@@ -401,7 +402,7 @@ public class TileWaterworks extends TileEnderIOAddons implements IFrameworkMachi
 
   @Override
   protected boolean checkProgress(boolean redstoneChecksPassed) {
-    if (currentTask == null || !hasPower()) {
+    if (currentTask == null || (!hasPower() && !mode24)) {
       return false;
     }
     if (redstoneChecksPassed && !currentTask.isComplete()) {

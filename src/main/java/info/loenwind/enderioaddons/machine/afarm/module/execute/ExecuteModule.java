@@ -20,6 +20,7 @@ import com.enderio.core.common.util.BlockCoord;
 import com.enderio.core.common.util.ItemUtil;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
+import crazypants.enderio.config.Config;
 import crazypants.enderio.machine.farm.PacketFarmAction;
 import crazypants.enderio.network.PacketHandler;
 
@@ -80,7 +81,7 @@ public abstract class ExecuteModule implements IAfarmControlModule {
     int hoeSlot = workTile.farm.getHoeSlot();
     if (hoeSlot != -1) {
       final ItemStack tool = workTile.farm.getStackInSlot(hoeSlot);
-      if (canDamage(tool)) {
+      if (canDamage(tool) && Math.random() < Config.farmToolTakeDamageChance) {
         tool.damageItem(1, workTile.farmerJoe);
       }
       return true;

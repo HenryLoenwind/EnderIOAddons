@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.machine.niard;
 
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
@@ -228,7 +229,7 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
 
   protected boolean canTick(boolean redstoneChecksPassed) {
     if(redstoneChecksPassed) {
-      if(getEnergyStored() < getPowerUsePerTick()) {
+      if (getEnergyStored() < getPowerUsePerTick() && !mode24) {
         return false;
       } else if (tank.getFluidAmount() > 0) {
         usePower();

@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.magcharger;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 
 import javax.annotation.Nonnull;
 
@@ -10,9 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.enderio.core.client.render.RenderUtil;
 
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
-
-public class GuiMagCharger extends GuiPoweredMachineBase<TileMagCharger> {
+public class GuiMagCharger extends GuiEIOABase<TileMagCharger> {
 
   public GuiMagCharger(InventoryPlayer par1InventoryPlayer, @Nonnull TileMagCharger te) {
     super(te, new ContainerMagCharger(par1InventoryPlayer, te));

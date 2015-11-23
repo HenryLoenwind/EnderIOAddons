@@ -81,14 +81,14 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public ItemStack getRandomFruit(Random rand) {
-    return ((WeightedItemStack) WeightedRandom.getRandomItem(rand, fruits)).stack;
+    return ((WeightedItemStack) WeightedRandom.getRandomItem(rand, fruits)).stack.copy();
   }
 
   @Override
   public ArrayList<ItemStack> getFruitsOnHarvest(int gain, Random rand) {
     ArrayList<ItemStack> result = new ArrayList<>();
     for (int i = 0; i < (gain > 2 ? 2 : 1); i++) {
-      result.add(((WeightedItemStack) WeightedRandom.getRandomItem(rand, lowfruits)).stack);
+      result.add(((WeightedItemStack) WeightedRandom.getRandomItem(rand, lowfruits)).stack.copy());
     }
     if (gain > 5) {
       for (int i = 0; i < (gain == 10 ? 2 : 1); i++) {
@@ -120,7 +120,7 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public boolean onAllowedGrowthTick(World world, int x, int y, int z, int oldGrowthStage) {
-    if (!isMature(world, x, y, z)) {
+    if (!isMature(oldGrowthStage)) {
       eioaGrowthRequirement.usePower(world, x, y, z);
       PacketHandler.INSTANCE.sendToAllAround(new PacketFarmAction(new BlockCoord(x, y, z)), new TargetPoint(world.provider.dimensionId, x, y, z, 64));
       return true;
@@ -131,12 +131,16 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public boolean isFertile(World world, int x, int y, int z) {
-    return !isMature(world, x, y, z) && eioaGrowthRequirement.canGrow(world, x, y, z);
+    return eioaGrowthRequirement.canGrow(world, x, y, z);
   }
 
   @Override
   public boolean isMature(IBlockAccess world, int x, int y, int z) {
-    return world.getBlockMetadata(x, y, z) >= 7;
+    return isMature(world.getBlockMetadata(x, y, z));
+  }
+
+  private static boolean isMature(int meta) {
+    return meta >= 7;
   }
 
   @Override
@@ -175,6 +179,11 @@ public class EioaCropPlant implements ICropPlant {
     public WeightedItemStack(int weight, ItemStack stack) {
       super(weight);
       this.stack = stack;
+    }
+
+    @Override
+    public String toString() {
+      return "WeightedItemStack [weight=" + itemWeight + ", stack=" + stack + "]";
     }
 
   }

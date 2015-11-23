@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.machine.tcom;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
@@ -313,20 +314,22 @@ public class TileTcom extends AbstractTileFramework implements IFrameworkMachine
 
   public boolean canUsePower(Float wantToUse) {
     int w = wantToUse.intValue();
-    return !((w < 1 ? 1 : w) > getEnergyStored());
+    return mode24 || !((w < 1 ? 1 : w) > getEnergyStored());
   }
 
   public boolean canUsePower(int wantToUse) {
-    return !(wantToUse > getEnergyStored());
+    return mode24 || !(wantToUse > getEnergyStored());
   }
 
   public boolean usePower(Float wantToUse) {
     int w = wantToUse.intValue();
-    return usePower(w < 1 ? 1 : w);
+    return mode24 || usePower(w < 1 ? 1 : w);
   }
 
   public boolean usePower(int wantToUse) {
-    if (wantToUse > getEnergyStored()) {
+    if (mode24) {
+      return true;
+    } else if (wantToUse > getEnergyStored()) {
       return false;
     } else {
       setEnergyStored(getEnergyStored() - wantToUse);

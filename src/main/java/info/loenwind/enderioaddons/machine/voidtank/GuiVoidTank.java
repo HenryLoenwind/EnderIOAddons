@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.voidtank;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 
 import java.awt.Rectangle;
 
@@ -18,9 +19,8 @@ import com.enderio.core.client.render.RenderUtil;
 
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.fluid.Fluids;
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
-public class GuiVoidTank extends GuiPoweredMachineBase<TileVoidTank> {
+public class GuiVoidTank extends GuiEIOABase<TileVoidTank> {
 
   public GuiVoidTank(@Nonnull InventoryPlayer par1InventoryPlayer, @Nonnull TileVoidTank te) {
     super(te, new ContainerVoidTank(par1InventoryPlayer, te));

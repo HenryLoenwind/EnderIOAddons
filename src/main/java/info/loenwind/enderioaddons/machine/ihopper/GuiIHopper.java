@@ -7,6 +7,7 @@ import static info.loenwind.enderioaddons.machine.ihopper.ContainerIHopper.ROW2;
 import static info.loenwind.enderioaddons.machine.ihopper.TileIHopper.SLOTS;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.gui.AdvancedRedstoneModeButton;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 
 import javax.annotation.Nonnull;
 
@@ -17,9 +18,7 @@ import org.lwjgl.opengl.GL11;
 import com.enderio.core.client.render.RenderUtil;
 import com.enderio.core.common.util.BlockCoord;
 
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
-
-public class GuiIHopper extends GuiPoweredMachineBase<TileIHopper> {
+public class GuiIHopper extends GuiEIOABase<TileIHopper> {
 
   @Nonnull
   private static final String GUI_TEXTURE = EnderIOAddons.DOMAIN + ":textures/gui/impulsehopper.png";

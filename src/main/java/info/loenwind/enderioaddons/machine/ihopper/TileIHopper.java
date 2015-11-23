@@ -4,6 +4,7 @@ import static crazypants.enderio.config.Config.powerConduitTierOneRF;
 import static crazypants.enderio.config.Config.powerConduitTierThreeRF;
 import static crazypants.enderio.config.Config.powerConduitTierTwoRF;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import static info.loenwind.enderioaddons.config.Config.impulseHopperRFusePerItem;
 import static info.loenwind.enderioaddons.config.Config.impulseHopperRFusePerOperation;
 import static info.loenwind.enderioaddons.config.Config.impulseHopperWorkEveryTick1;
@@ -276,7 +277,9 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
   }
 
   public boolean usePower(int wantToUse) {
-    if (wantToUse > getEnergyStored()) {
+    if (mode24) {
+      return true;
+    } else if (wantToUse > getEnergyStored()) {
       return false;
     } else {
       setEnergyStored(getEnergyStored() - wantToUse);

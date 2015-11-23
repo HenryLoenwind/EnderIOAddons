@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.pmon;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 import info.loenwind.enderioaddons.gui.InvisibleButton;
 
 import javax.annotation.Nonnull;
@@ -13,9 +14,8 @@ import org.lwjgl.opengl.GL11;
 import com.enderio.core.client.render.RenderUtil;
 
 import crazypants.enderio.EnderIO;
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
-public class GuiPMon extends GuiPoweredMachineBase<TilePMon> {
+public class GuiPMon extends GuiEIOABase<TilePMon> {
 
   protected int timebase = 2;
   protected int timebaseOffset = 0;

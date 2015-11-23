@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.drain;
 
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
@@ -191,7 +192,7 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
 
   protected boolean canTick(boolean redstoneChecksPassed) {
     if(redstoneChecksPassed) {
-      if(getEnergyStored() < getPowerUsePerTick()) {
+      if (getEnergyStored() < getPowerUsePerTick() && !mode24) {
         return false;
       }
       usePower();

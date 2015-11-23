@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.cobbleworks;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
@@ -8,9 +9,8 @@ import org.lwjgl.opengl.GL11;
 import com.enderio.core.client.render.RenderUtil;
 
 import crazypants.enderio.EnderIO;
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
-public class GuiCobbleworks extends GuiPoweredMachineBase<TileCobbleworks> {
+public class GuiCobbleworks extends GuiEIOABase<TileCobbleworks> {
 
   public GuiCobbleworks(InventoryPlayer par1InventoryPlayer, TileCobbleworks te) {
     super(te, new ContainerCobbleworks(par1InventoryPlayer, te));

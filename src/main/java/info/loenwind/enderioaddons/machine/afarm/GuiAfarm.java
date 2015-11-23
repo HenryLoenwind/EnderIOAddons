@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.afarm;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 import info.loenwind.enderioaddons.gui.InvisibleButton;
 import info.loenwind.enderioaddons.network.Manager;
 
@@ -24,9 +25,8 @@ import com.enderio.core.client.render.RenderUtil;
 import cpw.mods.fml.common.Optional;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.gui.IconEIO;
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
-public class GuiAfarm extends GuiPoweredMachineBase<TileAfarm> {
+public class GuiAfarm extends GuiEIOABase<TileAfarm> {
 
   private final static int tabXOffset = -3;
   private final static int tabYOffset = 4;

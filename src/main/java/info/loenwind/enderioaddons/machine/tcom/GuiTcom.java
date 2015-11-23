@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.tcom;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 import info.loenwind.enderioaddons.gui.InvisibleButton;
 import info.loenwind.enderioaddons.gui.StdOutputSlot;
 import info.loenwind.enderioaddons.gui.StdSlot;
@@ -36,10 +37,9 @@ import crazypants.enderio.EnderIO;
 import crazypants.enderio.gui.IconEIO;
 import crazypants.enderio.machine.gui.GuiButtonIoConfig;
 import crazypants.enderio.machine.gui.GuiOverlayIoConfig;
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 import crazypants.enderio.network.PacketHandler;
 
-public class GuiTcom extends GuiPoweredMachineBase<TileTcom> {
+public class GuiTcom extends GuiEIOABase<TileTcom> {
 
   private final static int SCROLL_STEP = 19;
   private final static int SCROLL_ITEMS = 3;

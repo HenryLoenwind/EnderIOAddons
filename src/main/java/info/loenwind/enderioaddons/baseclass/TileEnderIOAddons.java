@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.baseclass;
 import static info.loenwind.autosave.annotations.Store.StoreFor.CLIENT;
 import static info.loenwind.autosave.annotations.Store.StoreFor.ITEM;
 import static info.loenwind.autosave.annotations.Store.StoreFor.SAVE;
+import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import info.loenwind.autosave.Reader;
 import info.loenwind.autosave.Writer;
 import info.loenwind.autosave.annotations.Storable;
@@ -104,21 +105,23 @@ public abstract class TileEnderIOAddons extends AbstractPoweredTaskEntity {
 
   public boolean canUsePower(Float wantToUse) {
     int w = wantToUse.intValue();
-    return !((w < 1 ? 1 : w) > getEnergyStored());
+    return mode24 || !((w < 1 ? 1 : w) > getEnergyStored());
   }
 
   public boolean canUsePower(int wantToUse) {
-    return !(wantToUse > getEnergyStored());
+    return mode24 || !(wantToUse > getEnergyStored());
   }
 
   public boolean usePower(Float wantToUse) {
     int w = wantToUse.intValue();
-    return usePower(w < 1 ? 1 : w) > 0;
+    return mode24 || usePower(w < 1 ? 1 : w) > 0;
   }
 
   @Override
   public int usePower(int wantToUse) {
-    if (wantToUse > getEnergyStored()) {
+    if (mode24) {
+      return wantToUse;
+    } else if (wantToUse > getEnergyStored()) {
       return 0;
     } else {
       setEnergyStored(getEnergyStored() - wantToUse);

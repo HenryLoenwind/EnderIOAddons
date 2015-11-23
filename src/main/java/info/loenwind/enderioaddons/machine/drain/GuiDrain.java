@@ -1,6 +1,7 @@
 package info.loenwind.enderioaddons.machine.drain;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.gui.GuiEIOABase;
 
 import java.awt.Rectangle;
 
@@ -15,9 +16,8 @@ import com.enderio.core.client.render.RenderUtil;
 
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.fluid.Fluids;
-import crazypants.enderio.machine.gui.GuiPoweredMachineBase;
 
-public class GuiDrain extends GuiPoweredMachineBase<TileDrain> {
+public class GuiDrain extends GuiEIOABase<TileDrain> {
 
   public GuiDrain(@Nonnull InventoryPlayer par1InventoryPlayer, @Nonnull TileDrain te) {
     super(te, new ContainerDrain(par1InventoryPlayer, te));
