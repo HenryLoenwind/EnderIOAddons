@@ -93,6 +93,10 @@ sourceSets {
     }
 }
 
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
 processResources {
     inputs.property "version", mod_version
     inputs.property "mcversion", project.minecraft.version
