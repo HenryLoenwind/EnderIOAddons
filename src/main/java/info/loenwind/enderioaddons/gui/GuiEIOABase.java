@@ -3,11 +3,11 @@ package info.loenwind.enderioaddons.gui;
 import static info.loenwind.enderioaddons.EnderIOAddons.mode24;
 import info.loenwind.enderioaddons.EnderIOAddons;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.inventory.Container;
-import scala.actors.threadpool.Arrays;
 
 import com.enderio.core.client.render.RenderUtil;
 
