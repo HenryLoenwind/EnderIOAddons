@@ -50,7 +50,7 @@ public class EnderIOAddons implements InitAware {
   @Nonnull
   public static final Lang lang = new Lang(DOMAIN);
 
-  public static boolean mode24 = true;
+  public static boolean mode24 = false;
 
   @Override
   @EventHandler
