@@ -83,6 +83,11 @@ public abstract class ExecuteModule implements IAfarmControlModule {
       final ItemStack tool = workTile.farm.getStackInSlot(hoeSlot);
       if (canDamage(tool) && Math.random() < Config.farmToolTakeDamageChance) {
         tool.damageItem(1, workTile.farmerJoe);
+        if (tool.stackSize <= 0) {
+          workTile.farm.setInventorySlotContents(hoeSlot, null);
+        } else {
+          workTile.farm.setInventorySlotContents(hoeSlot, tool);
+        }
       }
       return true;
     }
