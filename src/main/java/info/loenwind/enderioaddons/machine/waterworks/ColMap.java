@@ -36,7 +36,7 @@ public class ColMap {
   }
 
   private boolean contains(int col, @Nullable Object o) {
-    for (int i = 0; i <= elements; i++) {
+    for (int i = 0; i < elements; i++) {
       Object c = get(col, i);
       if (o == null && c == null || (o != null && o.equals(c))) {
         return true;
@@ -46,7 +46,7 @@ public class ColMap {
   }
 
   private int find(int col, @Nullable Object o) {
-    for (int i = 0; i <= elements; i++) {
+    for (int i = 0; i < elements; i++) {
       Object c = get(col, i);
       if (o == null && c == null || (o != null && o.equals(c))) {
         return i;

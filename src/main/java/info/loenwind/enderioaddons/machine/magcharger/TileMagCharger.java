@@ -8,6 +8,7 @@ import info.loenwind.autosave.annotations.Storable;
 import info.loenwind.autosave.annotations.Store;
 import info.loenwind.enderioaddons.EnderIOAddons;
 import info.loenwind.enderioaddons.common.Profiler;
+import info.loenwind.enderioaddons.common.SideRestriction;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.flag.ItemFlag;
@@ -16,7 +17,6 @@ import info.loenwind.enderioaddons.network.INetworkUpdatable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import crazypants.enderio.EnderIO;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.power.BasicCapacitor;
@@ -27,9 +27,9 @@ public class TileMagCharger extends AbstractTileFramework implements INetworkUpd
   protected @Store int progress = -1; // in ticks, counting down
   public @Store({ CLIENT }) int itemsInQueue = 0;
 
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   public int renderOffset = 0;
-  @SideOnly(Side.CLIENT)
+  @SideRestriction(Side.CLIENT)
   public float renderLastProgress = 0;
 
   public TileMagCharger() {

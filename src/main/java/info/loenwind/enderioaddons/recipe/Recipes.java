@@ -13,6 +13,7 @@ import static info.loenwind.enderioaddons.machine.tcom.BlockTcom.blockTcom;
 import static info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank.blockVoidTank;
 import static info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks.blockWaterworks;
 import info.loenwind.enderioaddons.common.InitAware;
+import info.loenwind.enderioaddons.common.Log;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.machine.afarm.AgriDetector;
 import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
@@ -356,9 +357,16 @@ public class Recipes implements InitAware {
         addShaped(farm, "ehe", "eCe", "cMc", 'e', electricSteel, 'h', Items.diamond_hoe, 'C', machineChassi, 'M', moduleIQ, 'c', crystal);
         addShaped(induRake, "bb", " d", " d", 'b', darkSteelBars, 'd', darkSteel);
         addShaped(induRake, "bb", "d ", "d ", 'b', darkSteelBars, 'd', darkSteel);
-        addShapeless(handRake_wood, brokenRakeWood, "stickWood", brokenRakeWood);
-        addShapeless(handRake_wood, brokenRakeWood, "woodStick", brokenRakeWood);
-        addShapeless(handRake_iron, brokenRakeIron, "nuggetIron", brokenRakeIron);
+        if (handRake_wood != null) {
+          addShapeless(handRake_wood, brokenRakeWood, "stickWood", brokenRakeWood);
+          addShapeless(handRake_wood, brokenRakeWood, "woodStick", brokenRakeWood);
+        } else {
+          Log.warn("Failed to find AgriCraft's Wooden Hand Rake. Some recipes will be missing!");
+        }
+        if (handRake_iron != null) {
+          addShapeless(handRake_iron, brokenRakeIron, "nuggetIron", brokenRakeIron);
+          Log.warn("Failed to find AgriCraft's Iron Hand Rake. Some recipes will be missing!");
+        }
 
         ItemStack BREED = new ItemStack(ItemModule.itemModule, 1, Module.BREED.ordinal());
         ItemStack CROSSBREED = new ItemStack(ItemModule.itemModule, 1, Module.CROSSBREED.ordinal());
@@ -378,7 +386,13 @@ public class Recipes implements InitAware {
         addShapeless(MULTIPLY, crops, moduleIQ, crops);
         addShapeless(HARVESTUNANALYZED, Items.diamond_shovel, moduleBase, magGlass);
         addShapeless(REPLACEBETTER, Items.diamond_shovel, moduleIQ, magGlass);
-        addShapeless(WEED, weeds, moduleBase, handRake_wood);
+        if (handRake_wood != null) {
+          addShapeless(WEED, weeds, moduleBase, handRake_wood);
+        }
+        if (handRake_iron != null) {
+          addShapeless(WEED, weeds, moduleBase, handRake_iron);
+        }
+        addShapeless(WEED, weeds, moduleBase, induRake);
         addShapeless(EJECTSEEDS, "listAllseed", moduleBase, "blockHopper");
         addShapeless(BESTONLY, EJECTSEEDS, moduleIQ, magGlass);
       }
