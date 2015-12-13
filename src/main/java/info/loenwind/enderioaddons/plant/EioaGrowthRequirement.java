@@ -31,6 +31,15 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
     bedrock = new BlockWithMeta(Blocks.bedrock, OreDictionary.WILDCARD_VALUE, true);
     darkBar = new BlockWithMeta(Block.getBlockFromItem(Recipes.darkSteelBars.getItem()), OreDictionary.WILDCARD_VALUE, true);
     try {
+      Class<?> newGrowthRequirementHandler = Class.forName("com.InfinityRaider.AgriCraft.farming.growthrequirement.GrowthRequirementHandler");
+      if (newGrowthRequirementHandler != null) {
+        Log.debug("An newer version of AgriCraft is in use, our soil will be registered automatically.");
+        return;
+      }
+    } catch (ClassNotFoundException | SecurityException | IllegalArgumentException e) {
+      Log.debug("An older version of AgriCraft is in use, manually registering our soil.");
+    }
+    try {
       Class<?> growthRequirementHandler = Class.forName("com.InfinityRaider.AgriCraft.farming.GrowthRequirementHandler");
       if (growthRequirementHandler != null) {
         Method addSoil = growthRequirementHandler.getMethod("addSoil", BlockWithMeta.class);
