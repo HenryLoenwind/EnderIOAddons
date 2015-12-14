@@ -365,6 +365,7 @@ public class Recipes implements InitAware {
         }
         if (handRake_iron != null) {
           addShapeless(handRake_iron, brokenRakeIron, "nuggetIron", brokenRakeIron);
+        } else {
           Log.warn("Failed to find AgriCraft's Iron Hand Rake. Some recipes will be missing!");
         }
 
