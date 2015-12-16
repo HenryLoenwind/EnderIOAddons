@@ -1,5 +1,6 @@
 package info.loenwind.enderioaddons.timer;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.TimeZone;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
-import scala.actors.threadpool.Arrays;
 
 import com.enderio.core.common.util.BlockCoord;
 
