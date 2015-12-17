@@ -74,10 +74,10 @@ dependencies {
 
     // WAILA ships really old CCC/CCL versions, so we force the new versions
     compile "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:dev"
-    compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"    
-    
+    compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"
+
     exportedCompile "com.thoughtworks.xstream:xstream:1.4.8"
-    
+
     compile files("lib/AgriCraft-1.7.10-1.4.2-api.jar")
 }
 
@@ -85,10 +85,9 @@ sourceSets {
     main {
         java {
             srcDir 'src/main/java'
-            exclude '**/enderio/trigger/**'
         }
         resources {
-            srcDir 'resources'
+            srcDir 'src/main/resources'
         }
     }
 }
@@ -189,7 +188,7 @@ String getChangelogText() {
 
 curse {
     dependsOn 'reobf'
-    
+
     onlyIf {
         return project.hasProperty('curseforge_key') && System.getenv("CURSE") != null && System.getenv("CURSE").equalsIgnoreCase("true")
     }
@@ -209,26 +208,26 @@ task checkTranslations << {
         if (value1 == null || value2 == null) {return}
         mapen.put(value1, value2)
     }
-    
+
     new File('resources/assets/enderio/lang/').eachFileMatch( ~".*\\.lang\$" ) { langfile ->
         if (!langfile.getName().contains("en_US")) {
-	        Map<String, String> map = new HashMap<String, String>()
-	        File outfile = new File("${langfile}.txt")
-	        Writer outwriter = outfile.newWriter("UTF8")
-	        outwriter.write("\n// Additional translations:\n")
-	        outwriter << langfile.filterLine {
-	            def (value1, value2) = it.tokenize( '=' )
-	            if (value1 == null || value2 == null) {return false}
-	            map.put(value1, value2)
-	            return !mapen.containsKey(value1)
-	        }
-	        
-	        outwriter.append("\n// Missing translations:\n")
-	        for (e in mapen) {
-	            if (!map.containsKey(e.key)) {
-	                outwriter.append(e.key + "=" + e.value + "\n")
-	            }
-	        }
+            Map<String, String> map = new HashMap<String, String>()
+            File outfile = new File("${langfile}.txt")
+            Writer outwriter = outfile.newWriter("UTF8")
+            outwriter.write("\n// Additional translations:\n")
+            outwriter << langfile.filterLine {
+                def (value1, value2) = it.tokenize( '=' )
+                if (value1 == null || value2 == null) {return false}
+                map.put(value1, value2)
+                return !mapen.containsKey(value1)
+            }
+
+            outwriter.append("\n// Missing translations:\n")
+            for (e in mapen) {
+                if (!map.containsKey(e.key)) {
+                    outwriter.append(e.key + "=" + e.value + "\n")
+                }
+            }
         println "Created translation report ${outfile}"
         }
     }

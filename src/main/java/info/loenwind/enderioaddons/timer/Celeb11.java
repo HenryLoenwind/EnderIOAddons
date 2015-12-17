@@ -36,7 +36,7 @@ public class Celeb11 implements Event, Runnable {
       Scheduler.instance.registerEvent(new Celeb11("UTC+08:00", "Beijing", "Hong Kong", "Manila", "Singapore", "Shanghai", "Macau", "Taiwan", "Philippines", "Malaysia", "Bali", "Mongolia", "Brunei Darussalam", "Irkutsk", "Chita", "Bratsk", "Ulan-Ude", "Perth"));
       Scheduler.instance.registerEvent(new Celeb11("UTC+07:00", "Jakarta", "Bangkok", "Hanoi", "Phnom Penh", "Vietnam", "Laos", "Cambodia", "Java", "Sumatra", "Christmas Isl.", "Krasnoyarsk", "Kemerovo", "Abakan", "Kyzyl"));
       Scheduler.instance.registerEvent(new Celeb11("UTC+06:30", "Myanmar", "Cocos Islands,  Yangon", "Naypyidaw", "Mandalay", "Mawlamyine", "Keeling Islands"));
-      Scheduler.instance.registerEvent(new Celeb11("UTC+06:00", "Dhaka", "Almaty", "Bishkek", "Thimphu", "Astana", " Novosibirsk", "Omsk", "Tomsk", "Barnau", "Bhutan", "British Indian Ocean Territory", "Chagos", "Diego Garcia", "Kazakhstan", "Almaty", "Astana", "Kyrgystan"));
+      Scheduler.instance.registerEvent(new Celeb11("UTC+06:00", "Dhaka", "Almaty", "Bishkek", "Thimphu", "Astana", "Novosibirsk", "Omsk", "Tomsk", "Barnau", "Bhutan", "British Indian Ocean Territory", "Chagos", "Diego Garcia", "Kazakhstan", "Almaty", "Astana", "Kyrgystan"));
       Scheduler.instance.registerEvent(new Celeb11("UTC+05:45", "Nepal,  Kathmandu", "Biratnagar", "Pokhara"));
       Scheduler.instance.registerEvent(new Celeb11("UTC+05:30", "New Delhi", "Mumbai", "Kolkata", "Bengaluru", "Bangalore", "Sri Lanka"));
       Scheduler.instance.registerEvent(new Celeb11("UTC+05:00", "Tashkent", "Islamabad", "Lahore", "Karachi", "Yekaterinburg ", "Chelyabinsk", "Perm", "Ufa", "Kurgan", "Orengurg", "Tyumen", "Uzbekistan", "Turkmenistan", "Tajikistan", "Kazakhstan", "Aqtau", "Aqtobe", "Maldives", "Kerguelen Isl.(Fr.)"));
@@ -105,7 +105,6 @@ public class Celeb11 implements Event, Runnable {
       start.add(Calendar.YEAR, 1);
       end.add(Calendar.YEAR, 1);
     }
-    System.out.println(locations.get(0) + " => " + start);
   }
 
   @Override
