@@ -231,19 +231,20 @@ public class TileNiard extends TileEnderIOAddons implements IFluidHandler, ITank
     if(redstoneChecksPassed) {
       if (getEnergyStored() < getPowerUsePerTick() && !mode24) {
         return false;
-      } else if (tank.getFluidAmount() > 0) {
-        usePower();
-        return true;
       }
+      if (tank.getAvailableSpace() > 0 && inventory[getSlotDefinition().getMinInputSlot()] != null && shouldDoWorkThisTick(20)) {
+        drainFullContainer();
+        // if this succeeded, the next if will usePower() for us
+      }
+      if (tank.getFluidAmount() > 0) {
+        usePower();
+      }
+      return true;
     }
     return false;
   }
 
   protected boolean doTick() {
-    if(shouldDoWorkThisTick(20)) {
-      drainFullContainer();
-    }
-
     if (sleep == 0) {
 
       // scale by cap

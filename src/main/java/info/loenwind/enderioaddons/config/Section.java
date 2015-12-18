@@ -18,6 +18,7 @@ public enum Section {
   NIARD("niard"),
   VOIDTANK("void tank"),
   WATERWORKS("waterworks"),
+  LIQUIDS("liquids"),
   DEV("development");
 
   @Nonnull

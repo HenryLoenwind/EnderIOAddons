@@ -16,6 +16,7 @@ public enum Config {
   drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, 250,
       "The amount of power used by a drain to move a source block by one meter."), //
   drainAllowOnDedicatedServer(Section.DRAIN, false, "Allow the use of the drain on a dedicated server.", true, true), //
+  drainCollectsMilkFromCows(Section.DRAIN, true, "Allows the drain to collect milk from cows."), //
   drainEnabled(Section.RECIPES, true, "Enable the crafting recipe for the drain", true, true), //
 
   cobbleWorksRfPerCobblestone(Section.COBBLEWORKS, 100, "RF used per generated cobblestone", true, false), //
@@ -176,6 +177,9 @@ public enum Config {
   farmDebugLoggingEnabled(Section.FARM, false, "When enabled, the farm will write extensive information about its operation into the logfile"), //
 
   farmEnabled(Section.RECIPES, true, "Enable the crafting recipe for the AgriCraft farming station (will only work if AgriCraft is installed)", true, true), //
+
+  flowingMilkCuresPoison(Section.LIQUIDS, 0.001, "Chance that flowing milk will cure poison (applies once per tick)"), //
+  sourceMilkIsConsumedWhenCuringPoison(Section.LIQUIDS, 0.25, "Chance that a source block of milk will be consumed when curing poison"), //
 
   profilingEnabled(Section.DEV, false, "When enabled, profiling information will be written into the logfile"), //
   ;

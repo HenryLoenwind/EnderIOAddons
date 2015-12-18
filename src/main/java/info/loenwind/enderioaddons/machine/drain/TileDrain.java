@@ -8,17 +8,21 @@ import info.loenwind.autosave.annotations.Store;
 import info.loenwind.autosave.handlers.enderioaddons.HandleSetBlockCoord;
 import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.fluid.Fluids;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -259,6 +263,20 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
         dryruncount = 0;
         return true;
       } else {
+        if (info.loenwind.enderioaddons.config.Config.drainCollectsMilkFromCows.getBoolean()) {
+          if (tank.getFluid() == null || tank.getFluid().getFluid() == Fluids.MILK.getFluid()) {
+            AxisAlignedBB bb = getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord).expand(3, 1.5f, 3);
+            List cowsInRange = worldObj.getEntitiesWithinAABB(EntityCow.class, bb);
+            for (EntityCow cow : (List<EntityCow>) cowsInRange) {
+              if (cow.getClass() == EntityCow.class) {
+                fillInternal(new FluidStack(Fluids.MILK.getFluid(), 2), true);
+                return true;
+              } else {
+                // TODO: MooCows and other modded cows
+              }
+            }
+          }
+        }
         if (dryruncount++ > 60) {
           dryruncount = 0;
           nowater.clear();

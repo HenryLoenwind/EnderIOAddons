@@ -45,6 +45,9 @@ fluid.brine4=Solid Brine
 tile.fluid.brine4.name=Solid Brine
 item.bucketBrine4.name=Solid Brine Bucket
 
+fluid.milk=Milk
+tile.fluid.milk.name=Milk
+
 enderio.waterworks.stashprogress=Internal Buffer
 
 tile.blockIHopper.name=Impulse Hopper
