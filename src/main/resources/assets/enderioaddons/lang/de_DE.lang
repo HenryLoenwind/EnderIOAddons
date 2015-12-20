@@ -1,0 +1,209 @@
+tile.blockDrain.name=Abfluss
+tile.blockDrain.tooltip.detailed.line1=Sammelt Flüssigkeiten, die in ihn fließen
+tile.blockDrain.tooltip.detailed.line2=Kann mit Kondensatoren erweiteret werden um
+tile.blockDrain.tooltip.detailed.line3=seine Geschwindigkeit zu erhöhen.
+enderio.blockDrain.tooltip.disabledMessage=Hinweis: Der Abfluss iss auf diesem Server abgeschaltet.
+
+enderioaddons.machineFrame.name=Leeres Maschinengerüst
+enderioaddons.frameTank.name=Tank für Maschinengerüste
+enderioaddons.frameTanks.name=Tanks für Maschinengerüste
+enderioaddons.machineFrameTank.name=Leeres Maschinengerüst mit Tanks
+enderioaddons.cobbleController.name=Steingeneratorsteuergerät für Maschinengerüste
+enderioaddons.heatingElement.name=Heizelement
+enderioaddons.filterElement.name=Filterelement
+enderioaddons.waterController.name=Wasserfiltersteuergerät für Maschinengerüste
+enderioaddons.ihopperController.name=Impulstrichtersteuergerät für Maschinengerüste
+enderioaddons.tcomController.name=Beuterecyclersteuergerät für Maschinengerüste
+enderioaddons.tray.name=Gegenstandsschale
+enderioaddons.pylon.name=Verzauberungsmodulatorkern
+enderioaddons.pylontank.name=Verzauberungsmodulator
+enderioaddons.chassiParts.name=Chassisplatten
+enderioaddons.flagparts.name=Flaggen und Masten
+enderioaddons.simplemagnet.name=Einfacher Magnet
+
+tile.blockCobbleworks.name=Steingenerator
+tile.blockCobbleworks.tooltip.detailed.line1=Erzeugt Steine auf Energie.
+tile.blockCobbleworks.tooltip.detailed.line2=Kann mit Legierungsschmelzen,
+tile.blockCobbleworks.tooltip.detailed.line3=SAG-Mahlwerken und Fertigungsapparaturen
+tile.blockCobbleworks.tooltip.detailed.line4=erweiteret werden um mehr Materialien zu erzeugen.
+
+tile.blockWaterworks.name=Wasserfilter
+
+fluid.brine1=Brackwassser
+tile.fluid.brine1.name=Brackwassser
+item.bucketBrine1.name=Brackwasssereimer
+
+fluid.brine2=Sole
+tile.fluid.brine2.name=Sole
+item.bucketBrine2.name=Soleeimer
+
+fluid.brine3=Konzentrierte Sole
+tile.fluid.brine3.name=Konzentrierte Sole
+item.bucketBrine3.name=Eimer mit konzentrierter Sole
+
+fluid.brine4=Schlacke
+tile.fluid.brine4.name=Schlacke
+item.bucketBrine4.name=Schlackeeimer
+
+fluid.milk=Milch
+tile.fluid.milk.name=Milch
+
+enderio.waterworks.stashprogress=Interner Speicher
+
+tile.blockIHopper.name=Impulstrichter
+
+tile.blockNiard.name=Ssulfba
+tile.blockNiard.tooltip.detailed.line1="Ssulfba egithcäm red" entläßt Flüssigkeiten in die Welt.
+tile.blockNiard.tooltip.detailed.line2=Er plaziert diese unter sich, so tief wie möglich.
+tile.blockNiard.tooltip.detailed.line3=Der Bereich kann mit Kondensatoren erweitert werden (1x1, 3x3, 7x7).
+tile.blockNiard.tooltip.detailed.line4=Erfahrungsflüssigkeit wird in Erfahrungskügelchen konvertiert.
+
+tile.blockVoidTank.name=Portaltank
+tile.blockVoidTank.tooltip.detailed.line1=Ein Nether Portal in einem Flüssigkeitsdrucktank zu entzünden
+tile.blockVoidTank.tooltip.detailed.line2=ergäbe einen Tank, der Flüssigkeiten ins Nether drücken
+tile.blockVoidTank.tooltip.detailed.line3=kann, oder?
+tile.blockVoidTank.tooltip.detailed.line4=Was soll schon schiefgehen?
+
+tile.blockPMon.name=Graphischer Endergiemonitor
+tile.blockPMon.tooltip.detailed.line1=Zeigt eine graphische Darstellung der Entwicklung
+tile.blockPMon.tooltip.detailed.line2=des Füllstand Deiner Kondensatorbanken.
+
+enderioaddons.gui.tooltip.redstoneControlMode=Redstonemodus
+enderioaddons.gui.tooltip.redstoneControlMode.rising_edge=Ansteigende Flanke
+enderioaddons.gui.tooltip.redstoneControlMode.falling_edge=Fallende Flanke
+enderioaddons.gui.tooltip.redstoneControlMode.high_pulse=Positiver Impuls
+enderioaddons.gui.tooltip.redstoneControlMode.low_pulse=Negativer Impuls
+enderioaddons.gui.tooltip.redstoneControlMode.on=Signal
+enderioaddons.gui.tooltip.redstoneControlMode.off=Invertiertes Signal
+enderioaddons.gui.tooltip.redstoneControlMode.ignore=Immer aktiv
+enderioaddons.gui.tooltip.redstoneControlMode.never=Deaktiviert
+
+enderioaddons.tcom.ench.tooltip=%1$s Level von "%2$s"
+enderioaddons.tcom.get.ench.tooltip=Verzaubere einen Gegenstand mit etwas "%1$s"
+enderioaddons.tcom.get.mat.tooltip=Entnehme "%1$s"
+enderioaddons.tcom.input.tooltip=§4Gegenstände, die hier eingelegt werden, werden §nzerstört§4!
+
+tile.blockTcom.name=Beuterecycler
+tile.blockTcom.tooltip.detailed.line1=Der Beuterecycler zerlegt übliche Beute von
+tile.blockTcom.tooltip.detailed.line2=einfachen Monstern in ihre Bestandteile und
+tile.blockTcom.tooltip.detailed.line3=sammelt ihre Verzauberungen.
+
+enderioaddons.flag.tooltip.parent=Ziel: %1$s/%2$s/%3$s
+enderioaddons.flag.itemname.parent= (Ziel: %1$s/%2$s/%3$s)
+enderioaddons.flag.tooltip.parent.none=Ziel: keines
+enderioaddons.flag.tooltip.uncharged=Nicht magnetisiert
+enderioaddons.flag.itemname.uncharged= (nicht magnetisiert)
+
+tile.blockFlag.name=Magnetische Flagge
+tile.blockFlag.tooltip.detailed.line1=Eine Flagge, die auf die zuletzt gesetzte Flagge zeigt.
+tile.blockFlag.tooltip.detailed.line2=Das Ziel einer noch nicht gesetzten Flagge kann mit einem Rechtsclick
+tile.blockFlag.tooltip.detailed.line3=auf eine gesetzte Flagge geändert werden. Das Ziel kann in einer
+tile.blockFlag.tooltip.detailed.line4=Werkbank geköscht werden.
+tile.blockFlag.tooltip.detailed.line5=Muss vor der Benutzung in enem Magnetisierer magnetisiert werden.
+
+tile.blockMagCharger.name=Magnetisierer
+tile.blockMagCharger.tooltip.detailed.line1=Magnetisiert magnetische Flaggen.
+
+enderioaddons.nei.magcharger=Magnetisierer
+
+tile.blockChassis.0.name=Maschinenchassis (Dekorativer Block)
+tile.blockChassis.1.name=Leere Maschine (Dekorativer Block)
+tile.blockChassis.2.name=Maschinenoberseiten (Dekorativer Block)
+tile.blockChassis.3.name=Maschinenseiten (Dekorativer Block)
+tile.blockChassis.4.name=Maschinenrückseiten (Dekorativer Block)
+tile.blockChassis.5.name=Maschine mit Seiten (Dekorativer Block)
+tile.blockChassis.6.name=Maschine mit Rückseiten (Dekorativer Block)
+tile.blockChassis.7.name=Leere Seelenmaschine (Dekorativer Block)
+tile.blockChassis.8.name=Seelenmaschinenoberseiten (Dekorativer Block)
+tile.blockChassis.9.name=Seelenmaschinenseiten (Dekorativer Block)
+tile.blockChassis.10.name=Seelenmaschinenrückseiten (Dekorativer Block)
+tile.blockChassis.11.name=Seelenmaschine mit Seiten (Dekorativer Block)
+tile.blockChassis.12.name=Seelenmaschine mit Rückseiten (Dekorativer Block)
+tile.blockChassis.13.name=Rote Maschine (Dekorativer Block)
+tile.blockChassis.14.name=Zerstörter Spawner (Dekorativer Block)
+tile.blockChassis.15.name=Unsichtbarer Block (Dekorativer Block)
+
+enderioaddons.nei.teaser=Info
+enderioaddons.nei.teaser.enderioaddons.afarminfo=Dies ist die Ender IO Addons "AgriCraft Ackerbaustation". Sie ist nicht verfügbar weil AgriCraft nicht installiert ist. Solltest Du unbedingt nachholen, AgriCraft ist toll! Und auf CurseForge verfügbar.
+enderioaddons.afarminfo.name=AgriCraft Ackerbaustation (nicht verfügbar)
+
+tile.blockAfarm.name=AgriCraft Ackerbaustation
+
+enderioaddons.fcmBreedModule.name=Zuchtmodul
+enderioaddons.fcmCrossBreedModule.name=Kreuzungsmodul
+enderioaddons.fcmHarvestSeedsModule.name=Samenerntemodul
+enderioaddons.fcmSeedAnalyzerModule.name=Samenanalysemodul
+enderioaddons.fcmMultiplyModule.name=Samenvermehrungsmodul
+enderioaddons.fcmHarvestUnanalyzedModule.name=Erntemodul für nicht analysierte Pflanzen
+enderioaddons.fcmReplaceBetterModule.name=Erntemodul für niederperformante Pflanzen
+enderioaddons.fcmWeedModule.name=Jätemodul
+enderioaddons.fcmEjectSeedsModule.name=Samenauswurfmodul
+enderioaddons.fcmBestOnlyModule.name=Samensortiermodul
+enderioaddons.fcmBaseModule.name=Basisackerbaumodul
+enderioaddons.fcmIQModule.name=Agrarökonomenmodul
+
+enderioaddons.nei.teaser.enderioaddons.fcmBreedModule=Das Zuchtmodul für die AgriCraft Ackerbaustation pflanzt Pflanzen in einem Schachbrettmuster damit diese sich vermehren können.
+enderioaddons.nei.teaser.enderioaddons.fcmCrossBreedModule=Das Kreuzungsmodul für die AgriCraft Ackerbaustation pflanzt zwei verschiedene Pflanzen in einem Schachbrettmuster damit diese sich kreuzen können.
+enderioaddons.nei.teaser.enderioaddons.fcmHarvestSeedsModule=Das Samenerntemodul für die AgriCraft Ackerbaustation erntet ganze, unreife Pflanzen für ihre Samen. Es sollte mit einem Zuchtmodul oder Kreuzungsmodul kombiniert werden, da es dann nur dort erntet, wo neue Pflanzen wachsen.
+enderioaddons.nei.teaser.enderioaddons.fcmSeedAnalyzerModule=Das Samenanalysemodul für die AgriCraft Ackerbaustation analysiert Samen im Samenspeicher. Es verbraucht Energie.
+
+enderioaddons.nei.teaser.enderioaddons.fcmMultiplyModule=The AgriCraft Farming Station upgrade module "Multiplying" will plant sparsely and surround grown plants with cross crops. (This only works if AgriCraft is configured to allow plants to spread to neighboring crop sticks.)
+enderioaddons.nei.teaser.enderioaddons.fcmHarvestUnanalyzedModule=The AgriCraft Farming Station upgrade module "Harvest Unanalyzed Plants" will harvest any unanalyzed plants and return their seeds to the storage. You might want to combine it with a seed analyzer...
+enderioaddons.nei.teaser.enderioaddons.fcmReplaceBetterModule=The AgriCraft Farming Station upgrade module "Plant Upgrading" will replace any analyzed plant with a better seed, if one is in storage. Great to have when (cross-)breeding.
+enderioaddons.nei.teaser.enderioaddons.fcmWeedModule=The AgriCraft Farming Station upgrade module "Weeding" will remove weeds. It needs a rake in one of the tool slots. (This is useless if weeds are disabled.)
+enderioaddons.nei.teaser.enderioaddons.fcmEjectSeedsModule=The AgriCraft Farming Station upgrade module "Seed Ejecting" will transfer all seeds from the storage to the output slots. Useful if you want to multiply 10/10/10 seeds.
+enderioaddons.nei.teaser.enderioaddons.fcmBestOnlyModule=The AgriCraft Farming Station upgrade module "Seed Sorting" will transfer seeds from the storage to the output slots if there are better ones available. No need to keep the bad ones, is there?
+enderioaddons.nei.teaser.enderioaddons.fcmBaseModule=This base module is needed to craft AgriCraft Farming Station upgrade modules. On its own it's useless.
+enderioaddons.nei.teaser.enderioaddons.fcmIQModule=The Farming Intelligence Module is needed to craft the AgriCraft Farming Station as well as more advanced modules for it.
+
+enderioaddons.afarm.gui.tab0.modules=Steuermodule
+enderioaddons.afarm.gui.tab0.modulestorage=Steiermodulspeicher
+enderioaddons.afarm.gui.tab1.seed1=Samen 1
+enderioaddons.afarm.gui.tab1.seed2=Samen 2
+enderioaddons.afarm.gui.tab1.nw=NW
+enderioaddons.afarm.gui.tab1.ne=NO
+enderioaddons.afarm.gui.tab1.se=SO
+enderioaddons.afarm.gui.tab1.sw=SW
+enderioaddons.afarm.gui.tab1.seedstorage=Samenspeicher
+enderioaddons.afarm.gui.tab2.output=Ergebnis
+enderioaddons.afarm.gui.tab3.tools=Werkzeuge
+enderioaddons.afarm.gui.tab3.fertilizer=Dünger
+enderioaddons.afarm.gui.tab3.cropsticks=Pflanzhilfen
+enderioaddons.afarm.gui.tab3.till=Alles pflügen
+enderioaddons.farm.gui.till.enabled=Pflügt alles auf dem keine Pflanzhilfe plaziert werden kann|Für Pflanzen, die auf Ackerboden wachsen
+enderioaddons.farm.gui.till.disabled=Pflügt nur unter Pflanzhilfen und sofern nötig|Für Pflanzen, die auf ungepflügtem Boden wachsen
+
+enderioaddons.afarm.notification.NO_POWER=Keine Energie
+enderioaddons.afarm.notification.NO_HOE=Keine Hacke
+enderioaddons.afarm.notification.NO_RAKE=Keine Harke
+enderioaddons.afarm.notification.NO_CROPS=Keine Pflanzhilfen
+enderioaddons.afarm.notification.NO_SEEDS=Keine Samen
+enderioaddons.afarm.notification.NO_FERTILIZER=Kein Dünger
+enderioaddons.afarm.notification.FULL=Voll!
+enderioaddons.afarm.notification.WEEDS=Unkraut!
+enderioaddons.afarm.notification.OFFLINE=Aus
+
+enderioaddons.handRakeWoodBroken.name=Zerbrochene hölzerne Handharke
+enderioaddons.handRakeIronBroken.name=Zerbrochene eiserne Handharke
+enderioaddons.iRake.name=Pflug (nicht zur Handbenutzung)
+
+enderioaddons.nei.teaser.enderioaddons.handRakeWoodBroken=This once was a sturdy hand tool. But now the excessive stress of being used as part of a machine has broken it.
+enderioaddons.nei.teaser.enderioaddons.handRakeIronBroken=This once was a sturdy hand tool. But now the excessive stress of being used as part of a machine has broken it.
+enderioaddons.nei.teaser.enderioaddons.iRake=While much too unwieldy to be used by hand, this rake is perfect for use in a machine. It'll take a bit more power, but this rake won't break.
+
+enderioaddons.config.title=Ender IO Addons Konfiguration
+
+enderioaddons.scs.name=Pflanzliche Kondensatorhüllen
+enderioaddons.nei.teaser.enderioaddons.scs=These parts were grown by a plant. If you combine them right, they should make a nice home for a capacitor. Or you could mash them into a pulp.
+enderioaddons.mcs.name=Pflanzliches Kondensatorgel
+enderioaddons.nei.teaser.enderioaddons.mcs=This gel was grown by a plant. If you combine it with some shells, it could make an organic capacitor.
+enderioaddons.lcs.name=Pflanzlicher Kondensatorkern
+enderioaddons.nei.teaser.enderioaddons.lcs=This part was grown by a plant. It's a nearly fully grown capacitor. Nearly, but not quite.
+enderioaddons.clhp.name=Kondensatorbeschichtete Gehäuseplatte
+enderioaddons.nei.teaser.enderioaddons.clhp=The lining of capacitor parts makes these plates ideal for small but powerful circuits.
+
+enderioaddons.darkseeds.name=Kondensatorsamen
+enderioaddons.nei.teaser.enderioaddons.darkseeds=These seeds need power to grow. Best to plant them onto a capacitor bank. They need to be grounded; surround them with Dark Iron Bars and anchor those to bedrock. They need very bright artificial light and don't like sunlight at all.
+enderioaddons.nei.teaser.enderioaddons.darkseeds.image=capplant
+enderioaddons.agricraft_journal.darkplant=A funny thing, seeds made from non-living things, grown by the power of RF energy.
+
