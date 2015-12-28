@@ -158,8 +158,28 @@ public class Recipes implements InitAware {
 
     // Drain
     if (Config.drainEnabled.getBoolean()) {
-      addShaped(blockDrain, "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e', electricSteel, 'v',
-          Items.cauldron);
+      addShaped(new ItemStack(blockDrain, 1, 0), "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',
+          electricSteel, 'v', Items.cauldron);
+    }
+
+    // Food Drain
+    if (Config.foodDrainEnabled.getBoolean()) {
+      ItemStack plate = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FOODPLATE.ordinal());
+      ItemStack plate2 = new ItemStack(ItemMachinePart.itemMachinePart, 2, MachinePart.FOODPLATE.ordinal());
+      ItemStack grill = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.FOODGRILL.ordinal());
+      ItemStack grill3 = new ItemStack(ItemMachinePart.itemMachinePart, 3, MachinePart.FOODGRILL.ordinal());
+      if (Config.drainEnabled.getBoolean()) {
+        addShaped(plate2, "ppp", "ggg", "sss", 's', electricSteel, 'g', "slimeball", 'p', "paneGlassWhite");
+        addShaped(grill3, "ppp", "ggg", "sss", 's', Blocks.iron_bars, 'g', "slimeball", 'p', "paneGlassWhite");
+        addShaped(grill3, "ppp", "ggg", "sss", 's', darkSteelBars, 'g', "slimeball", 'p', "paneGlassWhite");
+        addShaped(new ItemStack(blockDrain, 1, 1), "ggg", "gDg", " p ", 'D', new ItemStack(blockDrain, 1, 0), 'g', grill, 'p', plate);
+      } else {
+        addShaped(plate, "ppp", "ggg", "sss", 's', electricSteel, 'g', "slimeball", 'p', "paneGlassWhite");
+        addShaped(grill, "ppp", "ggg", "sss", 's', Blocks.iron_bars, 'g', "slimeball", 'p', "paneGlassWhite");
+        addShaped(grill, "ppp", "ggg", "sss", 's', darkSteelBars, 'g', "slimeball", 'p', "paneGlassWhite");
+        addShaped(new ItemStack(blockDrain, 1, 0), "btb", "pmp", "pvg", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'v',
+            Items.cauldron, 'g', grill, 'p', plate);
+      }
     }
 
     // Niard

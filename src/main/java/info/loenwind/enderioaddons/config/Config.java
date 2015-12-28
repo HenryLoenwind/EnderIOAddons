@@ -11,13 +11,16 @@ import net.minecraftforge.common.config.Property;
 
 public enum Config {
 
-  drainContinuousEnergyUseRF(Section.DRAIN, 10, "The amount of power used by a drain per tick.", true, false), // 
-  drainPerBucketEnergyUseRF(Section.DRAIN, 400, "The amount of power used by a drain per 1000mB of liquid collected."), //
-  drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, 250,
-      "The amount of power used by a drain to move a source block by one meter."), //
-  drainAllowOnDedicatedServer(Section.DRAIN, false, "Allow the use of the drain on a dedicated server.", true, true), //
-  drainCollectsMilkFromCows(Section.DRAIN, true, "Allows the drain to collect milk from cows."), //
+  drainContinuousEnergyUseRF(Section.DRAIN, 10, "The amount of power used by a (food) drain per tick", true, false), // 
+  drainPerBucketEnergyUseRF(Section.DRAIN, 400, "The amount of power used by a (food) drain per 1000mB of liquid collected"), //
+  drainPerSourceBlockMoveEnergyUseRF(Section.DRAIN, 250, "The amount of power used by a (food) drain to move a source block by one mete."), //
+  drainAllowOnDedicatedServer(Section.DRAIN, false, "Allow the use of the drain on a dedicated server. This does not effect the food drain", true, true), //
   drainEnabled(Section.RECIPES, true, "Enable the crafting recipe for the drain", true, true), //
+
+  foodDrainCollectsMilkFromCows(Section.DRAIN, true, "Allows the food drain to collect milk from cows."), //
+  foodDrainCollectsFlowingMilk(Section.DRAIN, true, "Allows the food drain to pick up flowing milk."), //
+  foodDrainRange(Section.DRAIN, 3d, "Distance from the food drain that is searched for cows."), //
+  foodDrainEnabled(Section.RECIPES, true, "Enable the crafting recipe for the food drain", true, true), //
 
   cobbleWorksRfPerCobblestone(Section.COBBLEWORKS, 100, "RF used per generated cobblestone", true, false), //
 

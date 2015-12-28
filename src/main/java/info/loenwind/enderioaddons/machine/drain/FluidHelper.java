@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.machine.drain;
 import static info.loenwind.enderioaddons.common.NullHelper.notnull;
 import static info.loenwind.enderioaddons.common.NullHelper.notnullF;
 import info.loenwind.enderioaddons.fluid.FluidType;
+import info.loenwind.enderioaddons.machine.drain.filter.FluidFilter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -88,12 +89,12 @@ public final class FluidHelper {
       ForgeDirection.EAST };
   
   @Nullable
-  public static FluidHelper getInstance(@Nonnull World world, @Nonnull BlockCoord bc) {
+  public static FluidHelper getInstance(@Nonnull World world, @Nonnull BlockCoord bc, @Nonnull FluidFilter whitelist, @Nonnull FluidFilter blacklist) {
     for (ForgeDirection forgeDirection : DIRECTIONS_INIT) {
       BlockCoord direction = getLocation(bc, forgeDirection);
       if (isSourceBlock(world, direction)) {
         Fluid fluidForBlock = FluidRegistry.lookupFluidForBlock(direction.getBlock(world));
-        if (fluidForBlock != null) {
+        if (fluidForBlock != null && whitelist.isFluid(fluidForBlock) && !blacklist.isFluid(fluidForBlock)) {
           FluidHelper result = getInstance(world, new FluidStack(fluidForBlock, 1000), direction);
           if (result != null) {
             return result;
@@ -104,7 +105,7 @@ public final class FluidHelper {
     for (ForgeDirection forgeDirection : DIRECTIONS_INIT) {
       BlockCoord direction = getLocation(bc, forgeDirection);
       Fluid fluidForBlock = FluidRegistry.lookupFluidForBlock(direction.getBlock(world));
-      if (fluidForBlock != null) {
+      if (fluidForBlock != null && whitelist.isFluid(fluidForBlock) && !blacklist.isFluid(fluidForBlock)) {
         FluidHelper result = getInstance(world, new FluidStack(fluidForBlock, 1000), direction);
         if (result != null) {
           return result;
@@ -158,6 +159,10 @@ public final class FluidHelper {
     return bc.getBlock(world) == block;
   }
   
+  public boolean isSameLiquid(Fluid otherFluid) {
+    return fluid == otherFluid;
+  }
+
   public static boolean isSameLiquid(@Nonnull FluidStack fs, @Nonnull World world, @Nonnull BlockCoord bc) {
     return bc.getBlock(world) == fs.getFluid().getBlock();
   }
@@ -373,6 +378,10 @@ public final class FluidHelper {
       }
     }
     return false;
+  }
+
+  public FluidStack getFluidStack() {
+    return stack;
   }
   
 }

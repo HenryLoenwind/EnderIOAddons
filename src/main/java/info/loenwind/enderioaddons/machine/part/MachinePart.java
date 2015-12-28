@@ -40,6 +40,8 @@ public enum MachinePart {
   MCS("mcs", false, false, false, null, false, false, true), //
   LCS("lcs", false, false, false, null, false, false, true), //
   CLHP("clhp", false, false, false, null, false, false, true), //
+  FOODPLATE("foodPlate", false, false, false, null, false, false, true), //
+  FOODGRILL("foodGrill", false, false, false, null, false, false, true), //
   ;
 
   @Nonnull

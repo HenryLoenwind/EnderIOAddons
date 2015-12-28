@@ -1,7 +1,11 @@
 tile.blockDrain.name=Powered Drain
+tile.blockDrain.food.name=Food-grade Powered Drain
 tile.blockDrain.tooltip.detailed.line1=Collects liquids that flow into it.
 tile.blockDrain.tooltip.detailed.line2=Upgrade with capacitors to increase
 tile.blockDrain.tooltip.detailed.line3=working speed.
+tile.blockDrain.food.tooltip.detailed.line1=Collects milk from cows and picks up flowing milk.
+tile.blockDrain.food.tooltip.detailed.line2=Upgrade with capacitors to increase
+tile.blockDrain.food.tooltip.detailed.line3=working speed.
 enderio.blockDrain.tooltip.disabledMessage=Note: The drain is disabled on this server.
 
 enderioaddons.machineFrame.name=Empty Machine Framework
@@ -20,6 +24,8 @@ enderioaddons.pylontank.name=Enchantment Modulator
 enderioaddons.chassiParts.name=Chassis Plates
 enderioaddons.flagparts.name=Flags and Poles
 enderioaddons.simplemagnet.name=Simple Magnet
+enderioaddons.foodPlate.name=Food-grade coated Chassis Plate
+enderioaddons.foodGrill.name=Food-grade coated Chassis Grill
 
 tile.blockCobbleworks.name=Cobblestone Framework
 tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.

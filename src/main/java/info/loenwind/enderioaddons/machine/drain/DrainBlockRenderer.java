@@ -28,8 +28,8 @@ public class DrainBlockRenderer implements ISimpleBlockRenderingHandler {
       return true;
     }
 
-    final IIcon icon_sides = BlockDrain.blockDrain.getIcon(2, 0);
-    final IIcon icon_bottom = BlockDrain.blockDrain.getIcon(0, 0);
+    final IIcon icon_sides = BlockDrain.blockDrain.getIcon(world, x, y, z, 2);
+    final IIcon icon_bottom = BlockDrain.blockDrain.getIcon(world, x, y, z, 6);
 
     Tessellator.instance.addTranslation(x, y, z);
 

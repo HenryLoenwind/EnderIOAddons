@@ -10,6 +10,9 @@ import info.loenwind.enderioaddons.baseclass.TileEnderIOAddons;
 import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.fluid.Fluids;
 import info.loenwind.enderioaddons.machine.drain.FluidHelper.ReturnObject;
+import info.loenwind.enderioaddons.machine.drain.filter.FoodFluidFilter;
+import info.loenwind.enderioaddons.machine.drain.filter.NoFilter;
+import info.loenwind.enderioaddons.machine.drain.filter.TankFilter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +55,8 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
 
   private static final int ONE_BLOCK_OF_LIQUID = 1000;
 
+  private final static @Nonnull FoodFluidFilter filter = new FoodFluidFilter();
+
   private static int IO_MB_TICK = 100;
 
   @Nonnull
@@ -68,6 +73,10 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
 
   public TileDrain() {
     super(new SlotDefinition(1, 1, 1));
+  }
+
+  public boolean isFoodDrain() {
+    return worldObj.getBlockMetadata(xCoord, yCoord, zCoord) == 1;
   }
 
   @Override
@@ -241,14 +250,26 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
     }
     
     if (shouldDoWorkThisTick(modulo) && tank.getAvailableSpace() >= ONE_BLOCK_OF_LIQUID) {
-      FluidHelper instance;
+      FluidHelper instance = null;
       final FluidStack tankfluid = tank.getFluid();
-      if (tankfluid != null) {
-        instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
-            notnull(getLocation(), "Invalid game state: TE location is missing"), tankfluid);
+      if (isFoodDrain()) {
+        if (Config.foodDrainCollectsFlowingMilk.getBoolean()) {
+          if (tankfluid != null) {
+            instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
+                notnull(getLocation(), "Invalid game state: TE location is missing"), new TankFilter(tank), new NoFilter(false));
+          } else {
+            instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
+                notnull(getLocation(), "Invalid game state: TE location is missing"), filter, new NoFilter(false));
+          }
+        }
       } else {
-        instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
-            notnull(getLocation(), "Invalid game state: TE location is missing"));
+        if (tankfluid != null) {
+          instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
+              notnull(getLocation(), "Invalid game state: TE location is missing"), new TankFilter(tank), filter);
+        } else {
+          instance = FluidHelper.getInstance(notnull(worldObj, "Invalid game state: World is missing"),
+              notnull(getLocation(), "Invalid game state: TE location is missing"), new NoFilter(true), filter);
+        }
       }
       if (instance != null) {
         instance.setDrainingCallback(this);
@@ -263,17 +284,16 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
         dryruncount = 0;
         return true;
       } else {
-        if (info.loenwind.enderioaddons.config.Config.drainCollectsMilkFromCows.getBoolean()) {
-          if (tank.getFluid() == null || tank.getFluid().getFluid() == Fluids.MILK.getFluid()) {
-            AxisAlignedBB bb = getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord).expand(3, 1.5f, 3);
-            List cowsInRange = worldObj.getEntitiesWithinAABB(EntityCow.class, bb);
-            for (EntityCow cow : (List<EntityCow>) cowsInRange) {
-              if (cow.getClass() == EntityCow.class) {
-                fillInternal(new FluidStack(Fluids.MILK.getFluid(), 2), true);
-                return true;
-              } else {
-                // TODO: MooCows and other modded cows
-              }
+        if (Config.foodDrainCollectsMilkFromCows.getBoolean() && isFoodDrain() && (tankfluid == null || tankfluid.getFluid() == Fluids.MILK.getFluid())) {
+          AxisAlignedBB bb = getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord).expand(Config.foodDrainRange.getFloat(), 1.5f,
+              Config.foodDrainRange.getFloat());
+          List cowsInRange = worldObj.getEntitiesWithinAABB(EntityCow.class, bb);
+          for (EntityCow cow : (List<EntityCow>) cowsInRange) {
+            if (cow.getClass() == EntityCow.class) {
+              fillInternal(new FluidStack(Fluids.MILK.getFluid(), 2), true);
+              return true;
+            } else {
+              // TODO: Mooshrooms, MooCows and other modded cows
             }
           }
         }
@@ -348,7 +368,7 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
   @Override
   public void setWorldObj(@Nullable World p_145834_1_) {
     super.setWorldObj(p_145834_1_);
-    if (!worldObj.isRemote && !nowater.isEmpty() && !registered) {
+    if (!worldObj.isRemote && !nowater.isEmpty() && !registered && !isFoodDrain()) {
       // actually part of readCommon(nbt), but the world object is not yet set
       // when that is called
       InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
@@ -363,7 +383,7 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
 
   @Override
   public void onWaterDrain(@Nonnull World world, @Nonnull BlockCoord bc) {
-    if (!worldObj.isRemote && !registered) {
+    if (!worldObj.isRemote && !registered && !isFoodDrain()) {
       InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
 		  registered = true;
 	  }

@@ -84,6 +84,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
   @SideOnly(Side.CLIENT)
   public void getSubBlocks(Item item, CreativeTabs p_149666_2_, List list) {
     list.add(new ItemStack(this, 1, 0));
+    list.add(new ItemStack(this, 1, 1));
   }
 
   @Override
@@ -142,6 +143,10 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
     return GuiIds.GUI_ID_DRAIN;
   }
 
+  public static boolean isFoodDrain(IBlockAccess world, int x, int y, int z) {
+    return world.getBlockMetadata(x, y, z) == 1;
+  }
+
   @Override
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(IBlockAccess world, int x, int y, int z, int blockSide) {
@@ -153,12 +158,18 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
       AbstractMachineEntity me = (AbstractMachineEntity) te;
       facing = me.facing;
     }
+    int side = blockSide;
     int meta = world.getBlockMetadata(x, y, z);
     meta = MathHelper.clamp_int(meta, 0, 1);
+    if (blockSide == 6) {
+      side = 0;
+    } else if (blockSide == 0) {
+      meta = 0;
+    }
     if (meta == 1) {
-      return iconBuffer[0][ClientProxy.sideAndFacingToSpriteOffset[blockSide][facing] + 6];
+      return iconBuffer[0][ClientProxy.sideAndFacingToSpriteOffset[side][facing] + 6];
     } else {
-      return iconBuffer[0][ClientProxy.sideAndFacingToSpriteOffset[blockSide][facing]];
+      return iconBuffer[0][ClientProxy.sideAndFacingToSpriteOffset[side][facing]];
     }
   }
 
@@ -171,7 +182,7 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   protected String getMachineFrontIconKey(boolean active) {
-    return EnderIOAddons.DOMAIN + ":blockDrainSide";
+    return active ? EnderIOAddons.DOMAIN + ":blockFoodDrainSide" : EnderIOAddons.DOMAIN + ":blockDrainSide";
   }
 
   @Override
@@ -186,12 +197,12 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
 
   @Override
   protected String getTopIconKey(boolean active) {
-    return EnderIOAddons.DOMAIN + ":blockDrain";
+    return active ? EnderIOAddons.DOMAIN + ":blockFoodDrain" : EnderIOAddons.DOMAIN + ":blockDrain";
   }
 
   @Override
   protected String getBottomIconKey(boolean active) {
-    return "enderio:machineTemplate";
+    return active ? EnderIOAddons.DOMAIN + ":blockFoodDrainBottom" : "enderio:machineTemplate";
   }
 
   @Override
