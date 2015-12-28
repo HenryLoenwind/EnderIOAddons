@@ -56,7 +56,8 @@ public enum Config {
 
   waterWorksEnabled(Section.RECIPES, false, "Enable the crafting recipe for the Waterworks", true, true), //
 
-  impulseHopperRFusePerOperation(Section.IHOPPER, 20, "RF use per operation (regardless of its outcome)"), //
+  // defaults give exactly 20/40/100 RF/t. (16+6*64=400 per operation, divided by 20/10/4)
+  impulseHopperRFusePerOperation(Section.IHOPPER, 16, "RF use per operation (regardless of its outcome)"), //
   impulseHopperRFusePerItem(Section.IHOPPER, 1.0d, "RF use per transfered item"), //
 
   impulseHopperWorkEveryTick1(Section.IHOPPER, 20, "How many ticks does it take to execute one operation (machine with no capacitor upgrades)"), //

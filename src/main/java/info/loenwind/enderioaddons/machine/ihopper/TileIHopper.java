@@ -289,15 +289,17 @@ public class TileIHopper extends AbstractTileFramework implements IFrameworkMach
 
   @Override
   public void onCapacitorTypeChange() {
+    int powerPerOps = impulseHopperRFusePerOperation.getInt() + (int) (impulseHopperRFusePerItem.getFloat() * 64f * SLOTS);
+    int powerPerTick = powerPerOps / tickSpeedFromCap();
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
-      setCapacitor(new BasicCapacitor(powerConduitTierOneRF, 100000, powerConduitTierOneRF));
+      setCapacitor(new BasicCapacitor(powerConduitTierOneRF, 100000, powerPerTick));
       break;
     case ACTIVATED_CAPACITOR:
-      setCapacitor(new BasicCapacitor(powerConduitTierTwoRF, 200000, powerConduitTierTwoRF));
+      setCapacitor(new BasicCapacitor(powerConduitTierTwoRF, 200000, powerPerTick));
       break;
     case ENDER_CAPACITOR:
-      setCapacitor(new BasicCapacitor(powerConduitTierThreeRF, 500000, powerConduitTierThreeRF));
+      setCapacitor(new BasicCapacitor(powerConduitTierThreeRF, 500000, powerPerTick));
       break;
     }
   }
