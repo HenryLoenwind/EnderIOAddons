@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons;
 
 import info.loenwind.enderioaddons.common.InitAware;
 import info.loenwind.enderioaddons.config.ConfigHandler;
+import info.loenwind.enderioaddons.machine.part.CommandReloadFortune;
 import info.loenwind.enderioaddons.network.Manager;
 import info.loenwind.enderioaddons.recipe.Recipes;
 import info.loenwind.enderioaddons.timer.Celeb11;
@@ -22,6 +23,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = EnderIOAddons.MODID, name = EnderIOAddons.MOD_NAME, version = EnderIOAddons.VERSION, dependencies = "required-after:EnderIO;after:waterhooks;after:AgriCraft", guiFactory = "info.loenwind.enderioaddons.config.gui.ConfigFactory")
 public class EnderIOAddons implements InitAware {
@@ -85,4 +87,9 @@ public class EnderIOAddons implements InitAware {
     Scheduler.instance.start();
   }
 
+  @SuppressWarnings("static-method")
+  @EventHandler
+  public void serverLoad(FMLServerStartingEvent event) {
+    event.registerServerCommand(new CommandReloadFortune());
+  }
 }

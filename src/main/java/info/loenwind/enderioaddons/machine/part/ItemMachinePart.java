@@ -140,7 +140,7 @@ public class ItemMachinePart extends Item {
 
   private static final List<String> fortunes = new ArrayList<>();
 
-  private static void readConfig() throws IOException {
+  public static int readConfig() throws IOException {
     final String fileName = "fortunes.txt";
     File configFile = new File(ConfigHandler.configDirectory, fileName);
 
@@ -164,6 +164,7 @@ public class ItemMachinePart extends Item {
     } finally {
       IOUtils.closeQuietly(writer);
     }
+    return fortunes.size();
   }
 
   private static void readConfigFile(File file) throws IOException {
@@ -172,6 +173,7 @@ public class ItemMachinePart extends Item {
   }
 
   private static void readConfigFile(InputStream file) throws IOException {
+    fortunes.clear();
     BufferedReader br = new BufferedReader(new InputStreamReader(file));
     String line = null;
     while ((line = br.readLine()) != null) {
