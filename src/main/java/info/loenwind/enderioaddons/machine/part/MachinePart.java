@@ -42,6 +42,8 @@ public enum MachinePart {
   CLHP("clhp", false, false, false, null, false, false, true), //
   FOODPLATE("foodPlate", false, false, false, null, false, false, true), //
   FOODGRILL("foodGrill", false, false, false, null, false, false, true), //
+  COOKIE("fortuneCookie", false, false, false, null, false, false, true), //
+  COOKIESTRIP("fortuneCookieStrip", false, false, false, null, false, false, true), //
   ;
 
   @Nonnull

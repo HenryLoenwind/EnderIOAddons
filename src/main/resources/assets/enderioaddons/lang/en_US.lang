@@ -26,6 +26,8 @@ enderioaddons.flagparts.name=Flags and Poles
 enderioaddons.simplemagnet.name=Simple Magnet
 enderioaddons.foodPlate.name=Food-grade coated Chassis Plate
 enderioaddons.foodGrill.name=Food-grade coated Chassis Grill
+enderioaddons.fortuneCookie.name=Fortune Cookie
+enderioaddons.fortuneCookieStrip.name=You cheated this in, didn't you?
 
 tile.blockCobbleworks.name=Cobblestone Framework
 tile.blockCobbleworks.tooltip.detailed.line1=Creates cobblestone from energy.

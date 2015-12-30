@@ -156,6 +156,10 @@ public class Recipes implements InitAware {
       }
     }
 
+    // Fortune Cookie
+    ItemStack fortune = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COOKIE.ordinal());
+    addShaped(fortune, "cgc", "cpc", "gcg", 'c', Items.cookie, 'g', "nuggetGold", 'p', Items.paper);
+
     // Drain
     if (Config.drainEnabled.getBoolean()) {
       addShaped(new ItemStack(blockDrain, 1, 0), "btb", "pmp", "eve", 'm', machineChassi, 't', basicTank, 'p', Blocks.piston, 'b', Items.bucket, 'e',

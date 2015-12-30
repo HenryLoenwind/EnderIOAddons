@@ -32,6 +32,8 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     API.registerRecipeHandler(new TeaserRecipeHandler());
     API.registerUsageHandler(new TeaserRecipeHandler());
 
+    API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COOKIESTRIP.ordinal()));
+
     API.hideItem(new ItemStack(AbstractBlockFramework.blockDummy, 1, OreDictionary.WILDCARD_VALUE));
     if (!cobbleWorksEnabled.getBoolean()) {
       API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COBBLE_CONTROLLER.ordinal()));
