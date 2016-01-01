@@ -40,10 +40,10 @@ public enum MachinePart {
   MCS("mcs", false, false, false, null, false, false, true), //
   LCS("lcs", false, false, false, null, false, false, true), //
   CLHP("clhp", false, false, false, null, false, false, true), //
-  FOODPLATE("foodPlate", false, false, false, null, false, false, true), //
-  FOODGRILL("foodGrill", false, false, false, null, false, false, true), //
-  COOKIE("fortuneCookie", false, false, false, null, false, false, true), //
-  COOKIESTRIP("fortuneCookieStrip", false, false, false, null, false, false, true), //
+  FOODPLATE("foodPlate", false, false, false, null, false, false, false), //
+  FOODGRILL("foodGrill", false, false, false, null, false, false, false), //
+  COOKIE("fortuneCookie", false, false, false, null, false, false, false), //
+  COOKIESTRIP("fortuneCookieStrip", false, false, false, null, false, false, false), //
   ;
 
   @Nonnull
