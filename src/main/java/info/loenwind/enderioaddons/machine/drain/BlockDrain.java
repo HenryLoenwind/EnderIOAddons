@@ -302,20 +302,22 @@ public class BlockDrain extends AbstractMachineBlock<TileDrain> implements IAdva
               while (power > 0) {
                 range += 1.5f * power / 500;
                 final float range2 = range;
-                final float kaboom = power / (2000f / 666f);
-                delay += 5;
-                Scheduler.instance().schedule(delay, new Runnable() {
-                  @Override
-                  public void run() {
-                    world.newExplosion(null, x + .5f, y + range2, z + .5f, kaboom, true, true);
-                  }
-                });
+                final float kaboom = power / (2000f / 6.66f);
+                delay += 7;
+                if (y + range2 < 255) {
+                  Scheduler.instance().schedule(delay, new Runnable() {
+                    @Override
+                    public void run() {
+                      world.newExplosion(null, x + .5f, y + range2, z + .5f, kaboom, true, true);
+                    }
+                  });
+                }
                 power -= 333;
               }
               return true;
             } else if (fluidStack.getFluid() == FluidRegistry.WATER) {
               for (BlockCoord bc1 : getAround(te.getLocation())) {
-                if (bc1.getBlock(world) == Blocks.fire) {
+                if (world.blockExists(bc1.x, bc1.y, bc1.z) && bc1.getBlock(world) == Blocks.fire) {
                   world.setBlockToAir(bc1.x, bc1.y, bc1.z);
                   world.playSoundEffect(bc1.x + 0.5F, bc1.y + 0.1F, bc1.z + 0.5F, "random.fizz", 0.5F,
                       2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
