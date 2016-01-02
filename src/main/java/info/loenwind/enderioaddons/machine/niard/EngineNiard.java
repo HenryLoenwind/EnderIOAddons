@@ -117,8 +117,8 @@ public class EngineNiard {
 
   // Tools of the trade
 
-  private static boolean isInWorld(BlockCoord bc) {
-    return bc.y > 0 && bc.y <= 255;
+  private boolean isInWorld(BlockCoord bc) {
+    return owner.getWorldObj().blockExists(bc.x, bc.y, bc.z);
   }
 
   private boolean isSameLiquid(@Nonnull BlockCoord bc) {

@@ -72,6 +72,9 @@ public final class FluidHelper {
   }
 
   public static boolean isSourceBlock(@Nonnull World world, @Nonnull BlockCoord bc) {
+    if (!world.blockExists(bc.x, bc.y, bc.z)) {
+      return false;
+    }
     Block block = bc.getBlock(world);
     if (block instanceof BlockFluidClassic) {
       return ((BlockFluidClassic) block).isSourceBlock(world, bc.x, bc.y, bc.z);
@@ -156,7 +159,7 @@ public final class FluidHelper {
    * same liquid
    */
   public boolean isSameLiquid(@Nonnull BlockCoord bc) {
-    return bc.getBlock(world) == block;
+    return world.blockExists(bc.x, bc.y, bc.z) && bc.getBlock(world) == block;
   }
   
   public boolean isSameLiquid(Fluid otherFluid) {
@@ -164,7 +167,7 @@ public final class FluidHelper {
   }
 
   public static boolean isSameLiquid(@Nonnull FluidStack fs, @Nonnull World world, @Nonnull BlockCoord bc) {
-    return bc.getBlock(world) == fs.getFluid().getBlock();
+    return world.blockExists(bc.x, bc.y, bc.z) && bc.getBlock(world) == fs.getFluid().getBlock();
   }
   
   public boolean isSourceBlock(@Nonnull BlockCoord bc) {

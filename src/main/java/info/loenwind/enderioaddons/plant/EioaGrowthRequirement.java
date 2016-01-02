@@ -113,11 +113,14 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
   }
 
   private static boolean isBlock(World world, int x, int y, int z, BlockWithMeta bwm) {
-    return world.getBlock(x, y, z) == bwm.getBlock() && (bwm.ignoreMeta() || world.getBlockMetadata(x, y, z) == bwm.getMeta());
+    return world.blockExists(x, y, z) && world.getBlock(x, y, z) == bwm.getBlock() && (bwm.ignoreMeta() || world.getBlockMetadata(x, y, z) == bwm.getMeta());
   }
 
   @Override
   public boolean isValidSoil(World world, int x, int y, int z) {
+    if (!world.blockExists(x, y, z)) {
+      return false;
+    }
     Block block = world.getBlock(x, y, z);
     if (block != capBank.getBlock()) {
       return false;
