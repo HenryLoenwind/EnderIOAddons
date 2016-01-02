@@ -2,6 +2,7 @@ package info.loenwind.enderioaddons.plant;
 
 import static info.loenwind.enderioaddons.config.Config.seedsRFperGrowthTick;
 import info.loenwind.enderioaddons.common.Log;
+import info.loenwind.enderioaddons.common.WorldHelper;
 import info.loenwind.enderioaddons.recipe.Recipes;
 
 import java.lang.reflect.InvocationTargetException;
@@ -113,7 +114,7 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
   }
 
   private static boolean isBlock(World world, int x, int y, int z, BlockWithMeta bwm) {
-    return world.blockExists(x, y, z) && world.getBlock(x, y, z) == bwm.getBlock() && (bwm.ignoreMeta() || world.getBlockMetadata(x, y, z) == bwm.getMeta());
+    return WorldHelper.getBlock(world, x, y, z) == bwm.getBlock() && (bwm.ignoreMeta() || WorldHelper.getMeta(world, x, y, z) == bwm.getMeta());
   }
 
   @Override
