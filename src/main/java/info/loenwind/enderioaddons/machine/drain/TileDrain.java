@@ -368,9 +368,9 @@ public class TileDrain extends TileEnderIOAddons implements IFluidHandler, IWate
   @Override
   public void setWorldObj(@Nullable World p_145834_1_) {
     super.setWorldObj(p_145834_1_);
-    if (!worldObj.isRemote && !nowater.isEmpty() && !registered && !isFoodDrain()) {
+    if (!worldObj.isRemote && !nowater.isEmpty() && !registered) {
       // actually part of readCommon(nbt), but the world object is not yet set
-      // when that is called
+      // when that is called. For food drains "nowater" will be empty here.
       InfiniteWaterSourceStopper.getInstance().register(notnull(worldObj, "Invalid game state: World is missing"), this);
       registered = true;
     }
