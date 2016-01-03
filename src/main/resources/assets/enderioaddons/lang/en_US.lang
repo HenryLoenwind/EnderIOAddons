@@ -214,3 +214,7 @@ enderioaddons.nei.teaser.enderioaddons.darkseeds=These seeds need power to grow.
 enderioaddons.nei.teaser.enderioaddons.darkseeds.image=capplant
 enderioaddons.agricraft_journal.darkplant=A funny thing, seeds made from non-living things, grown by the power of RF energy.
 
+tile.enderioaddons.rlever10.name=Self-reseting lever (10 seconds)
+tile.enderioaddons.rlever30.name=Self-reseting lever (30 seconds)
+tile.enderioaddons.rlever60.name=Self-reseting lever (1 Minute)
+tile.enderioaddons.rlever300.name=Self-reseting lever (5 Minutes)

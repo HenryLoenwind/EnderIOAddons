@@ -18,6 +18,7 @@ import info.loenwind.enderioaddons.machine.magcharger.BlockMagCharger;
 import info.loenwind.enderioaddons.machine.niard.BlockNiard;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.pmon.BlockPMon;
+import info.loenwind.enderioaddons.machine.rlever.BlockRLever;
 import info.loenwind.enderioaddons.machine.tcom.BlockTcom;
 import info.loenwind.enderioaddons.machine.voidtank.BlockVoidTank;
 import info.loenwind.enderioaddons.machine.waterworks.BlockWaterworks;
@@ -50,6 +51,7 @@ public class ClientAndServerProxy implements InitAware {
       BlockAfarm.create();
       ItemModule.create();
     }
+    BlockRLever.create();
   }
 
   @Override

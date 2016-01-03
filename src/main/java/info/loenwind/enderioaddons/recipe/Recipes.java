@@ -23,6 +23,7 @@ import info.loenwind.enderioaddons.machine.chassis.BlockChassis;
 import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
+import info.loenwind.enderioaddons.machine.rlever.BlockRLever;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -359,9 +360,9 @@ public class Recipes implements InitAware {
         ItemStack brokenRakeWood = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal());
         ItemStack brokenRakeIron = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal());
 
-        addShaped(capacitor1, " s ", "sms", "srs", 's', scs, 'm', mcs, 'r', Items.redstone);
-        addShaped(capacitor2, " s ", "sls", "srs", 's', scs, 'l', lcs, 'r', Items.redstone);
-        addShaped(capacitor8, " s ", "mlm", "srs", 's', scs, 'm', mcs, 'l', lcs, 'r', Items.redstone);
+        addShaped(capacitor1, " s ", "sms", "srs", 's', scs, 'm', mcs, 'r', "dustRedstone");
+        addShaped(capacitor2, " s ", "sls", "srs", 's', scs, 'l', lcs, 'r', "dustRedstone");
+        addShaped(capacitor8, " s ", "mlm", "srs", 's', scs, 'm', mcs, 'l', lcs, 'r', "dustRedstone");
 
         if (crazypants.enderio.config.Config.useHardRecipes) {
           addShaped(clhp, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
@@ -422,6 +423,22 @@ public class Recipes implements InitAware {
         addShapeless(BESTONLY, EJECTSEEDS, moduleIQ, magGlass);
       }
     }
+
+    // Lever
+    addShapeless(BlockRLever.blockRLever10, Blocks.lever, "dustRedstone");
+
+    addShapeless(BlockRLever.blockRLever30, BlockRLever.blockRLever10, "dustRedstone");
+    addShapeless(BlockRLever.blockRLever30, Blocks.lever, "dustRedstone", "dustRedstone");
+
+    addShapeless(BlockRLever.blockRLever60, BlockRLever.blockRLever10, "dustRedstone", "dustRedstone");
+    addShapeless(BlockRLever.blockRLever60, BlockRLever.blockRLever30, "dustRedstone");
+    addShapeless(BlockRLever.blockRLever60, Blocks.lever, "dustRedstone", "dustRedstone", "dustRedstone");
+
+    addShapeless(BlockRLever.blockRLever300, BlockRLever.blockRLever10, "dustRedstone", "dustRedstone", "dustRedstone");
+    addShapeless(BlockRLever.blockRLever300, BlockRLever.blockRLever30, "dustRedstone", "dustRedstone");
+    addShapeless(BlockRLever.blockRLever300, BlockRLever.blockRLever60, "dustRedstone");
+    addShapeless(BlockRLever.blockRLever300, Blocks.lever, "dustRedstone", "dustRedstone", "dustRedstone", "dustRedstone");
+
   }
 
   private static boolean isAnyFrameworkMachineEnabled() {
