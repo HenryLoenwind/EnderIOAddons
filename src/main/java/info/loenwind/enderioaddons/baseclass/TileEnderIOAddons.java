@@ -13,12 +13,20 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import crazypants.enderio.machine.AbstractPoweredTaskEntity;
 import crazypants.enderio.machine.SlotDefinition;
+import crazypants.enderio.power.Capacitors;
 
 @Storable
 public abstract class TileEnderIOAddons extends AbstractPoweredTaskEntity {
 
   public TileEnderIOAddons(SlotDefinition slotDefinition) {
     super(slotDefinition);
+  }
+
+  @Override
+  public void setCapacitor(Capacitors capacitorType) {
+    if (getCapacitorType() != capacitorType || getCapacitor() == capacitorType.capacitor) {
+      super.setCapacitor(capacitorType);
+    }
   }
 
   /**

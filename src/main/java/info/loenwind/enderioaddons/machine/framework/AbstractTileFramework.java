@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import crazypants.enderio.machine.AbstractMachineEntity;
 import crazypants.enderio.machine.AbstractPowerConsumerEntity;
 import crazypants.enderio.machine.SlotDefinition;
+import crazypants.enderio.power.Capacitors;
 
 @Storable
 public abstract class AbstractTileFramework extends AbstractPowerConsumerEntity {
@@ -53,6 +54,13 @@ public abstract class AbstractTileFramework extends AbstractPowerConsumerEntity 
       }
     }
     return res;
+  }
+
+  @Override
+  public void setCapacitor(Capacitors capacitorType) {
+    if (getCapacitorType() != capacitorType || getCapacitor() == capacitorType.capacitor) {
+      super.setCapacitor(capacitorType);
+    }
   }
 
   /**
