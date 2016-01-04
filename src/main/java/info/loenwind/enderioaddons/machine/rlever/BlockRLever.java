@@ -35,13 +35,13 @@ public class BlockRLever extends BlockLever {
 
   public static void create() {
     blockRLever10 = new BlockRLever().setDelay(10 * 20).setBlockName("rlever10");
-    GameRegistry.registerBlock(blockRLever10, EnderIOAddons.DOMAIN + ":rlever10");
+    GameRegistry.registerBlock(blockRLever10, "rlever10");
     blockRLever30 = new BlockRLever().setDelay(30 * 20).setBlockName("rlever30");
-    GameRegistry.registerBlock(blockRLever30, EnderIOAddons.DOMAIN + ":rlever30");
+    GameRegistry.registerBlock(blockRLever30, "rlever30");
     blockRLever60 = new BlockRLever().setDelay(60 * 20).setBlockName("rlever60");
-    GameRegistry.registerBlock(blockRLever60, EnderIOAddons.DOMAIN + ":rlever60");
+    GameRegistry.registerBlock(blockRLever60, "rlever60");
     blockRLever300 = new BlockRLever().setDelay(300 * 20).setBlockName("rlever300");
-    GameRegistry.registerBlock(blockRLever300, EnderIOAddons.DOMAIN + ":rlever300");
+    GameRegistry.registerBlock(blockRLever300, "rlever300");
   }
 
   @Override
