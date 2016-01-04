@@ -33,7 +33,6 @@ import crazypants.enderio.machine.MachineRecipeInput;
 import crazypants.enderio.machine.MachineRecipeRegistry;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.power.BasicCapacitor;
-import crazypants.enderio.power.Capacitors;
 
 @Storable
 public class TileCobbleworks extends AbstractTileFramework implements IFrameworkMachine {
@@ -211,7 +210,7 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   private boolean computeOutputMapping() {
-    if (!inputsChanged) {
+    if (!inputsChanged || worldObj == null || worldObj.isRemote) {
       return false;
     }
     inputsChanged = false;
@@ -454,14 +453,6 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       capTickLimit -= wantToUse;
       return true;
     }
-  }
-
-  @Override
-  public void setCapacitor(Capacitors capacitorType) {
-    super.setCapacitor(capacitorType);
-    // we need to do this on the client after nbt data has been received from the server.
-    // It won't do anything unless either the capacitor or the input slots actually changed.
-    computeOutputMapping();
   }
 
   @Override
