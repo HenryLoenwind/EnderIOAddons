@@ -24,6 +24,11 @@ import info.loenwind.enderioaddons.machine.flag.BlockFlag;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
 import info.loenwind.enderioaddons.machine.rlever.BlockRLever;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -158,8 +163,10 @@ public class Recipes implements InitAware {
     }
 
     // Fortune Cookie
-    ItemStack fortune = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COOKIE.ordinal());
-    addShaped(fortune, "cgc", "cpc", "gcg", 'c', Items.cookie, 'g', "nuggetGold", 'p', Items.paper);
+    if (Config.fortuneCookiesEnabled.getBoolean() && Config.fortuneCookiesCraftingEnabled.getBoolean()) {
+      ItemStack fortune = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COOKIE.ordinal());
+      addShaped(fortune, "cgc", "cpc", "gcg", 'c', Items.cookie, 'g', "nuggetGold", 'p', Items.paper);
+    }
 
     // Drain
     if (Config.drainEnabled.getBoolean()) {
@@ -425,20 +432,52 @@ public class Recipes implements InitAware {
     }
 
     // Lever
-    addShapeless(BlockRLever.blockRLever10, Blocks.lever, "dustRedstone");
+    List<Block> levers = BlockRLever.getBlocks();
+    List<Block> usedLevers = new ArrayList<>();
+    int rs = 0;
+    for (Block block : levers) {
+      addShapelessWT(block, Blocks.lever, "dustRedstone", ++rs);
+      int rsl = rs;
+      for (Block block0 : usedLevers) {
+        addShapelessWT(block, block0, "dustRedstone", --rsl);
+      }
+      usedLevers.add(block);
+    }
+  }
 
-    addShapeless(BlockRLever.blockRLever30, BlockRLever.blockRLever10, "dustRedstone");
-    addShapeless(BlockRLever.blockRLever30, Blocks.lever, "dustRedstone", "dustRedstone");
+  @SuppressWarnings("unused")
+  private static void addShapelessWT(Block block, Object in, int count) {
+    if (count > 0 && count <= 9) {
+      Object[] ingr = new Object[count];
+      for (int i = 0; i < count; i++) {
+        ingr[i] = in;
+      }
+      addShapeless(block, ingr);
+    }
+  }
 
-    addShapeless(BlockRLever.blockRLever60, BlockRLever.blockRLever10, "dustRedstone", "dustRedstone");
-    addShapeless(BlockRLever.blockRLever60, BlockRLever.blockRLever30, "dustRedstone");
-    addShapeless(BlockRLever.blockRLever60, Blocks.lever, "dustRedstone", "dustRedstone", "dustRedstone");
+  private static void addShapelessWT(Block block, Object in0, Object in, int count) {
+    if (count >= 0 && count < 9) {
+      Object[] ingr = new Object[count + 1];
+      ingr[0] = in0;
+      for (int i = 0; i < count; i++) {
+        ingr[i + 1] = in;
+      }
+      addShapeless(block, ingr);
+    }
+  }
 
-    addShapeless(BlockRLever.blockRLever300, BlockRLever.blockRLever10, "dustRedstone", "dustRedstone", "dustRedstone");
-    addShapeless(BlockRLever.blockRLever300, BlockRLever.blockRLever30, "dustRedstone", "dustRedstone");
-    addShapeless(BlockRLever.blockRLever300, BlockRLever.blockRLever60, "dustRedstone");
-    addShapeless(BlockRLever.blockRLever300, Blocks.lever, "dustRedstone", "dustRedstone", "dustRedstone", "dustRedstone");
-
+  @SuppressWarnings("unused")
+  private static void addShapelessWT(Block block, Object in0, Object in1, Object in, int count) {
+    if (count >= 0 && count < 8) {
+      Object[] ingr = new Object[count + 2];
+      ingr[0] = in0;
+      ingr[1] = in1;
+      for (int i = 0; i < count; i++) {
+        ingr[i + 2] = in;
+      }
+      addShapeless(block, ingr);
+    }
   }
 
   private static boolean isAnyFrameworkMachineEnabled() {

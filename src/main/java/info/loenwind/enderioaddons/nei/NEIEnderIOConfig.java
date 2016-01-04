@@ -32,6 +32,9 @@ public class NEIEnderIOConfig implements IConfigureNEI {
     API.registerRecipeHandler(new TeaserRecipeHandler());
     API.registerUsageHandler(new TeaserRecipeHandler());
 
+    if (!Config.fortuneCookiesEnabled.getBoolean()) {
+      API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COOKIE.ordinal()));
+    }
     API.hideItem(new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.COOKIESTRIP.ordinal()));
 
     API.hideItem(new ItemStack(AbstractBlockFramework.blockDummy, 1, OreDictionary.WILDCARD_VALUE));

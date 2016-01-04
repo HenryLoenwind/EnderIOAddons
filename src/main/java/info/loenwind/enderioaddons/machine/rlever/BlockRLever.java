@@ -1,7 +1,11 @@
 package info.loenwind.enderioaddons.machine.rlever;
 
 import info.loenwind.enderioaddons.EnderIOAddons;
+import info.loenwind.enderioaddons.common.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -13,10 +17,8 @@ import crazypants.enderio.EnderIOTab;
 
 public class BlockRLever extends BlockLever {
 
-  public static Block blockRLever10;
-  public static Block blockRLever30;
-  public static Block blockRLever60;
-  public static Block blockRLever300;
+  private static List<Integer> delays = null;
+  private static List<Block> blocks = null;
 
   private int delay = 1;
 
@@ -34,14 +36,40 @@ public class BlockRLever extends BlockLever {
   }
 
   public static void create() {
-    blockRLever10 = new BlockRLever().setDelay(10 * 20).setBlockName("rlever10");
-    GameRegistry.registerBlock(blockRLever10, "rlever10");
-    blockRLever30 = new BlockRLever().setDelay(30 * 20).setBlockName("rlever30");
-    GameRegistry.registerBlock(blockRLever30, "rlever30");
-    blockRLever60 = new BlockRLever().setDelay(60 * 20).setBlockName("rlever60");
-    GameRegistry.registerBlock(blockRLever60, "rlever60");
-    blockRLever300 = new BlockRLever().setDelay(300 * 20).setBlockName("rlever300");
-    GameRegistry.registerBlock(blockRLever300, "rlever300");
+    getLevers();
+    blocks = new ArrayList<>();
+    for (Integer value : delays) {
+      Block lever = new BlockRLever().setDelay(value).setBlockName("rlever" + value);
+      GameRegistry.registerBlock(lever, "rlever" + value);
+      blocks.add(lever);
+    }
+  }
+
+  public static List<Integer> getLevers() {
+    if (delays == null) {
+      delays = new ArrayList<>();
+      String s = info.loenwind.enderioaddons.config.Config.leversEnabled.getString();
+      s = s.replaceAll("[^0-9,]", "");
+      String[] split = s.split(",");
+      for (String string : split) {
+        if (string != null && !string.isEmpty()) {
+          try {
+            final Integer value = Integer.valueOf(string);
+            if (value > 0 && value <= 60 * 60 * 24) { // max 1 day
+              delays.add(value);
+            }
+          } catch (NumberFormatException e) {
+            Log.error("Could not parse lever time setting '" + string + "'");
+          }
+        }
+      }
+      Collections.sort(delays);
+    }
+    return delays;
+  }
+
+  public static List<Block> getBlocks() {
+    return blocks;
   }
 
   @Override
