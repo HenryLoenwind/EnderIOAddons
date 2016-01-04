@@ -33,6 +33,7 @@ import crazypants.enderio.machine.MachineRecipeInput;
 import crazypants.enderio.machine.MachineRecipeRegistry;
 import crazypants.enderio.machine.SlotDefinition;
 import crazypants.enderio.power.BasicCapacitor;
+import crazypants.enderio.power.Capacitors;
 
 @Storable
 public class TileCobbleworks extends AbstractTileFramework implements IFrameworkMachine {
@@ -456,6 +457,14 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
   }
 
   @Override
+  public void setCapacitor(Capacitors capacitorType) {
+    super.setCapacitor(capacitorType);
+    // we need to do this on the client after nbt data has been received from the server.
+    // It won't do anything unless either the capacitor or the input slots actually changed.
+    computeOutputMapping();
+  }
+
+  @Override
   public void onCapacitorTypeChange() {
     switch (getCapacitorType()) {
     case BASIC_CAPACITOR:
@@ -470,15 +479,24 @@ public class TileCobbleworks extends AbstractTileFramework implements IFramework
       break;
     }
     inputsChanged = true;
-    computeOutputMapping();
   }
 
   @Override
   public void setInventorySlotContents(int slot, ItemStack contents) {
-    super.setInventorySlotContents(slot, contents);
-    if (slotDefinition.isInputSlot(slot)) {
+    if (slotDefinition.isInputSlot(slot) && differs(contents, inventory[slot])) {
       inputsChanged = true;
     }
+    super.setInventorySlotContents(slot, contents);
+  }
+
+  private static boolean differs(ItemStack a, ItemStack b) {
+    if (a == null && b == null) {
+      return false;
+    }
+    if (a == null || b == null) {
+      return true;
+    }
+    return a.getItem() != b.getItem();
   }
 
   @Override
