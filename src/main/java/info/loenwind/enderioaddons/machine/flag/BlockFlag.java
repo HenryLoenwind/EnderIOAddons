@@ -117,14 +117,16 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
 
   @Override
   public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack itemstack) {
-    TileEntity te = world.getTileEntity(x, y, z);
-    if (itemstack != null && itemstack.getItem() instanceof ItemFlag && te instanceof TileFlag) {
-      if (itemstack.getItemDamage() != 0) {
-        ((TileFlag) te).setCharged(false);
-        spawnParticle(world, "reddust", x + .5, y + .5, z + .5, 0, 0, 0);
-      } else {
-        ((TileFlag) te).readItemStackNBT(itemstack);
-        ((TileFlag) te).reparentItemstack(itemstack);
+    if (!world.isRemote) {
+      TileEntity te = world.getTileEntity(x, y, z);
+      if (itemstack != null && itemstack.getItem() instanceof ItemFlag && te instanceof TileFlag) {
+        if (itemstack.getItemDamage() != 0) {
+          ((TileFlag) te).setCharged(false);
+          spawnParticle(world, "reddust", x + .5, y + .5, z + .5, 0, 0, 0);
+        } else {
+          ((TileFlag) te).readItemStackNBT(itemstack);
+          ((TileFlag) te).reparentItemstack(itemstack);
+        }
       }
     }
   }
@@ -134,15 +136,17 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
     ItemStack itemstack = player.getCurrentEquippedItem();
 
     if (itemstack != null && itemstack.getItem() instanceof ItemFlag) {
-      if (itemstack.getItemDamage() != 0) {
-        spawnParticle(world, "reddust", x + par7, y + par8, z + par9, 0, 0, 0);
-      } else {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof TileFlag && ((TileFlag) te).isCharged()) {
-          ((TileFlag) te).reparentItemstack(itemstack);
-          spawnParticle(world, "happyVillager", x + par7, y + par8, z + par9, 0, 0, 0);
-        } else {
+      if (!world.isRemote) {
+        if (itemstack.getItemDamage() != 0) {
           spawnParticle(world, "reddust", x + par7, y + par8, z + par9, 0, 0, 0);
+        } else {
+          TileEntity te = world.getTileEntity(x, y, z);
+          if (te instanceof TileFlag && ((TileFlag) te).isCharged()) {
+            ((TileFlag) te).reparentItemstack(itemstack);
+            spawnParticle(world, "happyVillager", x + par7, y + par8, z + par9, 0, 0, 0);
+          } else {
+            spawnParticle(world, "reddust", x + par7, y + par8, z + par9, 0, 0, 0);
+          }
         }
       }
       return true;
