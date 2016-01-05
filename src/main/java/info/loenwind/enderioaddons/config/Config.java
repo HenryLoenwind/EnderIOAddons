@@ -186,10 +186,10 @@ public enum Config {
   sourceMilkIsConsumedWhenCuringPoison(Section.LIQUIDS, 0.25, "Chance that a source block of milk will be consumed when curing poison"), //
 
   fortuneCookiesEnabled(Section.RECIPES, true, "When enabled, the fortune cookies will be visible ingame"), //
-  fortuneCookiesCraftingEnabled(Section.RECIPES, true, "When enabled, the fortune cookies will have a crafting recipe"), //
+  fortuneCookiesCraftingEnabled(Section.RECIPES, true, "When enabled, the fortune cookies will have a crafting recipe", true, true), //
 
   leversEnabled(Section.RECIPES, "10,30,60,300",
-      "A comma-seperated list of durations in seconds. For these, self-reseting levers will be created. Set to 0 to disable the lever"), //
+      "A comma-seperated list of durations in seconds. For these, self-reseting levers will be created. Set to 0 to disable the lever", true, true), //
 
   profilingEnabled(Section.DEV, false, "When enabled, profiling information will be written into the logfile"), //
   ;
