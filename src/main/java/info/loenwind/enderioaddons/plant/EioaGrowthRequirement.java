@@ -3,6 +3,7 @@ package info.loenwind.enderioaddons.plant;
 import static info.loenwind.enderioaddons.config.Config.seedsRFperGrowthTick;
 import info.loenwind.enderioaddons.common.Log;
 import info.loenwind.enderioaddons.common.WorldHelper;
+import info.loenwind.enderioaddons.config.Config;
 import info.loenwind.enderioaddons.recipe.Recipes;
 
 import java.lang.reflect.InvocationTargetException;
@@ -56,6 +57,43 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
 
   @Override
   public boolean canGrow(World world, int x, int y, int z) {
+    if (Config.growthRequirementDebuggingEnabled.getBoolean()) {
+      String txt = "Plant at " + x + "/" + y + "/" + z + ": ";
+      if (isValidSoil(world, x, y - 1, z)) {
+        txt += "Soil (" + capBank + ") is valid. ";
+      } else {
+        txt += "Soil (" + capBank + ") is NOT valid, it is " + WorldHelper.getBlock(world, x, y, z) + ":" + WorldHelper.getMeta(world, x, y, z) + ". ";
+      }
+      if (isBaseBlockPresent(world, x, y, z)) {
+        txt += "Base block (" + bedrock + ") is valid directly below soil. ";
+      } else if (isBaseBlockPresent(world, x, y - 1, z)) {
+        txt += "Base block (" + bedrock + ") is valid one below soil. ";
+      } else {
+        txt += "Base block (" + bedrock + ") is MISSING. Block directly below soil is " + WorldHelper.getBlock(world, x, y - 1, z) + ":"
+            + WorldHelper.getMeta(world, x, y - 1, z) + ", block below that is " + WorldHelper.getBlock(world, x, y - 2, z) + ":"
+            + WorldHelper.getMeta(world, x, y - 2, z) + ". ";
+      }
+      if (areBarsPresent(world, x, y, z)) {
+        txt += "Bars (" + darkBar + ") are valid. ";
+      } else {
+        txt += "Bars (" + darkBar + ") are NOT valid. ";
+      }
+      if (isBrightnessOk(world, x, y, z)) {
+        txt += "Light levels (sky light " + brightness[2] + "..." + brightness[3] + " and block light " + brightness[0] + "..." + brightness[1] + ") are ok. ";
+      } else {
+        txt += "Light levels (sky light " + brightness[2] + "..." + brightness[3] + " and block light " + brightness[0] + "..." + brightness[1]
+            + ") are NOT ok, sky light is " + world.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) + ", block light is "
+            + world.getSavedLightValue(EnumSkyBlock.Block, x, y, z) + ". ";
+      }
+      if (world.isRemote) {
+        txt += "Power level in the capacitor bank can only be checked server-side. ";
+      } else if (hasPower(world, x, y, z)) {
+        txt += "Power level in the capacitor bank is ok. ";
+      } else {
+        txt += "Power level in the capacitor bank is too low. ";
+      }
+      Log.info(txt);
+    }
     return isValidSoil(world, x, y - 1, z) && (isBaseBlockPresent(world, x, y, z) || isBaseBlockPresent(world, x, y - 1, z)) && areBarsPresent(world, x, y, z)
         && isBrightnessOk(world, x, y, z) && hasPower(world, x, y, z);
   }

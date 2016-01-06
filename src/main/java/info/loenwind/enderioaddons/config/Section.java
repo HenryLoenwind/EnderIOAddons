@@ -19,7 +19,7 @@ public enum Section {
   VOIDTANK("void tank"),
   WATERWORKS("waterworks"),
   LIQUIDS("liquids"),
-  DEV("development");
+  DEV("development", false);
 
   @Nonnull
   public final String name;
