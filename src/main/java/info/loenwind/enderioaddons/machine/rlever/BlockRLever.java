@@ -39,7 +39,7 @@ public class BlockRLever extends BlockLever {
     getLevers();
     blocks = new ArrayList<>();
     for (Integer value : delays) {
-      Block lever = new BlockRLever().setDelay(value).setBlockName("rlever" + value);
+      Block lever = new BlockRLever().setDelay(value * 20).setBlockName("rlever" + value);
       GameRegistry.registerBlock(lever, "rlever" + value);
       blocks.add(lever);
     }
