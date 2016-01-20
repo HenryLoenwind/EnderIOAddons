@@ -211,7 +211,7 @@ enderioaddons.nei.teaser.enderioaddons.clhp=电容内衬外壳版是放置精密
 
 enderioaddons.darkseeds.name=电容种子
 enderioaddons.nei.teaser.enderioaddons.darkseeds=这些种子需要能量才能生长，你最好把它们种在电容库上面.他们需要有稳固的根基：因此请用玄铁栅栏围绕着他们，并把这些一起放在基岩上面.此外，他们还需要十分强的人造光源，因为他们一点儿也不喜欢阳光.
-enderioaddons.nei.teaser.enderioaddons.darkseeds.image=电容植物
+enderioaddons.nei.teaser.enderioaddons.darkseeds.image=capplant
 enderioaddons.agricraft_journal.darkplant=一个有趣的小玩意儿，其种子由无生命的材料构成，通过消耗RF能量来生长
 
 tile.enderioaddons.rlever10.name=自我重置拉杆(10秒)
