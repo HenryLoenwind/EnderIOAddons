@@ -104,8 +104,8 @@ enderioaddons.flag.itemname.uncharged= (未被磁化)
 
 tile.blockFlag.name=磁引旗帜
 tile.blockFlag.tooltip.detailed.line1=这是一个能自动指向上一次所放置旗帜
-tile.blockFlag.tooltip.detailed.line2=的旗帜。可以通过右击一个已放置的旗
-tile.blockFlag.tooltip.detailed.line3=帜来改变其指向。旗帜的指向可以通过
+tile.blockFlag.tooltip.detailed.line2=的旗帜.可以通过右击一个已放置的旗
+tile.blockFlag.tooltip.detailed.line3=帜来改变其指向.旗帜的指向可以通过
 tile.blockFlag.tooltip.detailed.line4=在合成栏进行一次合成来清空
 tile.blockFlag.tooltip.detailed.line5=使用磁引旗帜前需要先在磁化器中磁化
 
@@ -132,7 +132,7 @@ tile.blockChassis.14.name=破损的刷怪笼装饰方块
 tile.blockChassis.15.name=隐形装饰方块
 
 enderioaddons.nei.teaser=信息
-enderioaddons.nei.teaser.enderioaddons.afarminfo=这是末影接口扩展添加的“农业工艺种植站”。它目前不可获得，因为你没有安装农业工艺模组。你应该安装它的，因为它真是个极好的模组！你可以在CurseForge上找到它
+enderioaddons.nei.teaser.enderioaddons.afarminfo=这是末影接口扩展添加的“农业工艺种植站”.它目前不可获得，因为你没有安装农业工艺模组.你应该安装它的，因为它真是个极好的模组！你可以在CurseForge上找到它
 enderioaddons.afarminfo.name=农业工艺种植站(不可获得)
 
 tile.blockAfarm.name=农业工艺种植站
@@ -152,15 +152,15 @@ enderioaddons.fcmIQModule.name=种植智慧模块
 
 enderioaddons.nei.teaser.enderioaddons.fcmBreedModule=农业工艺种植站升级模块“育种”将会使种植站以棋盘花纹状间隔摆放杂交架，使得育种更加充分和高效
 enderioaddons.nei.teaser.enderioaddons.fcmCrossBreedModule=农业工艺种植站升级模块“杂交”将会使种植站以棋盘花纹状间隔摆放杂交架，并且可以交替种植2种作物
-enderioaddons.nei.teaser.enderioaddons.fcmHarvestSeedsModule=农业工艺种植站升级模块“种子收获”将会使种植站在作物成熟后直接收获其种子而不是成熟的作物。你需要和“育种”或是“杂交”模块一起使用，因为此时它不会收获那些种植作物的地方
-enderioaddons.nei.teaser.enderioaddons.fcmSeedAnalyzerModule=农业工艺种植站升级模块“种子分析”将会使种植站自动分析在其种子缓存区内的种子。当然，自动分析是需要能量的
+enderioaddons.nei.teaser.enderioaddons.fcmHarvestSeedsModule=农业工艺种植站升级模块“种子收获”将会使种植站在作物成熟后直接收获其种子而不是成熟的作物.你需要和“育种”或是“杂交”模块一起使用，因为此时它不会收获那些种植作物的地方
+enderioaddons.nei.teaser.enderioaddons.fcmSeedAnalyzerModule=农业工艺种植站升级模块“种子分析”将会使种植站自动分析在其种子缓存区内的种子.当然，自动分析是需要能量的
 enderioaddons.nei.teaser.enderioaddons.fcmMultiplyModule=农业工艺种植站升级模块“种子繁殖”将会使种植站稀疏地放置作物架，并且会在成熟的作物旁边放上杂交架使其能够蔓延.（它只有在农业工艺配置文件开启成熟作物可以蔓延到邻接的作物架上的设定后才能正常使用）
-enderioaddons.nei.teaser.enderioaddons.fcmHarvestUnanalyzedModule=农业工艺种植站升级模块“收获未分析的作物”将会使种植站收获任何未分析的作物并返回它们的种子进入种子缓存区。你应该会想和“种子分析”模块一起使用...
-enderioaddons.nei.teaser.enderioaddons.fcmReplaceBetterModule=农业工艺种植站升级模块“种植升级”将会使种植站用种子缓存区内属性更好的种子取代任何分析过的作物。当装有“育种”或“杂交”模块时最好再加上这个模块
-enderioaddons.nei.teaser.enderioaddons.fcmWeedModule=农业工艺种植站升级模块“除草”将会使种植站自动清理杂草。它需要一个耙在它的一个工具槽中。(当在农业工艺配置文件中关闭杂草的设定后，这个模块就没用了)
-enderioaddons.nei.teaser.enderioaddons.fcmEjectSeedsModule=农业工艺种植站升级模块“种子弹射”将会使种植站将种子缓存区内所有的种子弹射到产物输出区。这个模块在你想繁殖出10/10/10属性的种子时很有用。
-enderioaddons.nei.teaser.enderioaddons.fcmBestOnlyModule=农业工艺种植站升级模块“种子分级”将会使种植站在有更好的种子时将种子缓存区内的劣等种子弹射到产物输出区。优胜劣汰，不是吗？
-enderioaddons.nei.teaser.enderioaddons.fcmBaseModule=这个基础模块是用来合成各种农业工艺升级模块用的，他自己本身没什么作用。
+enderioaddons.nei.teaser.enderioaddons.fcmHarvestUnanalyzedModule=农业工艺种植站升级模块“收获未分析的作物”将会使种植站收获任何未分析的作物并返回它们的种子进入种子缓存区.你应该会想和“种子分析”模块一起使用...
+enderioaddons.nei.teaser.enderioaddons.fcmReplaceBetterModule=农业工艺种植站升级模块“种植升级”将会使种植站用种子缓存区内属性更好的种子取代任何分析过的作物.当装有“育种”或“杂交”模块时最好再加上这个模块
+enderioaddons.nei.teaser.enderioaddons.fcmWeedModule=农业工艺种植站升级模块“除草”将会使种植站自动清理杂草.它需要一个耙在它的一个工具槽中.(当在农业工艺配置文件中关闭杂草的设定后，这个模块就没用了)
+enderioaddons.nei.teaser.enderioaddons.fcmEjectSeedsModule=农业工艺种植站升级模块“种子弹射”将会使种植站将种子缓存区内所有的种子弹射到产物输出区.这个模块在你想繁殖出10/10/10属性的种子时很有用.
+enderioaddons.nei.teaser.enderioaddons.fcmBestOnlyModule=农业工艺种植站升级模块“种子分级”将会使种植站在有更好的种子时将种子缓存区内的劣等种子弹射到产物输出区.优胜劣汰，不是吗？
+enderioaddons.nei.teaser.enderioaddons.fcmBaseModule=这个基础模块是用来合成各种农业工艺升级模块用的，他自己本身没什么作用.
 enderioaddons.nei.teaser.enderioaddons.fcmIQModule=种植智慧模块是用来合成农业工艺种植站和一些高级模块用的
 
 enderioaddons.afarm.gui.tab0.modules=当前控制模块
@@ -196,25 +196,25 @@ enderioaddons.iRake.name=工业耙(只能在农业工艺种植机内使用)
 
 enderioaddons.nei.teaser.enderioaddons.handRakeWoodBroken=它曾经是一个结实的手持工具，但现在却因为承受不住机器的过度使用而损坏了
 enderioaddons.nei.teaser.enderioaddons.handRakeIronBroken=它曾经是一个结实的手持工具，但现在却因为承受不住机器的过度使用而损坏了
-enderioaddons.nei.teaser.enderioaddons.iRake=手持使用它是很不明智的一件事，因为它专门为机器而设计。使用它将会需要更多的能量，但这个耙永远不会损坏
+enderioaddons.nei.teaser.enderioaddons.iRake=手持使用它是很不明智的一件事，因为它专门为机器而设计.使用它将会需要更多的能量，但这个耙永远不会损坏
 
 enderioaddons.config.title=末影接口扩展配置文件
 
 enderioaddons.scs.name=有机电容外壳
-enderioaddons.nei.teaser.enderioaddons.scs=这个部件是通过种植作物得到的。如果你正确的拼装它们，它将会成为电容完美的家。或者你也可以把它做成浆
+enderioaddons.nei.teaser.enderioaddons.scs=这个部件是通过种植作物得到的.如果你正确的拼装它们，它将会成为电容完美的家.或者你也可以把它做成浆
 enderioaddons.mcs.name=有机电容胶体
-enderioaddons.nei.teaser.enderioaddons.mcs=这个胶体是通过种植作物得到的。如果把它和一些外壳组合起来，你将得到一个有机电容
+enderioaddons.nei.teaser.enderioaddons.mcs=这个胶体是通过种植作物得到的.如果把它和一些外壳组合起来，你将得到一个有机电容
 enderioaddons.lcs.name=有机电容核心
-enderioaddons.nei.teaser.enderioaddons.lcs=这个部件是通过种植作物得到的。它几乎是一个完全长好的电容了。但也只是几乎，并不是完全
+enderioaddons.nei.teaser.enderioaddons.lcs=这个部件是通过种植作物得到的.它几乎是一个完全长好的电容了.但也只是几乎，并不是完全
 enderioaddons.clhp.name=电容内衬外壳板
 enderioaddons.nei.teaser.enderioaddons.clhp=电容内衬外壳版是放置精密电路的完美场所
 
 enderioaddons.darkseeds.name=电容种子
-enderioaddons.nei.teaser.enderioaddons.darkseeds=这些种子需要能量才能生长，你最好把它们种在电容库上面。他们需要有稳固的根基：因此请用玄铁栅栏围绕着他们，并把这些一起放在基岩上面。此外，他们还需要十分强的人造光源，因为他们一点儿也不喜欢阳光。
+enderioaddons.nei.teaser.enderioaddons.darkseeds=这些种子需要能量才能生长，你最好把它们种在电容库上面.他们需要有稳固的根基：因此请用玄铁栅栏围绕着他们，并把这些一起放在基岩上面.此外，他们还需要十分强的人造光源，因为他们一点儿也不喜欢阳光.
 enderioaddons.nei.teaser.enderioaddons.darkseeds.image=电容植物
 enderioaddons.agricraft_journal.darkplant=一个有趣的小玩意儿，其种子由无生命的材料构成，通过消耗RF能量来生长
 
-tile.enderioaddons.rlever10.name=自我重置拉杆(0.5秒)
-tile.enderioaddons.rlever30.name=自我重置拉杆(1.5秒)
-tile.enderioaddons.rlever60.name=自我重置拉杆(3秒)
-tile.enderioaddons.rlever300.name=自我重置拉杆(15秒)
+tile.enderioaddons.rlever10.name=自我重置拉杆(10秒)
+tile.enderioaddons.rlever30.name=自我重置拉杆(30秒)
+tile.enderioaddons.rlever60.name=自我重置拉杆(1分钟)
+tile.enderioaddons.rlever300.name=自我重置拉杆(5分钟)
