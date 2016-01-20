@@ -211,6 +211,7 @@ enderioaddons.nei.teaser.enderioaddons.clhp=The lining of capacitor parts makes 
 
 enderioaddons.darkseeds.name=Capacitor Seeds
 enderioaddons.nei.teaser.enderioaddons.darkseeds=These seeds need power to grow. Best to plant them onto a capacitor bank. They need to be grounded; surround them with Dark Iron Bars and anchor those to bedrock. They need very bright artificial light and don't like sunlight at all.
+# ATTN: The ".image" ones are filenames for png files
 enderioaddons.nei.teaser.enderioaddons.darkseeds.image=capplant
 enderioaddons.agricraft_journal.darkplant=A funny thing, seeds made from non-living things, grown by the power of RF energy.
 
