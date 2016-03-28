@@ -29,10 +29,6 @@ public class ItemHelper {
       if (item != null && !item.trim().isEmpty()) {
         final Matcher matcher = p.matcher(item);
         if (matcher.matches()) {
-          //          System.out.println(matcher.groupCount());
-          //          for (int i = 0; i <= matcher.groupCount(); i++) {
-          //            System.out.println("Group " + i + ": >" + matcher.group(i) + "<");
-          //          }
           String modid = matcher.group(1);
           String itemid = matcher.group(2);
           String metaS = matcher.group(3);
@@ -100,14 +96,4 @@ public class ItemHelper {
     return result;
   }
 
-  public static void main(String[] args) {
-    readWeightedList(",minecraft:dirt@1=99,;, enderio:whatever@0 = 47   ,other:what=13,");
-    String a = "enderioaddons:itemMachineParts@23=13500, EnderIO:itemBasicCapacitor@0=10, EnderIO:itemBasicCapacitor@1=5, EnderIO:itemBasicCapacitor@2=1";
-
-    String b = "enderioaddons:itemMachineParts@23=10000, enderioaddons:itemMachineParts@24=3000, enderioaddons:itemMachineParts@25=500, "
-        + "EnderIO:itemBasicCapacitor@0=10, EnderIO:itemBasicCapacitor@1=5, EnderIO:itemBasicCapacitor@2=1";
-    info.loenwind.enderioaddons.config.ItemHelper.readWeightedList(info.loenwind.enderioaddons.config.Config.plantDropsLowGain);
-    readWeightedList(a);
-    readWeightedList(b);
-  }
 }

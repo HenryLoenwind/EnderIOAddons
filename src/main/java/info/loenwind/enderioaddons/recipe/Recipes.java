@@ -104,6 +104,8 @@ public class Recipes implements InitAware {
 
   @ItemStackHolder(value = "EnderIO:blockPowerMonitor", meta = 0)
   public static final ItemStack blockPowerMonitor = null;
+  @ItemStackHolder(value = "EnderIO:blockFarmStation", meta = 0)
+  public static final ItemStack blockFarmStation = null;
 
   @ItemStackHolder(value = "EnderIO:item.darkSteel_helmet")
   public static final ItemStack darkSteel_helmet = null;
@@ -390,6 +392,8 @@ public class Recipes implements InitAware {
 
         addShaped(moduleIQ, "bbb", "bzb", "bbb", 'b', moduleBase, 'z', zombieBit);
         addShaped(farm, "ehe", "eCe", "cMc", 'e', electricSteel, 'h', Items.diamond_hoe, 'C', machineChassi, 'M', moduleIQ, 'c', crystal);
+        addShaped(farm, "bbb", "bFb", "bbb", 'b', moduleBase, 'F', blockFarmStation);
+        addShapeless(blockFarmStation, farm, "itemBasicGear");
         addShaped(induRake, "bb", " d", " d", 'b', darkSteelBars, 'd', darkSteel);
         addShaped(induRake, "bb", "d ", "d ", 'b', darkSteelBars, 'd', darkSteel);
         if (handRake_wood != null) {

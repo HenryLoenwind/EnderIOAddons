@@ -63,7 +63,7 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
           Log.warn("Config value 'plantRequiredBlocks' is invalid (second element has no block) and will be (partially) ignored.");
         }
 
-        ItemStack itemStackDarkBar = list.get(1);
+        ItemStack itemStackDarkBar = list.get(2);
         Block blockDarkBar = Block.getBlockFromItem(itemStackDarkBar.getItem());
         if (blockDarkBar != null) {
           if (itemStackDarkBar.getItemDamage() <= 15 || itemStackDarkBar.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
