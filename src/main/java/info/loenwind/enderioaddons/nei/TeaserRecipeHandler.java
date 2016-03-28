@@ -41,33 +41,16 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
     return "EnderIOAddonsTeaser";
   }
 
-  private TeaserRecipe tryToMakeARecipe(ItemStack itemstack) {
+  private TeaserRecipe tryToMakeARecipe(ItemStack itemstack, int pageid) {
     if (itemstack != null && itemstack.getItem() != null) {
       final String unlocalizedName = itemstack.getItem().getUnlocalizedName(itemstack);
       if (unlocalizedName != null && unlocalizedName.startsWith("enderioaddons.")) {
-        String key = "nei.teaser." + unlocalizedName;
-        final String text = EnderIOAddons.lang.localize(key);
-        if (text != null && !text.startsWith("enderioaddons.")) {
+        String text = getText(unlocalizedName, pageid);
+        String image = getImage(unlocalizedName, pageid);
+        if (text != null || image != null) {
           final ItemStack copy = itemstack.copy();
           copy.stackSize = 1;
-          return new TeaserRecipe(copy, key);
-        }
-      }
-    }
-    return null;
-  }
-
-  private TeaserRecipe tryToMakeImageRecipe(ItemStack itemstack) {
-    if (itemstack != null && itemstack.getItem() != null) {
-      final String unlocalizedName = itemstack.getItem().getUnlocalizedName(itemstack);
-      if (unlocalizedName != null && unlocalizedName.startsWith("enderioaddons.")) {
-        String key = "nei.teaser." + unlocalizedName + ".image";
-        final String text = EnderIOAddons.lang.localize(key);
-        if (text != null && !text.startsWith("enderioaddons.")) {
-          final ItemStack copy = itemstack.copy();
-          copy.stackSize = 1;
-          final TeaserRecipe teaserRecipe = new TeaserRecipe(copy, null);
-          teaserRecipe.texture = text;
+          final TeaserRecipe teaserRecipe = new TeaserRecipe(copy, text, image);
           return teaserRecipe;
         }
       }
@@ -75,28 +58,47 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
     return null;
   }
 
+  private static String getText(String unlocalizedName, int pageid) {
+    String key = "nei.teaser." + unlocalizedName + (pageid < 0 ? "" : ".page" + pageid);
+    String text = EnderIOAddons.lang.localize(key);
+    if (text != null && !text.startsWith("enderioaddons.")) {
+      return key;
+    }
+    return null;
+  }
+
+  private static String getImage(String unlocalizedName, int pageid) {
+    String key = "nei.teaser." + unlocalizedName + (pageid < 0 ? "" : ".page" + pageid) + ".image";
+    String text = EnderIOAddons.lang.localize(key);
+    if (text != null && !text.startsWith("enderioaddons.")) {
+      return text;
+    }
+    return null;
+  }
+
   @Override
   public void loadCraftingRecipes(ItemStack itemstack) {
-    TeaserRecipe maybe = tryToMakeARecipe(itemstack);
-    if (maybe != null) {
-      arecipes.add(maybe);
-      maybe = tryToMakeImageRecipe(itemstack);
+    int pageid = 0;
+    while (true) {
+      TeaserRecipe maybe = tryToMakeARecipe(itemstack, pageid);
       if (maybe != null) {
         arecipes.add(maybe);
+        pageid++;
+      } else {
+        if (pageid == 0) {
+          maybe = tryToMakeARecipe(itemstack, -1);
+          if (maybe != null) {
+            arecipes.add(maybe);
+          }
+        }
+        return;
       }
     }
   }
 
   @Override
   public void loadUsageRecipes(ItemStack itemstack) {
-    TeaserRecipe maybe = tryToMakeARecipe(itemstack);
-    if (maybe != null) {
-      arecipes.add(maybe);
-      maybe = tryToMakeImageRecipe(itemstack);
-      if (maybe != null) {
-        arecipes.add(maybe);
-      }
-    }
+    loadCraftingRecipes(itemstack);
   }
 
   @Override
@@ -137,9 +139,9 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
 
   public class TeaserRecipe extends TemplateRecipeHandler.CachedRecipe {
 
-    private PositionedStack output;
-    private String textKey;
-    private String texture = null;
+    private final PositionedStack output;
+    private final String textKey;
+    private final String texture;
 
     @Override
     public List<PositionedStack> getIngredients() {
@@ -151,9 +153,10 @@ public class TeaserRecipeHandler extends TemplateRecipeHandler {
       return output;
     }
 
-    public TeaserRecipe(ItemStack itemStack, String textKey) {
-      output = new PositionedStack(itemStack, 85 - xOff, 16 - yOff);
+    public TeaserRecipe(ItemStack itemStack, String textKey, String image) {
+      this.output = new PositionedStack(itemStack, 85 - xOff, 16 - yOff);
       this.textKey = textKey;
+      this.texture = image;
     }
   }
 

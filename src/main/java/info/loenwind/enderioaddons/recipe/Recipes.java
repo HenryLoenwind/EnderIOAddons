@@ -367,24 +367,27 @@ public class Recipes implements InitAware {
         ItemStack brokenRakeWood = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR1.ordinal());
         ItemStack brokenRakeIron = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.RAKE_BR2.ordinal());
 
-        addShaped(capacitor1, " s ", "sms", "srs", 's', scs, 'm', mcs, 'r', "dustRedstone");
-        addShaped(capacitor2, " s ", "sls", "srs", 's', scs, 'l', lcs, 'r', "dustRedstone");
-        addShaped(capacitor8, " s ", "mlm", "srs", 's', scs, 'm', mcs, 'l', lcs, 'r', "dustRedstone");
+        if (Config.seedRecipesEnabled.getBoolean()) {
+          addShaped(capacitor1, " s ", "sms", "srs", 's', scs, 'm', mcs, 'r', "dustRedstone");
+          addShaped(capacitor2, " s ", "sls", "srs", 's', scs, 'l', lcs, 'r', "dustRedstone");
+          addShaped(capacitor8, " s ", "mlm", "srs", 's', scs, 'm', mcs, 'l', lcs, 'r', "dustRedstone");
 
-        if (crazypants.enderio.config.Config.useHardRecipes) {
-          addShaped(clhp, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
-          addShaped(seed, "eee", "bcb", "shs", 'e', "listAllseed", 'b', "dyeWhite", 'c', capacitor8, 's', Blocks.soul_sand, 'h', endermanSkull);
-        } else {
-          addShaped(clhp8, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
-          addShaped(mcs, "sss", "sss", "sss", 's', scs);
-          addShaped(seed, "eee", "bcb", "shs", 'e', "listAllseed", 'b', "dyeWhite", 'c', capacitor1, 's', Blocks.soul_sand, 'h', Blocks.dirt);
+          if (crazypants.enderio.config.Config.useHardRecipes) {
+            addShaped(clhp, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
+            addShaped(seed, "eee", "bcb", "shs", 'e', "listAllseed", 'b', "dyeWhite", 'c', capacitor8, 's', Blocks.soul_sand, 'h', endermanSkull);
+          } else {
+            addShaped(clhp8, "sms", "ccc", "eee", 's', scs, 'm', mcs, 'c', conductiveIron, 'e', electricSteel);
+            addShaped(mcs, "sss", "sss", "sss", 's', scs);
+            addShaped(seed, "eee", "bcb", "shs", 'e', "listAllseed", 'b', "dyeWhite", 'c', capacitor1, 's', Blocks.soul_sand, 'h', Blocks.dirt);
+          }
+
+          addShaped(moduleBase, " np", "ncn", "pn ", 'n', clhp, 'p', chassiParts, 'c', crops);
         }
 
         if (farmSeedlessRecipesEnabled.getBoolean()) {
           addShaped(moduleBase, " np", "ncn", "pn ", 'n', agriNugget, 'p', chassiParts, 'c', crops);
         }
 
-        addShaped(moduleBase, " np", "ncn", "pn ", 'n', clhp, 'p', chassiParts, 'c', crops);
         addShaped(moduleIQ, "bbb", "bzb", "bbb", 'b', moduleBase, 'z', zombieBit);
         addShaped(farm, "ehe", "eCe", "cMc", 'e', electricSteel, 'h', Items.diamond_hoe, 'C', machineChassi, 'M', moduleIQ, 'c', crystal);
         addShaped(induRake, "bb", " d", " d", 'b', darkSteelBars, 'd', darkSteel);

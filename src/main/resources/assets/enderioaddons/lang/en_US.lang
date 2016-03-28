@@ -210,9 +210,11 @@ enderioaddons.clhp.name=Capacitor Lined Housing Plate
 enderioaddons.nei.teaser.enderioaddons.clhp=The lining of capacitor parts makes these plates ideal for small but powerful circuits.
 
 enderioaddons.darkseeds.name=Capacitor Seeds
-enderioaddons.nei.teaser.enderioaddons.darkseeds=These seeds need power to grow. Best to plant them onto a capacitor bank. They need to be grounded; surround them with Dark Iron Bars and anchor those to bedrock. They need very bright artificial light and don't like sunlight at all.
+enderioaddons.nei.teaser.enderioaddons.darkseeds.page0=These seeds need power to grow. Best to plant them onto a capacitor bank. They need to be grounded; surround them with Dark Iron Bars and anchor those to bedrock. They need very bright artificial light and don't like sunlight at all.
 # ATTN: The ".image" ones are filenames for png files
-enderioaddons.nei.teaser.enderioaddons.darkseeds.image=capplant
+enderioaddons.nei.teaser.enderioaddons.darkseeds.page1.image=capplant
+enderioaddons.nei.teaser.enderioaddons.darkseeds.page2=Details: Must be planted on a capacitor bank. Bedrock must be below capacitor bank. Must be surrounded by at least 6 dark iron bars. NO sun light, but light level must be at least 13. Block above must be air. Capacitor bank must supply 100.000 RF per growth tick.
+enderioaddons.nei.teaser.enderioaddons.darkseeds.page3=Can't figure out what's wrong? There's a config setting that will write diagnostics to the logfile. Enable it. (ESC -> Mod Options -> Ender IO Addons -> Config -> Agricraft Farming Station -> farmDebugLoggingEnabled -> true)
 enderioaddons.agricraft_journal.darkplant=A funny thing, seeds made from non-living things, grown by the power of RF energy.
 
 tile.enderioaddons.rlever10.name=Self-reseting lever (10 seconds)

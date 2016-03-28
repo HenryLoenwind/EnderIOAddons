@@ -4,9 +4,9 @@ import static info.loenwind.enderioaddons.config.Config.seedsAutomaticHarvesting
 import static info.loenwind.enderioaddons.config.Config.seedsBonemealEnabled;
 import static info.loenwind.enderioaddons.config.Config.seedsTierEasy;
 import static info.loenwind.enderioaddons.config.Config.seedsTierHard;
-import static info.loenwind.enderioaddons.recipe.Recipes.capacitor1;
-import static info.loenwind.enderioaddons.recipe.Recipes.capacitor2;
-import static info.loenwind.enderioaddons.recipe.Recipes.capacitor8;
+import info.loenwind.enderioaddons.config.Config;
+import info.loenwind.enderioaddons.config.ItemHelper;
+import info.loenwind.enderioaddons.config.WeightedItemStack;
 import info.loenwind.enderioaddons.machine.afarm.BlockAfarm;
 import info.loenwind.enderioaddons.machine.part.ItemMachinePart;
 import info.loenwind.enderioaddons.machine.part.MachinePart;
@@ -36,26 +36,10 @@ import crazypants.enderio.network.PacketHandler;
 
 public class EioaCropPlant implements ICropPlant {
 
-  private final List<WeightedItemStack> fruits = new ArrayList<>();
-  private final ArrayList<ItemStack> allfruits = new ArrayList<>();
-  private final List<WeightedItemStack> lowfruits = new ArrayList<>();
   private final ItemStack seed;
   public final EioaGrowthRequirement eioaGrowthRequirement = new EioaGrowthRequirement();
 
   public EioaCropPlant() {
-    lowfruits.add(new WeightedItemStack(13500, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal())));
-    lowfruits.add(new WeightedItemStack(10, capacitor1));
-    lowfruits.add(new WeightedItemStack(5, capacitor2));
-    lowfruits.add(new WeightedItemStack(1, capacitor8));
-    fruits.add(new WeightedItemStack(10000, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SCS.ordinal())));
-    fruits.add(new WeightedItemStack(3000, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.MCS.ordinal())));
-    fruits.add(new WeightedItemStack(500, new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.LCS.ordinal())));
-    fruits.add(new WeightedItemStack(10, capacitor1));
-    fruits.add(new WeightedItemStack(5, capacitor2));
-    fruits.add(new WeightedItemStack(1, capacitor8));
-    for (WeightedItemStack fruit : fruits) {
-      allfruits.add(fruit.stack);
-    }
     seed = new ItemStack(ItemMachinePart.itemMachinePart, 1, MachinePart.SEED.ordinal());
   }
 
@@ -76,19 +60,37 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public ArrayList<ItemStack> getAllFruits() {
+    ArrayList<ItemStack> allfruits = new ArrayList<>();
+    for (WeightedItemStack fruit : ItemHelper.readWeightedList(Config.plantDropsHighGain)) {
+      allfruits.add(fruit.getStack());
+    }
+    for (WeightedItemStack fruit : ItemHelper.readWeightedList(Config.plantDropsLowGain)) {
+      if (!contains(allfruits, fruit.getStack())) {
+        allfruits.add(fruit.getStack());
+      }
+    }
     return allfruits;
+  }
+
+  private static boolean contains(List<ItemStack> list, ItemStack stack) {
+    for (ItemStack itemStack : list) {
+      if (itemStack.isItemEqual(stack)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
   public ItemStack getRandomFruit(Random rand) {
-    return ((WeightedItemStack) WeightedRandom.getRandomItem(rand, fruits)).stack.copy();
+    return ((WeightedItemStack) WeightedRandom.getRandomItem(rand, ItemHelper.readWeightedList(Config.plantDropsHighGain))).getStack().copy();
   }
 
   @Override
   public ArrayList<ItemStack> getFruitsOnHarvest(int gain, Random rand) {
     ArrayList<ItemStack> result = new ArrayList<>();
     for (int i = 0; i < (gain > 2 ? 2 : 1); i++) {
-      result.add(((WeightedItemStack) WeightedRandom.getRandomItem(rand, lowfruits)).stack.copy());
+      result.add(((WeightedItemStack) WeightedRandom.getRandomItem(rand, ItemHelper.readWeightedList(Config.plantDropsLowGain))).getStack().copy());
     }
     if (gain > 5) {
       for (int i = 0; i < (gain == 10 ? 2 : 1); i++) {
@@ -170,22 +172,6 @@ public class EioaCropPlant implements ICropPlant {
 
   @Override
   public void renderPlantInCrop(IBlockAccess world, int x, int y, int z, RenderBlocks renderer) {
-  }
-
-  private static class WeightedItemStack extends WeightedRandom.Item {
-
-    private final ItemStack stack;
-
-    public WeightedItemStack(int weight, ItemStack stack) {
-      super(weight);
-      this.stack = stack;
-    }
-
-    @Override
-    public String toString() {
-      return "WeightedItemStack [weight=" + itemWeight + ", stack=" + stack + "]";
-    }
-
   }
 
   public ItemWithMeta getSeedIWM() {

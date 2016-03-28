@@ -164,16 +164,27 @@ public enum Config {
   farmArea2(Section.FARM, 5, "'Rings' of farmland a farm with first capacitor upgrade will work", true, false), //
   farmArea3(Section.FARM, 9, "'Rings' of farmland a farm with second capacitor upgrade will work", true, false), //
 
-  farmDelay1(Section.FARM, 20, "number of ticks it takes a farm with no capacitor upgrades to work one tile of land"), //
-  farmDelay2(Section.FARM, 10, "number of ticks it takes a farm with first capacitor upgrade to work one tile of land"), //
-  farmDelay3(Section.FARM, 3, "number of ticks it takes a farm with second capacitor upgrade to work one tile of land"), //
+  farmDelay1(Section.FARM, 20, "Number of ticks it takes a farm with no capacitor upgrades to work one tile of land"), //
+  farmDelay2(Section.FARM, 10, "Number of ticks it takes a farm with first capacitor upgrade to work one tile of land"), //
+  farmDelay3(Section.FARM, 3, "Number of ticks it takes a farm with second capacitor upgrade to work one tile of land"), //
 
   seedsRFperGrowthTick(Section.FARM, 100000, "RF it takes the Capacitor Plant to try to grow"), //
-  seedsTierEasy(Section.FARM, 3, "tier of the Capacitor seeds when 'easy recipes' are selected"), //
-  seedsTierHard(Section.FARM, 5, "tier of the Capacitor seeds when 'hard recipes' are selected"), //
+  seedsTierEasy(Section.FARM, 3, "Tier of the Capacitor seeds when 'easy recipes' are selected"), //
+  seedsTierHard(Section.FARM, 5, "Tier of the Capacitor seeds when 'hard recipes' are selected"), //
 
   farmSeedlessRecipesEnabled(Section.FARM, false,
-      "If enabled there will be recipes for the farm that don't require you to gro capacitor plants. I call it cheat mode"), //
+      "If enabled there will be recipes for the farm that don't require you to grow capacitor plants. I call it cheat mode", true, true), //
+  seedRecipesEnabled(Section.FARM, true,
+      "If disabled there will be no recipe to craft capacitor plant seeds and no recipes to use the fruits of the capacitor plant. "
+          + "The seeds may still be generated as random loot by AgriCraft", true, true), //
+  plantDropsLowGain(Section.FARM,
+      "enderioaddons:itemMachineParts@23=13500, EnderIO:itemBasicCapacitor@0=10, EnderIO:itemBasicCapacitor@1=5, EnderIO:itemBasicCapacitor@2=1",
+      "A list of items with weights that will be dropped by the capacitor plant when harvested. Plants with a gain of 1-2 will drop "
+          + "one item from this list, plants with a gain of 3-10 will drop 2."), //
+  plantDropsHighGain(Section.FARM, "enderioaddons:itemMachineParts@23=10000, enderioaddons:itemMachineParts@24=3000, enderioaddons:itemMachineParts@25=500, "
+      + "EnderIO:itemBasicCapacitor@0=10, EnderIO:itemBasicCapacitor@1=5, EnderIO:itemBasicCapacitor@2=1",
+      "A list of items with weights that will be dropped by the capacitor plant when harvested. Plants with a gain of 6-9 will drop "
+          + "one item from this list, plants with a gain of 10 will drop 2."), //
   seedsAutomaticHarvestingEnabled(Section.FARM, false, "If enabled Capacitor Plants can be harvested with machines. I call it couch potato mode"), //
   seedsBonemealEnabled(Section.FARM, false, "If enabled Capacitor Plants can be fertilized with bonemeal."), //
   farmAggressiveTillingDefault(Section.FARM, true, "The initial value of 'till agressively' for newly placed farms"), //
