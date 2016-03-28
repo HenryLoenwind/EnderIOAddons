@@ -185,6 +185,9 @@ public enum Config {
       + "EnderIO:itemBasicCapacitor@0=10, EnderIO:itemBasicCapacitor@1=5, EnderIO:itemBasicCapacitor@2=1",
       "A list of items with weights that will be dropped by the capacitor plant when harvested. Plants with a gain of 6-9 will drop "
           + "one item from this list, plants with a gain of 10 will drop 2."), //
+  plantRequiredBlocks(Section.FARM, "EnderIO:blockCapBank@1, minecraft:bedrock@-1, EnderIO:blockDarkIronBars@-1",
+      "Three items that define the soil, block under soil and block around for the capacitor plant. Please note that this are item IDs, not block IDs, but block"
+          + " meta values. The blocks for these item will be looked up as ususal.", true, true), //
   seedsAutomaticHarvestingEnabled(Section.FARM, false, "If enabled Capacitor Plants can be harvested with machines. I call it couch potato mode"), //
   seedsBonemealEnabled(Section.FARM, false, "If enabled Capacitor Plants can be fertilized with bonemeal."), //
   farmAggressiveTillingDefault(Section.FARM, true, "The initial value of 'till agressively' for newly placed farms"), //

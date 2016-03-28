@@ -8,6 +8,7 @@ import info.loenwind.enderioaddons.recipe.Recipes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -29,9 +30,56 @@ public class EioaGrowthRequirement implements IGrowthRequirement {
   private final int[] brightness = { 13, 15, 0, 0 };
 
   public EioaGrowthRequirement() {
+    // fall back values 
     capBank = new BlockWithMeta(Block.getBlockFromItem(Recipes.capBankCreative.getItem()), 1, true);
     bedrock = new BlockWithMeta(Blocks.bedrock, OreDictionary.WILDCARD_VALUE, true);
     darkBar = new BlockWithMeta(Block.getBlockFromItem(Recipes.darkSteelBars.getItem()), OreDictionary.WILDCARD_VALUE, true);
+
+    List<ItemStack> list = info.loenwind.enderioaddons.config.ItemHelper.readList(Config.plantRequiredBlocks);
+    if (list != null) {
+      if (list.size() == 3) {
+
+        ItemStack itemStackCapBank = list.get(0);
+        Block blockCapBank = Block.getBlockFromItem(itemStackCapBank.getItem());
+        if (blockCapBank != null) {
+          if (itemStackCapBank.getItemDamage() <= 15 || itemStackCapBank.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+            capBank = new BlockWithMeta(blockCapBank, itemStackCapBank.getItemDamage(), true);
+          } else {
+            Log.warn("Config value 'plantRequiredBlocks' is invalid (first element has invalid meta) and will be (partially) ignored.");
+          }
+        } else {
+          Log.warn("Config value 'plantRequiredBlocks' is invalid (first element has no block) and will be (partially) ignored.");
+        }
+
+        ItemStack itemStackBedrock = list.get(1);
+        Block blockBedrock = Block.getBlockFromItem(itemStackBedrock.getItem());
+        if (blockBedrock != null) {
+          if (itemStackBedrock.getItemDamage() <= 15 || itemStackBedrock.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+            bedrock = new BlockWithMeta(blockBedrock, itemStackBedrock.getItemDamage(), true);
+          } else {
+            Log.warn("Config value 'plantRequiredBlocks' is invalid (second element has invalid meta) and will be (partially) ignored.");
+          }
+        } else {
+          Log.warn("Config value 'plantRequiredBlocks' is invalid (second element has no block) and will be (partially) ignored.");
+        }
+
+        ItemStack itemStackDarkBar = list.get(1);
+        Block blockDarkBar = Block.getBlockFromItem(itemStackDarkBar.getItem());
+        if (blockDarkBar != null) {
+          if (itemStackDarkBar.getItemDamage() <= 15 || itemStackDarkBar.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+            darkBar = new BlockWithMeta(blockDarkBar, itemStackDarkBar.getItemDamage(), true);
+          } else {
+            Log.warn("Config value 'plantRequiredBlocks' is invalid (third element has invalid meta) and will be (partially) ignored.");
+          }
+        } else {
+          Log.warn("Config value 'plantRequiredBlocks' is invalid (third element has no block) and will be (partially) ignored.");
+        }
+
+      } else {
+        Log.warn("Config value 'plantRequiredBlocks' is invalid (wrong number of items) and will be ignored.");
+      }
+    }
+
     try {
       Class<?> newGrowthRequirementHandler = Class.forName("com.InfinityRaider.AgriCraft.farming.growthrequirement.GrowthRequirementHandler");
       if (newGrowthRequirementHandler != null) {

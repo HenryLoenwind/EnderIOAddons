@@ -12,12 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ItemHelper {
 
-  private static final Pattern p = Pattern.compile("^\\s*([^:\\s]+):([^@\\s]+)(?:@(\\d+))?\\s*=\\s*(\\d+)\\s*$");
+  private static final Pattern p = Pattern.compile("^\\s*([^:\\s]+):([^@\\s]+)(?:@(-?\\d+))?\\s*(?:=\\s*(\\d+)\\s*)?$");
 
   public static List<WeightedItemStack> readWeightedList(String input) {
     if (input == null || input.trim().isEmpty()) {
@@ -38,14 +39,16 @@ public class ItemHelper {
           String weightS = matcher.group(4);
 
           try {
-            if (modid == null || itemid == null || weightS == null) {
+            if (modid == null || itemid == null) {
               throw new NumberFormatException();
             }
             int meta = metaS == null ? 0 : Integer.valueOf(metaS);
-            if (meta < 0 || meta >= 4096) {
+            if (meta == -1) {
+              meta = OreDictionary.WILDCARD_VALUE;
+            } else if (meta < 0 || meta >= 4096) {
               throw new NumberFormatException();
             }
-            int weight = Integer.valueOf(weightS);
+            int weight = weightS == null ? 1 : Integer.valueOf(weightS);
 
             MinecraftItem mci = new MinecraftItem(modid, itemid, meta);
             ItemStack stack = mci.getItemStack();
@@ -82,6 +85,18 @@ public class ItemHelper {
     }
     List<WeightedItemStack> result = readWeightedList(config.getString());
     cache.put(config, Pair.of(config.getString(), result));
+    return result;
+  }
+
+  public static List<ItemStack> readList(Config config) {
+    List<WeightedItemStack> weightedList = readWeightedList(config);
+    if (weightedList == null) {
+      return null;
+    }
+    List<ItemStack> result = new ArrayList<>();
+    for (WeightedItemStack weightedItemStack : weightedList) {
+      result.add(weightedItemStack.getStack());
+    }
     return result;
   }
 
