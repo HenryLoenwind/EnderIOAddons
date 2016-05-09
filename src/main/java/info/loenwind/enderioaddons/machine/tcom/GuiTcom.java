@@ -350,7 +350,7 @@ public class GuiTcom extends GuiEIOABase<TileTcom> {
   }
 
   private void drawMaterialLineAmount(int amount, int x, int y0) {
-    if (amount > 1) {
+    if (amount > 0) {
       drawFakeItemsStart();
       GL11.glDisable(GL11.GL_LIGHTING);
       GL11.glDisable(GL11.GL_DEPTH_TEST);
