@@ -109,12 +109,12 @@ public class WorkTile {
 
   @Override
   public String toString() {
-    return "WorkTile [bc=" + bc + ", isWeeds=" + isWeeds + ", isAnalyzed=" + isAnalyzed + ", seed=" + seed + ", isEmpty=" + isEmpty
-        + ", isMature=" + isMature + ", isCrops=" + isCrops + ", isCrossCrops=" + isCrossCrops + ", seedSlot=" + seedSlot + ", seedStorageSlot="
-        + seedStorageSlot + ", cropsSlot=" + cropsSlot + ", fertilizerSlot=" + fertilizerSlot + ", allowPlanting=" + allowPlanting + ", allowHarvesting="
-        + allowHarvesting + ", allowCrossCrops=" + allowCrossCrops + ", doPlanting=" + doPlanting + ", doHarvesting=" + doHarvesting + ", doDestroy="
-        + doDestroy + ", doCrossCrops=" + doCrossCrops + ", doCrops=" + doCrops + ", doTill=" + doTill + ", doWeed=" + doWeed + ", doFertilize=" + doFertilize
-        + "]";
+    return "WorkTile [bc=" + bc + ", isAnalyzed=" + isAnalyzed + ", isCrops=" + isCrops + ", isCrossCrops=" + isCrossCrops + ", isEmpty=" + isEmpty
+        + ", isMature=" + isMature + ", isWeeds=" + isWeeds + ", seed=" + seed + ", seedSlot=" + seedSlot + ", seedStorageSlot=" + seedStorageSlot
+        + ", cropsSlot=" + cropsSlot + ", fertilizerSlot=" + fertilizerSlot + ", allowCrossCrops=" + allowCrossCrops + ", allowHarvesting=" + allowHarvesting
+        + ", allowPlanting=" + allowPlanting + ", doCrops=" + doCrops + ", doCrossCrops=" + doCrossCrops + ", doDestroy=" + doDestroy + ", doFertilize="
+        + doFertilize + ", doHarvesting=" + doHarvesting + ", doPlanting=" + doPlanting + ", doTill=" + doTill + ", doWeed=" + doWeed + ", doneSomething="
+        + doneSomething + "]";
   }
 
 }
