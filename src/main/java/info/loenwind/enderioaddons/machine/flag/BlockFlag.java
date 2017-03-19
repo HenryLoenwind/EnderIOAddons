@@ -1,26 +1,17 @@
 package info.loenwind.enderioaddons.machine.flag;
 
-import static info.loenwind.enderioaddons.config.Config.flagDemagnetizingChance;
-import static info.loenwind.enderioaddons.config.Config.flagKeepTargetOnBreaking;
-import static info.loenwind.enderioaddons.network.PacketParticles.spawnParticle;
-import info.loenwind.enderioaddons.EnderIOAddons;
-
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.EnumHelper;
+import javax.annotation.Nullable;
 
 import com.enderio.core.api.client.gui.IAdvancedTooltipProvider;
 import com.enderio.core.client.handlers.SpecialTooltipHandler;
 import com.enderio.core.common.TileEntityEnder;
 import com.enderio.core.common.util.BlockCoord;
+
+import static info.loenwind.enderioaddons.config.Config.flagDemagnetizingChance;
+import static info.loenwind.enderioaddons.config.Config.flagKeepTargetOnBreaking;
+import static info.loenwind.enderioaddons.network.PacketParticles.spawnParticle;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -29,6 +20,17 @@ import crazypants.enderio.BlockEio;
 import crazypants.enderio.ModObject;
 import crazypants.enderio.machine.obelisk.BlockObeliskAbstract;
 import crazypants.enderio.waila.IWailaInfoProvider;
+import info.loenwind.enderioaddons.EnderIOAddons;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 
 public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWailaInfoProvider {
 
@@ -178,6 +180,13 @@ public class BlockFlag extends BlockEio implements IAdvancedTooltipProvider, IWa
   }
 
   @Override
+  public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, @Nullable EntityPlayer player) {
+    int meta = world.getBlockMetadata(x, y, z);
+    ItemStack itemStack = new ItemStack(this, 1, meta);
+    return itemStack;
+  }
+
+	@Override
   public void addCommonEntries(ItemStack itemstack, EntityPlayer entityplayer, List<String> list, boolean flag) {
   }
 
